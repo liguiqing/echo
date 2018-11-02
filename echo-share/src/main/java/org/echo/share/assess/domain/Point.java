@@ -1,4 +1,4 @@
-package org.echo.commons.domain;
+package org.echo.share.assess.domain;
 
 import lombok.*;
 import java.io.Serializable;

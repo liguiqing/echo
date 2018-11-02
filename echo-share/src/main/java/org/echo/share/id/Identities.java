@@ -1,4 +1,4 @@
-package org.echo.commons.id;
+package org.echo.share.id;
 
 import java.io.Serializable;
 import java.math.BigInteger;

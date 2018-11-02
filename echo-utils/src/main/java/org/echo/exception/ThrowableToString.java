@@ -1,4 +1,4 @@
-package org.echo.commons.exception;
+package org.echo.exception;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
