@@ -9,6 +9,7 @@ import org.echo.share.id.Identity;
 import javax.persistence.Id;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
+import javax.persistence.MappedSuperclass;
 import java.io.Serializable;
 
 /**
@@ -20,6 +21,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Getter
 @Setter
+@MappedSuperclass
 public abstract class PersistenceEntityObject extends EntityObject implements PersistenceDomainObject {
 
     @Id
