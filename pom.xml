@@ -11,6 +11,10 @@
     <name>echo System Root</name>
     <url>http://maven.apache.org</url>
 
+    <name>Echo System Root</name>
+    <url>http://maven.apache.org</url>
+
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.build.sourceVersion>1.8</project.build.sourceVersion>
@@ -33,92 +37,36 @@
             <artifactId>hamcrest-all</artifactId>
             <scope>test</scope>
         </dependency>
+        <spring.version>5.1.2.RELEASE</spring.version>		<spring.boot.version>2.1.0.RELEASE</spring.boot.version>
+        <spring.data-jpa.version>2.1.2.RELEASE</spring.data-jpa.version>
+
+        <junit.version>5.3.0</junit.version>
+        <mockito.version>2.23.0</mockito.version>
+        <powermock.version>1.7.1</powermock.version>
+        <org.hamcrest.version>1.3</org.hamcrest.version>
+        <commons.lang.version>3.4</commons.lang.version>
+        <shiro.version>1.4.0</shiro.version>
+
+    </properties>
+
+    <dependencies>
+
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <scope>provided</scope>
         </dependency>
 
-        <!-- log -->
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>1.1.6</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-access</artifactId>
-            <version>1.1.6</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.7.19</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>jcl-over-slf4j</artifactId>
-            <version>1.7.19</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>commons-logging</groupId>
-            <artifactId>commons-logging</artifactId>
-            <version>1.2</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <!-- guava -->
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>19.0</version>
-        </dependency>
 
     </dependencies>
 
     <dependencyManagement>
         <dependencies>
-            <!-- junit -->
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter-api</artifactId>
-                <version>5.3.1</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
                 <version>${junit.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <artifactId>hamcrest-core</artifactId>
-                        <groupId>org.hamcrest</groupId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.mockito</groupId>
-                <artifactId>mockito-core</artifactId>
-                <version>${mockito.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.powermock</groupId>
-                <artifactId>powermock-module-junit4</artifactId>
-                <version>${powermock.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.powermock</groupId>
-                <artifactId>powermock-api-mockito2</artifactId>
-                <version>${powermock.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.hamcrest</groupId>
-                <artifactId>hamcrest-all</artifactId>
-                <version>${org.hamcrest.version}</version>
+                <scope>test</scope>
             </dependency>
 
             <dependency>
@@ -128,7 +76,8 @@
                 <scope>provided</scope>
             </dependency>
 
-            <!-- spring boot -->
+
+            <!-- set spring -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
@@ -140,40 +89,85 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-test</artifactId>
                 <version>${spring.boot.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-test</artifactId>
-                <version>${spring.version}</version>
-                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-web</artifactId>
                 <version>${spring.boot.version}</version>
-                <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-data-jpa</artifactId>
+                <artifactId>spring-boot-starter-data-redis</artifactId>
                 <version>${spring.boot.version}</version>
-                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-test</artifactId>
+                <version>${spring.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework.data</groupId>
                 <artifactId>spring-data-jpa</artifactId>
-                <version>${spring.data.version}</version>
+                <version>${spring.data-jpa.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.data</groupId>
+                <artifactId>spring-data-redis</artifactId>
+                <version>${spring.data-jpa.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>2.9.7</version>
             </dependency>
 
-            <!-- mysql jdbc -->
+            <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-pool2 -->
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-pool2</artifactId>
+                <version>2.6.0</version>
+            </dependency>
+
+            <!-- https://mvnrepository.com/artifact/redis.clients/jedis -->
+            <dependency>
+                <groupId>redis.clients</groupId>
+                <artifactId>jedis</artifactId>
+                <version>2.9.0</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.apache.commons</groupId>
+                        <artifactId>commons-pool2</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <dependency>
+                <groupId>net.sf.ehcache</groupId>
+                <artifactId>ehcache</artifactId>
+                <version>2.10.5</version>
+            </dependency>
+
+            <!-- set db pool -->
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>druid</artifactId>
+                <version>1.1.9</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-log4j12</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <!-- set mysql jdbc -->
             <dependency>
                 <groupId>mysql</groupId>
                 <artifactId>mysql-connector-java</artifactId>
                 <version>5.1.46</version>
             </dependency>
 
-            <!--  servlet -->
+            <!-- set servlet -->
             <dependency>
                 <groupId>javax.servlet</groupId>
                 <artifactId>javax.servlet-api</artifactId>
@@ -188,20 +182,13 @@
                 <version>1.2</version>
             </dependency>
 
-            <!-- set json -->
-            <!--<dependency>-->
-                <!--<groupId>com.google.code.gson</groupId>-->
-                <!--<artifactId>gson</artifactId>-->
-                <!--<version>2.6.2</version>-->
-            <!--</dependency>-->
 
-            <!--<dependency>-->
-                <!--<groupId>com.fasterxml.jackson.core</groupId>-->
-                <!--<artifactId>jackson-databind</artifactId>-->
-                <!--<version>2.9.5</version>-->
-            <!--</dependency>-->
-
-            <!-- shiro -->
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${commons.lang.version}</version>
+            </dependency>
+            <!-- set shiro -->
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-core</artifactId>
@@ -258,32 +245,16 @@
                 <scope>compile</scope>
             </dependency>
 
-            <!-- apache artifacts -->
-            <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
-            <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-lang3</artifactId>
-                <version>3.8.1</version>
-            </dependency>
 
-            <!-- alibaba artifacts -->
-            <!-- https://mvnrepository.com/artifact/com.alibaba/fastjson -->
             <dependency>
                 <groupId>com.alibaba</groupId>
                 <artifactId>fastjson</artifactId>
-                <version>1.2.51</version>
+                <version>1.2.49</version>
             </dependency>
-            <!-- db pool -->
             <dependency>
-                <groupId>com.alibaba</groupId>
-                <artifactId>druid</artifactId>
-                <version>1.1.12</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.slf4j</groupId>
-                        <artifactId>slf4j-log4j12</artifactId>
-                    </exclusion>
-                </exclusions>
+                <groupId>org.quartz-scheduler</groupId>
+                <artifactId>quartz</artifactId>
+                <version>2.3.0</version>
             </dependency>
 
         </dependencies>

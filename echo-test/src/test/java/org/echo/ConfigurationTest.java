@@ -1,4 +1,6 @@
+import lombok.extern.slf4j.Slf4j;
 import org.echo.test.config.JunitTestConfigurations;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {
         JunitTestConfigurations.class})
+@Slf4j
+@DisplayName("Echo Test : Configuration")
 public class ConfigurationTest {
     @Autowired
     Environment env;
@@ -24,8 +28,10 @@ public class ConfigurationTest {
     private String jdbcUrl;
     @Test
     public void test(){
+        log.debug("I am testing ...");
         assertNotNull(env);
         assertNotNull(jdbcUrl);
+
     }
 
 }

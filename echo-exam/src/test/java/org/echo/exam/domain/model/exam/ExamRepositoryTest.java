@@ -1,6 +1,7 @@
 package org.echo.commons.domain.model.exam;
 
 import org.echo.commons.config.AppConfigurations;
+import org.echo.share.config.CacheConfigurations;
 import org.echo.share.config.DataSourceConfigurations;
 import org.echo.test.config.JunitTestConfigurations;
 import org.junit.jupiter.api.Test;
@@ -20,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 @ContextConfiguration(classes = {
         JunitTestConfigurations.class,
         DataSourceConfigurations.class,
+        CacheConfigurations.class,
         AppConfigurations.class
         })
 //@Transactional

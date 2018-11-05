@@ -95,7 +95,7 @@ public class DataSourceConfigurations {
             entityManagerFactoryBean.setPersistenceUnitName(persistenceUnitName);
             entityManagerFactoryBean.setPersistenceXmlLocation("classpath:META-INF/persistence.xml");
         }
-        entityManagerFactoryBean.setPackagesToScan("org.echo.*.domain.model.**");
+        entityManagerFactoryBean.setPackagesToScan("org.echo.*.domain.model.**.*");
         entityManagerFactoryBean.setDataSource(dataSource);
         entityManagerFactoryBean.setJpaVendorAdapter(jpaVendorAdapter);
         entityManagerFactoryBean.setJpaDialect(jpaDialect);
