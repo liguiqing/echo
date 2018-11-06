@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <persistence xmlns="http://java.sun.com/xml/ns/persistence" version="2.0">
 
-    <persistence-unit name="org.echo.commons.PersistenceUnit">
+    <persistence-unit name="org.echo.exam.PersistenceUnit">
         <!--<provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>-->
         <!--<jar-file>WEB-INF/lib/zhezhu-access-1.0.0-SNAPSHOT.jar</jar-file>-->
     </persistence-unit>

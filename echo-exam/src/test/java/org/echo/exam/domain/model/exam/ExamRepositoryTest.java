@@ -1,16 +1,26 @@
-package org.echo.commons.domain.model.exam;
+package org.echo.exam.domain.model.exam;
 
-import org.echo.commons.config.AppConfigurations;
+import org.echo.exam.config.AppConfigurations;
 import org.echo.share.config.CacheConfigurations;
 import org.echo.share.config.DataSourceConfigurations;
+import org.echo.share.id.commons.ExamId;
 import org.echo.test.config.JunitTestConfigurations;
+import org.echo.test.repository.AbstractRepositoryTest;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.ContextHierarchy;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.transaction.annotation.Transactional;
+
+import javax.transaction.Transactional;
+import java.io.Serializable;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Copyright (c) 2016,$today.year, 深圳市易考试乐学测评有限公司
@@ -18,20 +28,30 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {
-        JunitTestConfigurations.class,
+@ContextHierarchy(@ContextConfiguration(classes = {
         DataSourceConfigurations.class,
         CacheConfigurations.class,
         AppConfigurations.class
-        })
-//@Transactional
-//@Rollback
-class ExamRepositoryTest {
+        }))
+@Transactional
+@Rollback
+@DisplayName("Echo : Exam module ExamRepository test")
+class ExamRepositoryTest extends AbstractRepositoryTest {
 
     @Value("${jdb.url}")
     private String jdbcUrl;
+
+    @Autowired
+    ExamRepository repository;
+
     @Test
     void test(){
-
+        ExamId examId = repository.nextIdentity();
+        assertNotNull(examId);
+        Exam exam = new Exam(examId);
+        repository.save(exam);
+        Exam exam1 = repository.loadOf(examId);
+        assertNotNull(exam1);
+        assertEquals(exam,exam);
     }
 }

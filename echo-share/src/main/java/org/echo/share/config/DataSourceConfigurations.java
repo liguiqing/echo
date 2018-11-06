@@ -2,7 +2,9 @@ package org.echo.share.config;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -25,16 +27,14 @@ import java.util.Properties;
  */
 @Slf4j
 @Configuration
+@EnableConfigurationProperties(DataSourceProperties.class)
 public class DataSourceConfigurations {
 
-
     @Bean("dataSource")
-    public DataSource dataSource(@Value("${jdbc.jndi.name:testJndiDs}") String jdbcJndiName,
-                                 @Value("${jdbc.url}") String url,
-                                 @Value("${jdbc.username}") String username,
-                                 @Value("${jdbc.password}") String password) throws SQLException {
+    public DataSource dataSource(DataSourceProperties dataSourceProperties) throws SQLException {
 
         final JndiDataSourceLookup dsLookup = new JndiDataSourceLookup();
+        String jdbcJndiName = dataSourceProperties.getJndiName();
         dsLookup.setResourceRef(true);
         try{
             log.debug("Get DataSource from jndi {}",jdbcJndiName);
@@ -43,6 +43,10 @@ public class DataSourceConfigurations {
         }catch (Exception e){
             log.debug("DataSource not found with jndi {}",jdbcJndiName);
         }
+
+        String url = dataSourceProperties.getUrl();
+        String username = dataSourceProperties.getUsername();
+        String password = dataSourceProperties.getPassword();
 
         log.debug("Create DataSource {} {} {}",url,username,password);
         DruidDataSource druidDataSource = new DruidDataSource();

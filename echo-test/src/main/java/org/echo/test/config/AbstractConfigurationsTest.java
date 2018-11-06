@@ -1,8 +1,9 @@
 package org.echo.test.config;
 
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.ContextHierarchy;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 /**
@@ -11,10 +12,11 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
  */
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {
-        JunitTestConfigurations.class
-})
-@ConfigurationProperties(prefix = "application")
+@ContextHierarchy(@ContextConfiguration(
+        initializers = ConfigFileApplicationContextInitializer.class,
+        classes = {
+            JunitTestConfigurations.class
+}))
 public abstract class AbstractConfigurationsTest {
 
 }

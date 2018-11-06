@@ -15,12 +15,13 @@
         <dependency>
             <groupId>echo</groupId>
             <artifactId>echo-test</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>${echo.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>net.sf.ehcache</groupId>
-            <artifactId>ehcache</artifactId>
+            <groupId>echo</groupId>
+            <artifactId>spring-cache</artifactId>
+            <version>${echo.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -29,6 +30,11 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.github.ben-manes.caffeine</groupId>
+            <artifactId>caffeine</artifactId>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>redis.clients</groupId>

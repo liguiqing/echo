@@ -9,25 +9,25 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>echo-commons</artifactId>
+    <artifactId>echo-exam</artifactId>
     <dependencies>
         <dependency>
             <groupId>echo</groupId>
             <artifactId>echo-test</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>${echo.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>echo</groupId>
             <artifactId>echo-share</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>${echo.version}</version>
             <scope>compile</scope>
         </dependency>
 
     </dependencies>
 
     <build>
-        <finalName>echo-commons</finalName>
+        <finalName>echo-exam</finalName>
         <filters>
             <filter>src/filters/${env}.properties</filter>
         </filters>

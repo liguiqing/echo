@@ -5,7 +5,6 @@ import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.reflect.FieldUtils;
-import org.junit.Before;
 import org.mockito.MockitoAnnotations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +22,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import org.junit.jupiter.api.BeforeAll;
+
 /**
  * @author Liguiqing
  * @since V1.0
@@ -33,7 +34,7 @@ public abstract class AbstractSpringControllerTest {
 
     protected MockMvc mvc;
 
-    @Before
+    @BeforeAll
     public void before(){
         MockitoAnnotations.initMocks(this);
     }

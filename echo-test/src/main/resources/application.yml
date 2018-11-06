@@ -1,0 +1,55 @@
+server:
+  port: 8080
+debug: true
+
+spring:
+  cache:
+    redis-caffeine:
+      caffeine:
+        expireAfterAccess: 5000
+      redis:
+        defaultExpiration: 60000
+  freemarker:
+    charset: UTF-8
+    cache: false
+    expose-request-attributes: true
+    request-context-attribute: request
+    expose-session-attributes: true
+    content-type: text/html
+    template-loader-path: classpath:/META-INF/ftl
+    suffix: .ftl
+    check-template-location: true
+  mvc:
+    favicon:
+      enabled: false
+  devtools:
+    restart:
+      enabled: true
+  redis:
+    jedis:
+      pool:
+        maxActive: 8
+        maxWait: -1
+        maxIdle: 8
+        minIdle: 0
+      timeout: 10000
+      cluster:
+        nodes:
+        - 192.168.1.251:9998
+        - 192.168.1.251:9999
+jdbc:
+  driver:
+  password: newa_newc
+  jndiName: testJndiDs
+  url: jdbc:mysql://192.168.1.251:3306/easytnt_sm_testing?useUnicode=true&amp;characterEncoding=utf-8&amp;autoReconnect=true&amp;rewriteBatchedStatements=true
+  username: root
+hibernate:
+  max_fetch_depth: 10
+  dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+  format_sql: true
+  hbm2ddl:
+    auto: none
+  jdbc:
+    batch_size: 100
+    fetch_size: 50
+  show_sql: false

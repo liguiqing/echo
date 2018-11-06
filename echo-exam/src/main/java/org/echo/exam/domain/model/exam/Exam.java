@@ -1,4 +1,4 @@
-package org.echo.commons.domain.model.exam;
+package org.echo.exam.domain.model.exam;
 
 import lombok.NoArgsConstructor;
 import org.echo.share.domain.PersistenceEntityObject;

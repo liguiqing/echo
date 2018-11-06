@@ -1,3 +1,5 @@
+package org.echo;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Liguiqing
  * @since V3.0
  */
-@DisplayName("A Junit5Test test case")
+@DisplayName("A org.echo.Junit5Test test case")
 public class Junit5Test {
 
     @Test

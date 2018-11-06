@@ -1,8 +1,9 @@
 package org.echo.share.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.echo.test.config.AbstractConfigurationsTest;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.ContextHierarchy;
 
@@ -13,16 +14,15 @@ import org.springframework.test.context.ContextHierarchy;
 
 @ContextHierarchy(@ContextConfiguration(classes = {
         CacheConfigurations.class,
-        DataSourceConfigurations.class
+        DataSourceConfigurations.class,
+
 }))
+@Slf4j
+@DisplayName("Echo : Share module Configurations test")
 public class ConfigurationsTest extends AbstractConfigurationsTest {
 
-
-    public ConfigurationsTest(){
-
-    }
     @Test
     public void test(){
-
+        log.debug("I will testing ...");
     }
 }

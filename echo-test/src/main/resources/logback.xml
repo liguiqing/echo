@@ -82,12 +82,12 @@
 		<appender-ref ref='ASYNC' />
 	</logger>
 
-	<logger name="com.echo" additivity="false">
-		<level value="${logger.com.echo}" />
+	<logger name="org.echo" additivity="false">
+		<level value="${logger.org.echo}" />
 		<appender-ref ref="ASYNC" />
 	</logger>
-	<logger name="com.echo.exception" additivity="false">
-		<level value="${logger.com.echo.exception}" />
+	<logger name="org.echo.exception" additivity="false">
+		<level value="${logger.org.echo.exception}" />
 		<appender-ref ref="ASYNC" />
 	</logger>
 
