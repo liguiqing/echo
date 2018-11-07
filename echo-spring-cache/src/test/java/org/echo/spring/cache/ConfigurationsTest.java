@@ -1,7 +1,7 @@
 package org.echo.spring.cache;
 
 import lombok.extern.slf4j.Slf4j;
-import org.echo.spring.cache.redis.org.echo.spring.cache.config.RedisCaffeineCacheAutoConfiguration;
+import org.echo.spring.cache.redis.RedisCaffeineCacheAutoConfiguration;
 import org.echo.test.config.AbstractConfigurationsTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

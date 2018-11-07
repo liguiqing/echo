@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.support.AbstractValueAdaptingCache;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.util.StringUtils;
+import org.echo.util.CollectionsUtil;
 
 import java.lang.reflect.Constructor;
 import java.util.Map;
@@ -33,28 +34,29 @@ public class RedisCaffeineCache extends AbstractValueAdaptingCache {
 
     private String cachePrefix;
 
-    private long defaultExpiration = 0;
+    private long defaultExpiration;
 
     private Map<String, Long> expires;
 
-    private String topic = "cache:redis:caffeine:topic";
+    private String topic;
 
-    protected RedisCaffeineCache(boolean allowNullValues) {
-        super(allowNullValues);
-    }
-
+    /**是否启动二级缓存,默认值不启用.启用时必须配置redis服务**/
+    private boolean level2Enabled;
 
     public RedisCaffeineCache(String name, RedisTemplate<Object, Object> redisTemplate,
                            Cache<Object, Object> caffeineCache,
                            RedisCaffeineCacheProperties redisCaffeineCacheProperties) {
     super(redisCaffeineCacheProperties.isCacheNullValues());
         this.name = name;
-        this.redisTemplate = redisTemplate;
         this.caffeineCache = caffeineCache;
         this.cachePrefix = redisCaffeineCacheProperties.getCachePrefix();
         this.defaultExpiration = redisCaffeineCacheProperties.getRedis().getDefaultExpiration();
         this.expires = redisCaffeineCacheProperties.getRedis().getExpires();
         this.topic = redisCaffeineCacheProperties.getRedis().getTopic();
+        this.level2Enabled = redisCaffeineCacheProperties.isLevel2Enabled();
+        if(this.level2Enabled){
+            this.redisTemplate = redisTemplate;
+        }
     }
 
 
@@ -66,6 +68,9 @@ public class RedisCaffeineCache extends AbstractValueAdaptingCache {
             log.debug("Get cache from caffeine, the key is : {}", cacheKey);
             return value;
         }
+
+        if(!level2Enabled)
+            return null;
 
         value = redisTemplate.opsForValue().get(cacheKey);
 
@@ -94,6 +99,10 @@ public class RedisCaffeineCache extends AbstractValueAdaptingCache {
         if(value != null) {
             return (T) value;
         }
+
+        if(!level2Enabled)
+            return null;
+
         ReentrantLock lock = new ReentrantLock();
         try {
             lock.lock();
@@ -128,15 +137,21 @@ public class RedisCaffeineCache extends AbstractValueAdaptingCache {
             this.evict(key);
             return;
         }
-        long expire = getExpire();
-        if(expire > 0) {
-            redisTemplate.opsForValue().set(getKey(key), toStoreValue(value), expire, TimeUnit.MILLISECONDS);
-        } else {
-            redisTemplate.opsForValue().set(getKey(key), toStoreValue(value));
-        }
 
-        push(new CacheMessage(this.name, key));
+        putToLevel2(key,value);
         caffeineCache.put(key, value);
+    }
+
+    private void putToLevel2(Object key, Object value){
+        if(level2Enabled){
+            long expire = getExpire();
+            if(expire > 0) {
+                redisTemplate.opsForValue().set(getKey(key), toStoreValue(value), expire, TimeUnit.MILLISECONDS);
+            } else {
+                redisTemplate.opsForValue().set(getKey(key), toStoreValue(value));
+            }
+            push(new CacheMessage(this.name, key));
+        }
     }
 
     @Override
@@ -150,15 +165,7 @@ public class RedisCaffeineCache extends AbstractValueAdaptingCache {
         synchronized (key) {
             prevValue = redisTemplate.opsForValue().get(cacheKey);
             if(prevValue == null) {
-                long expire = getExpire();
-                if(expire > 0) {
-                    redisTemplate.opsForValue().set(getKey(key), toStoreValue(value), expire, TimeUnit.MILLISECONDS);
-                } else {
-                    redisTemplate.opsForValue().set(getKey(key), toStoreValue(value));
-                }
-
-                push(new CacheMessage(this.name, key));
-
+                putToLevel2(key,value);
                 caffeineCache.put(key, toStoreValue(value));
             }
         }
@@ -169,10 +176,12 @@ public class RedisCaffeineCache extends AbstractValueAdaptingCache {
     public void evict(Object key) {
         log.debug("Evict cache {}",key);
 
-        // 先清除redis中缓存数据，然后清除caffeine中的缓存，
-        // 避免短时间内如果先清除caffeine缓存后其他请求会再从redis里加载到caffeine中
-        redisTemplate.delete(getKey(key));
-        push(new CacheMessage(this.name, key));
+        if(level2Enabled) {
+            // 先清除redis中缓存数据，然后清除caffeine中的缓存，
+            // 避免短时间内如果先清除caffeine缓存后其他请求会再从redis里加载到caffeine中
+            redisTemplate.delete(getKey(key));
+            push(new CacheMessage(this.name, key));
+        }
         caffeineCache.invalidate(key);
     }
 
@@ -180,14 +189,15 @@ public class RedisCaffeineCache extends AbstractValueAdaptingCache {
     public void clear() {
         log.debug("Clear cache {}",this.name);
 
-        // 先清除redis中缓存数据，然后清除caffeine中的缓存，
-        // 避免短时间内如果先清除caffeine缓存后其他请求会再从redis里加载到caffeine中
-        Set<Object> keys = redisTemplate.keys(this.name.concat(":"));
-        for(Object key : keys) {
-            redisTemplate.delete(key);
+        if(level2Enabled) {
+            // 先清除redis中缓存数据，然后清除caffeine中的缓存，
+            // 避免短时间内如果先清除caffeine缓存后其他请求会再从redis里加载到caffeine中
+            Set<Object> keys = redisTemplate.keys(this.name.concat(":"));
+            if(CollectionsUtil.isNotNullAndNotEmpty(keys)){
+                keys.forEach(key->redisTemplate.delete(key));
+            }
+            push(new CacheMessage(this.name, null));
         }
-
-        push(new CacheMessage(this.name, null));
         caffeineCache.invalidateAll();
     }
 
@@ -214,9 +224,8 @@ public class RedisCaffeineCache extends AbstractValueAdaptingCache {
     }
 
     private long getExpire() {
-        long expire = defaultExpiration;
         Long cacheNameExpire = expires.get(this.name);
-        return cacheNameExpire == null ? expire : cacheNameExpire.longValue();
+        return cacheNameExpire == null ? defaultExpiration : cacheNameExpire;
     }
 
     private Object getKey(Object key) {

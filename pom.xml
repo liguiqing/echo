@@ -381,6 +381,6 @@
         <module>echo-exam</module>
         <module>echo-core</module>
         <module>echo-share</module>
-        <module>spring-cache</module>
+        <module>echo-spring-cache</module>
     </modules>
 </project>

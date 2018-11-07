@@ -5,6 +5,10 @@ debug: true
 spring:
   cache:
     redis-caffeine:
+      level2Enabled: false
+      cacheNullValues: true
+      dynamic: true
+      cachePrefix: echo
       caffeine:
         expireAfterAccess: 5000
       redis:

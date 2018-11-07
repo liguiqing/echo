@@ -2,6 +2,7 @@ package org.echo.spring.cache.redis;
 
 import com.google.common.collect.Sets;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -16,7 +17,7 @@ import java.util.Set;
  * @author Liguiqing
  * @since V1.0
  */
-
+@NoArgsConstructor
 @Slf4j
 @Getter
 @Setter
@@ -33,9 +34,20 @@ public class RedisCaffeineCacheProperties {
     private boolean dynamic = true;
 
     /** 缓存key的前缀*/
-    private String cachePrefix;
+    private String cachePrefix = "echo:";
+
+    /**是否启动二级缓存,默认值不启用.启用时必须配置redis服务**/
+    private boolean level2Enabled = false;
 
     private Redis redis = new Redis();
 
     private Caffeine caffeine = new Caffeine();
+
+    public RedisCaffeineCacheProperties(boolean cacheNullValues,
+                                        boolean dynamic, String cachePrefix, boolean level2Enabled) {
+        this.cacheNullValues = cacheNullValues;
+        this.dynamic = dynamic;
+        this.cachePrefix = cachePrefix;
+        this.level2Enabled = level2Enabled;
+    }
 }

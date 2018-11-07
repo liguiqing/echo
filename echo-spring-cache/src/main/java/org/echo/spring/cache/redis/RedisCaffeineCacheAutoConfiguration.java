@@ -1,9 +1,6 @@
-package org.echo.spring.cache.redis.org.echo.spring.cache.config;
+package org.echo.spring.cache.redis;
 
 import lombok.extern.slf4j.Slf4j;
-import org.echo.spring.cache.redis.CacheMessageListener;
-import org.echo.spring.cache.redis.RedisCaffeineCacheManager;
-import org.echo.spring.cache.redis.RedisCaffeineCacheProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -60,7 +57,7 @@ public class RedisCaffeineCacheAutoConfiguration {
                                                                        RedisCaffeineCacheManager redisCaffeineCacheManager) {
         RedisMessageListenerContainer redisMessageListenerContainer = new RedisMessageListenerContainer();
         redisMessageListenerContainer.setConnectionFactory(redisTemplate.getConnectionFactory());
-        CacheMessageListener cacheMessageListener = new CacheMessageListener(redisTemplate, redisCaffeineCacheManager);
+        RedisBaseCacheMessageListener cacheMessageListener = new RedisBaseCacheMessageListener(redisTemplate, redisCaffeineCacheManager);
         redisMessageListenerContainer.addMessageListener(cacheMessageListener, new ChannelTopic(redisCaffeineCacheProperties.getRedis().getTopic()));
         return redisMessageListenerContainer;
     }
