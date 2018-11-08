@@ -1,4 +1,4 @@
-package org.echo.spring.cache.redis;
+package org.echo.spring.cache.message;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;

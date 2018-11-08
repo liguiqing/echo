@@ -1,4 +1,4 @@
-package org.echo.spring.cache.redis;
+package org.echo.spring.cache.secondary;
 
 import com.google.common.collect.Sets;
 import lombok.Getter;
@@ -11,19 +11,16 @@ import org.springframework.stereotype.Component;
 import java.util.Set;
 
 /**
- * Redis+CaffeineProperties
- * 配置类,从spring boot配置文件中请取redis相关配置
- *
  * @author Liguiqing
- * @since V1.0
+ * @since V3.0
  */
 @NoArgsConstructor
 @Slf4j
 @Getter
 @Setter
 @Component
-@ConfigurationProperties(prefix = "spring.cache.redis-caffeine")
-public class RedisCaffeineCacheProperties {
+@ConfigurationProperties(prefix = "spring.cache.secondary")
+public class SecondaryCacheProperties {
 
     private Set<String> cacheNames = Sets.newHashSet();
 
@@ -39,15 +36,7 @@ public class RedisCaffeineCacheProperties {
     /**是否启动二级缓存,默认值不启用.启用时必须配置redis服务**/
     private boolean level2Enabled = false;
 
-    private Redis redis = new Redis();
+    /**是否启动二级缓存,默认值不启用.启用时必须配置redis服务**/
+    private String level2Topic = "echo:cache";
 
-    private Caffeine caffeine = new Caffeine();
-
-    public RedisCaffeineCacheProperties(boolean cacheNullValues,
-                                        boolean dynamic, String cachePrefix, boolean level2Enabled) {
-        this.cacheNullValues = cacheNullValues;
-        this.dynamic = dynamic;
-        this.cachePrefix = cachePrefix;
-        this.level2Enabled = level2Enabled;
-    }
 }

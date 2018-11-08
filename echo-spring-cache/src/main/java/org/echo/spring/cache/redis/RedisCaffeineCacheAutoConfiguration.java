@@ -41,7 +41,6 @@ public class RedisCaffeineCacheAutoConfiguration {
     }
 
     @Bean
-
     public JedisConnectionFactory redisConnectionFactory(RedisClusterConfiguration clusterConfiguration){
         return new JedisConnectionFactory(clusterConfiguration);
     }

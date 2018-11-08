@@ -1,13 +1,12 @@
 package org.echo.spring.cache.redis;
 
 import com.github.benmanes.caffeine.cache.Cache;
-
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.echo.spring.cache.message.CacheMessage;
+import org.echo.util.CollectionsUtil;
 import org.springframework.cache.support.AbstractValueAdaptingCache;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.util.StringUtils;
-import org.echo.util.CollectionsUtil;
 
 import java.lang.reflect.Constructor;
 import java.util.Map;
@@ -17,13 +16,12 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * Redis+Caffeine implements of Spring {@link org.springframework.cache.Cache}
+ * Redis+CaffeineProperties implements of Spring {@link org.springframework.cache.Cache}
  *
  * @author Liguiqing
  * @since V1.0
  */
 @Slf4j
-@Getter
 public class RedisCaffeineCache extends AbstractValueAdaptingCache {
 
     private String name;
@@ -144,11 +142,12 @@ public class RedisCaffeineCache extends AbstractValueAdaptingCache {
 
     private void putToLevel2(Object key, Object value){
         if(level2Enabled){
+            Object cacheKey = getKey(key);
             long expire = getExpire();
             if(expire > 0) {
-                redisTemplate.opsForValue().set(getKey(key), toStoreValue(value), expire, TimeUnit.MILLISECONDS);
+                redisTemplate.opsForValue().set(cacheKey, toStoreValue(value), expire, TimeUnit.MILLISECONDS);
             } else {
-                redisTemplate.opsForValue().set(getKey(key), toStoreValue(value));
+                redisTemplate.opsForValue().set(cacheKey, toStoreValue(value));
             }
             push(new CacheMessage(this.name, key));
         }
@@ -175,7 +174,6 @@ public class RedisCaffeineCache extends AbstractValueAdaptingCache {
     @Override
     public void evict(Object key) {
         log.debug("Evict cache {}",key);
-
         if(level2Enabled) {
             // 先清除redis中缓存数据，然后清除caffeine中的缓存，
             // 避免短时间内如果先清除caffeine缓存后其他请求会再从redis里加载到caffeine中

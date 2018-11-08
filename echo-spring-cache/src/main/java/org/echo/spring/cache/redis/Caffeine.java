@@ -3,7 +3,7 @@ package org.echo.spring.cache.redis;
 import lombok.*;
 
 /**
- * Caffeine Cache Control Bean
+ * CaffeineProperties Cache Control Bean
  *
  * 一级缓存
  * @author Liguiqing

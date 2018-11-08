@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Redis+Caffeine implements of Spring {@see CacheManager}
+ * Redis+CaffeineProperties implements of Spring {@see CacheManager}
  *
  * @author Liguiqing
  * @since V1.0

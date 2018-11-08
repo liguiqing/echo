@@ -7,6 +7,9 @@ import org.junit.jupiter.api.Test;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Objects;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,14 +25,26 @@ public class RedisCaffeineCacheTest {
 
         RedisCaffeineCacheProperties cacheProperties =
                 new RedisCaffeineCacheProperties(true,true,"test",false);
+        com.github.benmanes.caffeine.cache.Cache<String, Object> manualCache = Caffeine.newBuilder()
+                .expireAfterWrite(10, TimeUnit.MINUTES)
+                .maximumSize(10_000)
+                .build();
+
         com.github.benmanes.caffeine.cache.Caffeine<Object, Object> cacheBuilder = Caffeine.newBuilder();
 
         RedisCaffeineCache cache = new RedisCaffeineCache("testCache",null,cacheBuilder.build(),cacheProperties);
-        String k1 = "s1";
+
+        String k1 = "k1";
         String s1 = "s1";
         cache.put(k1,s1);
-        String s1_ = cache.get(k1,()->null);
+        String s1_ = cache.get(k1,()->s1);
         assertEquals(s1,s1_);
+        s1_ = manualCache.get(k1,k->createExpensiveGraph(s1))+"";
+        assertEquals(s1,s1_);
+        s1_ = manualCache.get(k1,k->createExpensiveGraph(s1))+"";
+        assertEquals(s1,s1_);
+        manualCache.invalidate(k1);
+
         LocalDateTime now = LocalDateTime.now();
         cache.put("tb1",new TestBean("f1",2l,now));
         final TestBean tb1 =  cache.get("tb1",()->null);
@@ -41,10 +56,14 @@ public class RedisCaffeineCacheTest {
 
         cache.evict(k1);
         s1_ = cache.get(k1,()->null);
-        assertNull(s1);
+        assertNull(s1_);
         cache.clear();
         TestBean tb2 =  cache.get("tb1",()->null);
         assertNull(tb2);
+    }
+
+    Object createExpensiveGraph(Object value){
+        return value;
     }
 
     @NoArgsConstructor

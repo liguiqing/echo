@@ -1,5 +1,5 @@
 /**
- * Redis+Caffeine
+ * Redis+CaffeineProperties
  * Spring 本地一级缓存+远程二级缓存组件
  *
  * 使用Redis作为二级缓存, Caffeine作为一级缓存
