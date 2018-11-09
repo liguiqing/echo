@@ -1,4 +1,4 @@
-package org.echo.spring.cache.redis;
+package org.echo.spring.cache.secondary;
 
 import lombok.extern.slf4j.Slf4j;
 import org.echo.spring.cache.message.CacheMessage;
@@ -17,20 +17,20 @@ public class RedisBaseCacheMessageListener implements MessageListener {
 
     private RedisTemplate<Object, Object> redisTemplate;
 
-    private RedisCaffeineCacheManager redisCaffeineCacheManager;
+    private SecondaryCacheManager cacheManager;
 
     public RedisBaseCacheMessageListener(RedisTemplate<Object, Object> redisTemplate,
-                                         RedisCaffeineCacheManager redisCaffeineCacheManager) {
+                                         SecondaryCacheManager cacheManager) {
         super();
         this.redisTemplate = redisTemplate;
-        this.redisCaffeineCacheManager = redisCaffeineCacheManager;
+        this.cacheManager = cacheManager;
     }
 
     @Override
     public void onMessage(Message message, byte[] pattern) {
         CacheMessage cacheMessage = (CacheMessage) redisTemplate.getValueSerializer().deserialize(message.getBody());
         log.debug("Receive a redis topic message, clear local cache, the cacheName is {}, the key is {}", cacheMessage.getCacheName(), cacheMessage.getKey());
-        redisCaffeineCacheManager.clearLocal(cacheMessage.getCacheName(), cacheMessage.getKey());
+        cacheManager.clearLocal(cacheMessage.getCacheName(), cacheMessage.getKey());
     }
 
 }

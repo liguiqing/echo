@@ -8,7 +8,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Liguiqing
@@ -34,4 +36,8 @@ public class RedisCacheProperties {
 
     /** 缓存key的前缀*/
     private String cachePrefix = "echo:";
+
+    private Set<String> hostsAndPorts = new HashSet<>();
+
+    private Standalone standalone = new Standalone();
 }

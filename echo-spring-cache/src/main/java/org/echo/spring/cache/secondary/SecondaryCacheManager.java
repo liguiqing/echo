@@ -13,11 +13,13 @@ import java.util.concurrent.ConcurrentMap;
 
 /**
  *
+ * 二级缓存管理器
+ *
  * @author Liguiqing
  * @since V1.0
  */
 @Slf4j
-public class SecondryrCacheManager implements CacheManager {
+public class SecondaryCacheManager implements CacheManager {
 
     private SecondaryCacheProperties cacheProperties;
 
@@ -33,14 +35,13 @@ public class SecondryrCacheManager implements CacheManager {
 
     private CacheMessagePusher messagePusher;
 
-    public SecondryrCacheManager(SecondaryCacheProperties cacheProperties,
+    public SecondaryCacheManager(SecondaryCacheProperties cacheProperties,
                                  CacheFactory cacheL1Factory,
                                  CacheFactory cacheL2Factory,
                                  CacheMessagePusher messagePusher) {
-        //this.cacheProperties = cacheProperties;
-        this.dynamic =false;
-        this.cacheNames = cacheNames;
-        this.cacheMap = cacheMap;
+        this.cacheProperties = cacheProperties;
+        this.dynamic =cacheProperties.isDynamic();
+        this.cacheNames = cacheProperties.getCacheNames();
         this.cacheL1Factory = cacheL1Factory;
         this.cacheL2Factory = cacheL2Factory;
         this.messagePusher = messagePusher;
@@ -57,6 +58,7 @@ public class SecondryrCacheManager implements CacheManager {
         if(!dynamic && !cacheNames.contains(name)) {
             return null;
         }
+
         cache = new SecondaryCache(name,cacheL1Factory.newCache(name),cacheL2Factory.newCache(name),cacheProperties,messagePusher);
         Cache oldCache = cacheMap.putIfAbsent(name, cache);
         log.debug("Create cache instance, the cache name is : {}", name);
@@ -67,4 +69,14 @@ public class SecondryrCacheManager implements CacheManager {
     public Collection<String> getCacheNames() {
         return this.cacheNames;
     }
+    public void clearLocal(String cacheName, Object key) {
+        Cache cache = cacheMap.get(cacheName);
+        if(cache == null) {
+            return ;
+        }
+
+        SecondaryCache secondaryCache = (SecondaryCache) cache;
+        secondaryCache.clearLocal(key);
+    }
+
 }

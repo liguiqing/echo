@@ -24,8 +24,8 @@ public class SecondaryCacheProperties {
 
     private Set<String> cacheNames = Sets.newHashSet();
 
-    /** 是否存储空值，默认true，防止缓存穿透*/
-    private boolean cacheNullValues = true;
+    /** 是否存储空值，默认false，防止缓存穿透*/
+    private boolean cacheNullValues = false;
 
     /** 是否动态根据cacheName创建Cache的实现，默认true*/
     private boolean dynamic = true;

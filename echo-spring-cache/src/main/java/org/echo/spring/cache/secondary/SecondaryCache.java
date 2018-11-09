@@ -184,4 +184,16 @@ public class SecondaryCache extends AbstractValueAdaptingCache {
         if(message != null)
             this.messagePusher.push(l2Topic, message);
     }
+    /**
+     * 清理本地缓存
+     * @param key key of cache
+     */
+    public void clearLocal(Object key) {
+        log.debug("Clear local cache, the key is : {}", key);
+
+        if(key == null) {
+            cacheL1.clear();
+        }
+    }
+
 }

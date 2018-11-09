@@ -2,7 +2,8 @@ package org.echo.spring.cache.redis;
 
 import org.echo.spring.cache.CacheFactory;
 import org.springframework.cache.Cache;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.cache.RedisCacheManager;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
 
 /**
  * @author Liguiqing
@@ -10,18 +11,21 @@ import org.springframework.data.redis.core.RedisTemplate;
  */
 
 public class RedisCacheFactory implements CacheFactory {
+    private RedisCacheManager redisCacheManager;
 
-    private RedisCacheProperties cacheProperties;
-
-    private RedisTemplate<Object, Object> redisTemplate;
-
-    public RedisCacheFactory(RedisCacheProperties cacheProperties,RedisTemplate<Object, Object> redisTemplate) {
-        this.cacheProperties = cacheProperties;
-        this.redisTemplate = redisTemplate;
+    public RedisCacheFactory(RedisConnectionFactory connectionFactory) {
+        //this.cacheProperties = cacheProperties;
+        //this.redisTemplate = redisTemplate;
+        this.redisCacheManager = RedisCacheManager.create(connectionFactory);
     }
 
     @Override
     public Cache newCache(String name) {
-        return new RedisCache(name,redisTemplate,cacheProperties);
+        return this.redisCacheManager.getCache(name);
+//        Cache cache =  redisCacheManager.getCache(name);
+//        if(cache == null){
+//            cache = redisCacheManager.
+//        }
+        //return new org.springframework.data.redis.cache.RedisCache(name,redisTemplate,cacheProperties);
     }
 }
