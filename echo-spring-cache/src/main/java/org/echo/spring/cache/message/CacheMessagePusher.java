@@ -1,8 +1,10 @@
 package org.echo.spring.cache.message;
 
 /**
+ * 缓存变更消息发布者
+ *
  * @author Liguiqing
- * @since V3.0
+ * @since V1.0
  */
 
 public interface CacheMessagePusher {

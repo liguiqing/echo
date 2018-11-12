@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.echo.spring.cache.CacheProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -23,7 +24,9 @@ import java.util.Set;
 @Setter
 @Component
 @ConfigurationProperties(prefix = "spring.cache.secondary.redis")
-public class RedisCacheProperties {
+public class RedisCacheProperties implements CacheProperties {
+
+    private String name;
 
     /** 是否存储空值，默认true，防止缓存穿透*/
     private boolean cacheNullValues = true;

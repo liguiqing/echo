@@ -3,8 +3,10 @@ package org.echo.spring.cache.message;
 import org.springframework.data.redis.core.RedisTemplate;
 
 /**
+ * 基于Redis 消息发布者实现
+ *
  * @author Liguiqing
- * @since V3.0
+ * @since V1.0
  */
 
 public class RedisCacheMessagePusher implements CacheMessagePusher{

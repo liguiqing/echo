@@ -22,5 +22,6 @@ public class CacheMessage implements Serializable {
 
     private String cacheName;
 
+    /** 待清理的缓存key;如果为空,清理cacheName缓存 **/
     private Object key;
 }

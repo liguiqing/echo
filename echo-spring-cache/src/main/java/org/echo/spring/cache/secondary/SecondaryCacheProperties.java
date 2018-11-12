@@ -22,8 +22,6 @@ import java.util.Set;
 @ConfigurationProperties(prefix = "spring.cache.secondary")
 public class SecondaryCacheProperties {
 
-    private Set<String> cacheNames = Sets.newHashSet();
-
     /** 是否存储空值，默认false，防止缓存穿透*/
     private boolean cacheNullValues = false;
 
@@ -36,7 +34,7 @@ public class SecondaryCacheProperties {
     /**是否启动二级缓存,默认值不启用.启用时必须配置redis服务**/
     private boolean level2Enabled = false;
 
-    /**是否启动二级缓存,默认值不启用.启用时必须配置redis服务**/
-    private String level2Topic = "echo:cache";
+    /** 缓存消息发布/订阅主题 **/
+    private String cacheMessageTopic = "echo:cache";
 
 }

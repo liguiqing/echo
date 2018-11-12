@@ -3,10 +3,12 @@ package org.echo.spring.cache.secondary;
 import lombok.extern.slf4j.Slf4j;
 import org.echo.spring.cache.CacheFactory;
 import org.echo.spring.cache.message.CacheMessagePusher;
+import org.echo.util.CollectionsUtil;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -25,8 +27,6 @@ public class SecondaryCacheManager implements CacheManager {
 
     private boolean dynamic;
 
-    private Set<String> cacheNames;
-
     private ConcurrentMap<String, Cache> cacheMap = new ConcurrentHashMap<>();
 
     private CacheFactory cacheL1Factory;
@@ -40,11 +40,18 @@ public class SecondaryCacheManager implements CacheManager {
                                  CacheFactory cacheL2Factory,
                                  CacheMessagePusher messagePusher) {
         this.cacheProperties = cacheProperties;
-        this.dynamic =cacheProperties.isDynamic();
-        this.cacheNames = cacheProperties.getCacheNames();
+        this.dynamic = cacheProperties.isDynamic();
         this.cacheL1Factory = cacheL1Factory;
         this.cacheL2Factory = cacheL2Factory;
         this.messagePusher = messagePusher;
+        createCaches();
+    }
+
+    private void createCaches() {
+        List<Cache> caches = this.cacheL1Factory.creates();
+        if(CollectionsUtil.isNotNullAndNotEmpty(caches)){
+            caches.forEach(cache -> cacheMap.putIfAbsent(cache.getName(),new SecondaryCache(cache.getName(),cache,cacheL2Factory.newCache(cache.getName()),cacheProperties,messagePusher)));
+        }
     }
 
     @Override
@@ -55,7 +62,7 @@ public class SecondaryCacheManager implements CacheManager {
             return cache;
         }
 
-        if(!dynamic && !cacheNames.contains(name)) {
+        if(!dynamic) {
             return null;
         }
 
@@ -67,7 +74,7 @@ public class SecondaryCacheManager implements CacheManager {
 
     @Override
     public Collection<String> getCacheNames() {
-        return this.cacheNames;
+        return this.cacheMap.keySet();
     }
     public void clearLocal(String cacheName, Object key) {
         Cache cache = cacheMap.get(cacheName);
@@ -79,4 +86,7 @@ public class SecondaryCacheManager implements CacheManager {
         secondaryCache.clearLocal(key);
     }
 
+    public boolean hasTwoLevel(){
+        return cacheL2Factory != null;
+    }
 }

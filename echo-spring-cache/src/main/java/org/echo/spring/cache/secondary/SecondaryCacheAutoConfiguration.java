@@ -7,13 +7,11 @@ import org.echo.spring.cache.message.RedisCacheMessagePusher;
 import org.echo.spring.cache.redis.RedisCacheFactory;
 import org.echo.spring.cache.redis.RedisCacheProperties;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.redis.connection.RedisClusterConfiguration;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
@@ -22,11 +20,14 @@ import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 
 /**
+ * 二级缓存自动配置
+ *
  * @author Liguiqing
  * @since V1.0
  */
 @Slf4j
 @Configuration
+@PropertySource(value={"classpath:/application-cache.yml"})
 @EnableConfigurationProperties(
     value = {
         SecondaryCacheProperties.class,
@@ -57,7 +58,8 @@ public class SecondaryCacheAutoConfiguration {
 
     @Bean
     public JedisConnectionFactory redisConnectionFactory(){
-        return new JedisConnectionFactory(new RedisStandaloneConfiguration(redisCacheProperties.getStandalone().getHost(),redisCacheProperties.getStandalone().getPort()));
+        return new JedisConnectionFactory(new RedisStandaloneConfiguration(redisCacheProperties.getStandalone().getHost(),
+                redisCacheProperties.getStandalone().getPort()));
     }
 
 
@@ -70,13 +72,22 @@ public class SecondaryCacheAutoConfiguration {
         return new SecondaryCacheManager(cacheProperties, caffeineCacheFactory,redisCacheFactory,messagePusher);
     }
 
+    /**
+     * 注册一个基于Redis的缓存消息处理器,可以替换为其他消息中间件来实现相同的功能
+     *
+     * @param redisTemplate
+     * @param cacheManager
+     * @return
+     */
     @Bean
     public RedisMessageListenerContainer redisMessageListenerContainer(RedisTemplate<Object, Object> redisTemplate,
-                                                                       SecondaryCacheManager secondaryCacheManager) {
+                                                                       SecondaryCacheManager cacheManager) {
+        if(!cacheManager.hasTwoLevel())
+            return null;
         RedisMessageListenerContainer redisMessageListenerContainer = new RedisMessageListenerContainer();
         redisMessageListenerContainer.setConnectionFactory(redisTemplate.getConnectionFactory());
-        RedisBaseCacheMessageListener cacheMessageListener = new RedisBaseCacheMessageListener(redisTemplate, secondaryCacheManager);
-        redisMessageListenerContainer.addMessageListener(cacheMessageListener, new ChannelTopic(cacheProperties.getLevel2Topic()));
+        RedisBaseCacheMessageListener cacheMessageListener = new RedisBaseCacheMessageListener(redisTemplate, cacheManager);
+        redisMessageListenerContainer.addMessageListener(cacheMessageListener, new ChannelTopic(cacheProperties.getCacheMessageTopic()));
         return redisMessageListenerContainer;
     }
 }
