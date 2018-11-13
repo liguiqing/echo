@@ -142,22 +142,22 @@ public class SecondaryCache extends AbstractValueAdaptingCache {
     public ValueWrapper putIfAbsent(Object key, Object value) {
         log.debug("Put cache if absent of {}->{}",key,value);
 
+        if (!super.isAllowNullValues() && value == null){
+            return null;
+        }
+
         ReentrantLock lock = new ReentrantLock();
         try {
             lock.lock();
             Object prevValue = getFromLevel2(key,value);
-            if(prevValue == null){
-                putToLevel1(key, value);
-                putToLevel2(key,value);
-            }
+            putToLevel1(key, value);
             return toValueWrapper(prevValue);
         }catch (Exception e){
             log.error(ThrowableToString.toString(e));
         } finally {
             lock.unlock();
         }
-
-        return toValueWrapper(value);
+        return null;
     }
 
     @Override
@@ -183,7 +183,12 @@ public class SecondaryCache extends AbstractValueAdaptingCache {
 
     private Object getFromLevel2(Object key,Object value){
         if(this.l2Enabled){
-            Object o =  this.cacheL2.get(key, () -> value);
+            Object o;
+            if(value == null)
+                o =  this.cacheL2.get(key);
+            else
+                o =  this.cacheL2.get(key, () -> value);
+
             if(o != null)
                 log.debug("Hit by key [{}] from level2 in cache [{}]", key,this.name);
             else

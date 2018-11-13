@@ -5,7 +5,7 @@ spring:
       dynamic: true
       level2Enabled: true
       cacheMessageTopic: echo:redis:secondary:topic
-      # 两级缓存的第一级采用caffeine实现
+      # 采用caffeine实现第一级缓存
       caffeine:
         # 默认一级缓存配置
         defaultProp:
@@ -33,10 +33,12 @@ spring:
           refreshAfterWrite: 100
           initialCapacity: 500
           maximumSize: 500
+      # 采用redis实现第二级缓存
       redis:
         cacheNullValues: false
-        defaultExpiration: 36000
+        defaultExpiration: 360000
         cachePrefix: echo
+        expires: {cache1: 6000,cache2: 5000}
         hostsAndPorts: 192.168.1.251:9999
         standalone:
           host: 192.168.1.251

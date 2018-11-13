@@ -3,25 +3,23 @@ package org.echo.spring.cache.secondary;
 import lombok.extern.slf4j.Slf4j;
 import org.echo.spring.cache.CacheFactory;
 import org.echo.spring.cache.message.CacheMessagePusher;
-import org.echo.util.CollectionsUtil;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
+import org.springframework.cache.transaction.AbstractTransactionSupportingCacheManager;
 
 import java.util.Collection;
-import java.util.List;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 /**
  *
- * 二级缓存管理器
+ * 两级缓存管理器
  *
  * @author Liguiqing
  * @since V1.0
  */
 @Slf4j
-public class SecondaryCacheManager implements CacheManager {
+public class SecondaryCacheManager extends AbstractTransactionSupportingCacheManager {
 
     private SecondaryCacheProperties cacheProperties;
 
@@ -44,14 +42,11 @@ public class SecondaryCacheManager implements CacheManager {
         this.cacheL1Factory = cacheL1Factory;
         this.cacheL2Factory = cacheL2Factory;
         this.messagePusher = messagePusher;
-        createCaches();
     }
 
-    private void createCaches() {
-        List<Cache> caches = this.cacheL1Factory.creates();
-        if(CollectionsUtil.isNotNullAndNotEmpty(caches)){
-            caches.forEach(cache -> cacheMap.putIfAbsent(cache.getName(),new SecondaryCache(cache.getName(),cache,cacheL2Factory.newCache(cache.getName()),cacheProperties,messagePusher)));
-        }
+    @Override
+    protected Collection<? extends Cache> loadCaches() {
+        return cacheMap.values();
     }
 
     @Override

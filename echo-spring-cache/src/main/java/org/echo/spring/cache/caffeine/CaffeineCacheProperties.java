@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.echo.spring.cache.CacheProperties;
+import org.echo.util.CollectionsUtil;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -32,5 +33,16 @@ public class CaffeineCacheProperties implements CacheProperties {
     @Override
     public String getName() {
         return defaultProp.getName();
+    }
+
+    protected CaffeineProperties getProp(String name){
+        if(CollectionsUtil.isNotNullAndNotEmpty(this.cachesOnBoot)){
+            for(CaffeineProperties p:cachesOnBoot){
+                if(p.getName().equalsIgnoreCase(name))
+                    return p;
+            }
+        }
+
+        return defaultProp;
     }
 }

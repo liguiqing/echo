@@ -65,9 +65,10 @@ public class SecondaryCacheAutoConfiguration {
 
     @Bean
     @ConditionalOnBean(RedisTemplate.class)
-    public SecondaryCacheManager cacheManager(JedisConnectionFactory connectionFactory,RedisTemplate<Object, Object> redisTemplate) {
+    public SecondaryCacheManager cacheManager(JedisConnectionFactory connectionFactory,
+                                              RedisTemplate<Object, Object> redisTemplate) {
         CaffeineCacheFactory caffeineCacheFactory = new CaffeineCacheFactory(caffeineCacheProperties);
-        RedisCacheFactory redisCacheFactory = new RedisCacheFactory(connectionFactory);
+        RedisCacheFactory redisCacheFactory = new RedisCacheFactory(connectionFactory,redisCacheProperties);
         RedisCacheMessagePusher messagePusher = new RedisCacheMessagePusher(redisTemplate);
         return new SecondaryCacheManager(cacheProperties, caffeineCacheFactory,redisCacheFactory,messagePusher);
     }

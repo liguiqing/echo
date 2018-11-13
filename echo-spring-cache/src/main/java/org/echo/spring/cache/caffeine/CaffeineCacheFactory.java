@@ -2,14 +2,10 @@ package org.echo.spring.cache.caffeine;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import org.echo.spring.cache.CacheFactory;
-import org.echo.util.CollectionsUtil;
 import org.springframework.cache.Cache;
 import org.springframework.cache.caffeine.CaffeineCache;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 /**
  *  Caffeine cache Factory
@@ -18,7 +14,7 @@ import java.util.stream.Collectors;
  * @since V1.0
  */
 
-public class CaffeineCacheFactory implements CacheFactory<CaffeineCacheProperties> {
+public class CaffeineCacheFactory implements CacheFactory {
 
     private CaffeineCacheProperties caffeineCacheProperties;
 
@@ -28,22 +24,7 @@ public class CaffeineCacheFactory implements CacheFactory<CaffeineCachePropertie
 
     @Override
     public Cache newCache(String name) {
-        return new CaffeineCache(name,caffeineCache(this.caffeineCacheProperties.getDefaultProp()));
-    }
-
-    @Override
-    public Cache newCache(CaffeineCacheProperties caffeineCacheProperties) {
-        CaffeineProperties prop = caffeineCacheProperties.getDefaultProp();
-        return new CaffeineCache(prop.getName(),caffeineCache(prop));
-    }
-
-    @Override
-    public List<Cache> creates() {
-        if(CollectionsUtil.isNotNullAndNotEmpty(this.caffeineCacheProperties.getCachesOnBoot())){
-            List<CaffeineProperties> props = this.caffeineCacheProperties.getCachesOnBoot();
-            return props.stream().map(prop -> new CaffeineCache(prop.getName(),caffeineCache(prop))).collect(Collectors.toList());
-        }
-        return null;
+        return new CaffeineCache(name,caffeineCache(this.caffeineCacheProperties.getProp(name)));
     }
 
     private com.github.benmanes.caffeine.cache.Cache<Object, Object> caffeineCache(CaffeineProperties properties){
@@ -67,7 +48,6 @@ public class CaffeineCacheFactory implements CacheFactory<CaffeineCachePropertie
 //            cacheBuilder.refreshAfterWrite(caffeineCacheProperties.getRefreshAfterWrite(),
 //                    TimeUnit.MILLISECONDS);
 //        }
-
         return cacheBuilder.build();
     }
 }

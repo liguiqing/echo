@@ -1,5 +1,6 @@
 package org.echo.spring.cache.secondary;
 
+import org.echo.spring.cache.TestConfigurations;
 import org.echo.spring.cache.message.CacheMessage;
 import org.echo.test.config.AbstractConfigurationsTest;
 import org.junit.jupiter.api.DisplayName;
@@ -20,7 +21,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * @author Liguiqing
  * @since V1.0
  */
-@ContextHierarchy(@ContextConfiguration(classes = {
+@ContextHierarchy(@ContextConfiguration(
+    classes = {
+        TestConfigurations.class,
         SecondaryCacheAutoConfiguration.class
 }))
 @DisplayName("Echo : SecondaryCacheManager test")
@@ -37,7 +40,7 @@ public class SecondaryCacheManagerTest extends AbstractConfigurationsTest {
         redisTemplate.convertAndSend("Test",new CacheMessage("cache1","c1"));
         assertNotNull(secondaryCacheManager);
         Collection<String> cacheNames = secondaryCacheManager.getCacheNames();
-        assertEquals(2,cacheNames.size());
+        assertEquals(0,cacheNames.size());
 
         Cache aCache = secondaryCacheManager.getCache("aCache");
         assertNotNull(aCache);
@@ -88,7 +91,7 @@ public class SecondaryCacheManagerTest extends AbstractConfigurationsTest {
         cache1.clear();
 
 
-
+        secondaryCacheManager.getCache("cache2");
         cacheNames = secondaryCacheManager.getCacheNames();
         assertEquals(4,cacheNames.size());
         assertTrue(cacheNames.contains("cache1"));

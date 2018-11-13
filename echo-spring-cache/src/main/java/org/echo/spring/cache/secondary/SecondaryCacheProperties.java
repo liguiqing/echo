@@ -1,14 +1,11 @@
 package org.echo.spring.cache.secondary;
 
-import com.google.common.collect.Sets;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
-
-import java.util.Set;
 
 /**
  * @author Liguiqing
