@@ -42,7 +42,7 @@ spring:
         nodes:
         - 192.168.1.251:9999
 jdbc:
-  driver:
+  driver: com.mysql.Driver
   password: newa_newc
   jndiName: testJndiDs
   url: jdbc:mysql://192.168.1.251:3306/easytnt_sm_testing?useUnicode=true&amp;characterEncoding=utf-8&amp;autoReconnect=true&amp;rewriteBatchedStatements=true

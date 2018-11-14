@@ -12,11 +12,11 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
  */
 
 @ExtendWith(SpringExtension.class)
-@ContextHierarchy(@ContextConfiguration(
+@ContextConfiguration(
         initializers = ConfigFileApplicationContextInitializer.class,
         classes = {
             JunitTestConfigurations.class
-}))
+})
 public abstract class AbstractConfigurationsTest {
 
 }

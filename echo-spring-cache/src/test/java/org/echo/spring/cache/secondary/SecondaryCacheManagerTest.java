@@ -1,15 +1,17 @@
 package org.echo.spring.cache.secondary;
 
-import org.echo.spring.cache.TestConfigurations;
 import org.echo.spring.cache.message.CacheMessage;
 import org.echo.test.config.AbstractConfigurationsTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
 import org.springframework.cache.Cache;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.ContextHierarchy;
+import org.springframework.test.context.TestPropertySource;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -21,13 +23,16 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * @author Liguiqing
  * @since V1.0
  */
+
 @ContextHierarchy(@ContextConfiguration(
-    classes = {
-        TestConfigurations.class,
-        SecondaryCacheAutoConfiguration.class
-}))
+        initializers = {ConfigFileApplicationContextInitializer.class},
+        classes = {
+                SecondaryCacheAutoConfiguration.class
+        })
+)
+@TestPropertySource(properties = {"spring.config.location = classpath:/application-cache.yml"})
 @DisplayName("Echo : SecondaryCacheManager test")
-public class SecondaryCacheManagerTest extends AbstractConfigurationsTest {
+public class SecondaryCacheManagerTest extends  AbstractConfigurationsTest{
 
     @Autowired
     private SecondaryCacheManager secondaryCacheManager;
@@ -35,8 +40,13 @@ public class SecondaryCacheManagerTest extends AbstractConfigurationsTest {
     @Autowired
     private RedisTemplate redisTemplate;
 
+    @Value("${jdbc.driver}")
+    private String driver;
+
+
     @Test
     public void test(){
+        assertNotNull(driver);
         redisTemplate.convertAndSend("Test",new CacheMessage("cache1","c1"));
         assertNotNull(secondaryCacheManager);
         Collection<String> cacheNames = secondaryCacheManager.getCacheNames();

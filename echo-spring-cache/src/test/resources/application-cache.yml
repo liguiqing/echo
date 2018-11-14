@@ -1,3 +1,5 @@
+cache:
+  name: test
 spring:
   cache:
     # 配置两级缓存,所有缓存时间类参数单位均为毫秒
