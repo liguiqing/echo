@@ -1,10 +1,11 @@
 server:
   port: 8080
 debug: true
-
+test:
+  master: master
+  caffeine:
+      expireAfterAccess: 5000
 spring:
-
-
   freemarker:
     charset: UTF-8
     cache: false

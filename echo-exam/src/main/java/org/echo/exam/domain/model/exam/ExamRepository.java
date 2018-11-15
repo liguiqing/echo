@@ -22,11 +22,11 @@ public interface ExamRepository extends PersistenceDomainObjectRepository<Exam, 
         return new ExamId(Identities.genId(IdPrefix.ExamId));
     }
 
-    @CacheEvict(key="#p0.id.id")
+    @CacheEvict(value = "exam",key="#p0.id.id")
     @Modifying
     void save(Exam exam);
 
-    @Cacheable(key = "#p0.id",unless = "#result == null")
+    @Cacheable(value = "exam",key = "#p0.id",unless = "#result == null")
     @Query("From Exam where examId=?1")
     Exam loadOf(ExamId examId);
 }

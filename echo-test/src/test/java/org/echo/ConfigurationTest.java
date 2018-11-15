@@ -9,8 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -26,7 +29,9 @@ import static org.junit.jupiter.api.Assertions.*;
         initializers = ConfigFileApplicationContextInitializer.class)
 @Slf4j
 @DisplayName("Echo Test : Configuration")
+@Configuration
 @EnableConfigurationProperties(TestBean.class)
+
 public class ConfigurationTest {
     @Autowired
     Environment env;

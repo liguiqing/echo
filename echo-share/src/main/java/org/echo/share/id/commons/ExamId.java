@@ -1,10 +1,12 @@
 package org.echo.share.id.commons;
 
-import org.echo.share.id.AbstractId;
+import lombok.*;
 import org.echo.share.id.IdPrefix;
 import org.echo.share.id.Identities;
+import org.echo.share.id.Identity;
 
-import java.io.Serializable;
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
 
 /**
  * Exam对象唯一标识
@@ -12,13 +14,17 @@ import java.io.Serializable;
  * @author Liguiqing
  * @since V3.0
  */
-
-public class ExamId extends AbstractId {
-    public ExamId(Serializable id) {
-        super(id);
-    }
+@Embeddable
+@AllArgsConstructor
+@EqualsAndHashCode
+@Setter
+@Getter
+@ToString
+public class ExamId implements Identity<String> {
+    @Column(name = "examId")
+    private String id;
 
     public ExamId() {
-        super(Identities.genId(IdPrefix.ExamId));
+        this.id = Identities.genId(IdPrefix.ExamId);
     }
 }

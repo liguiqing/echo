@@ -12,49 +12,42 @@ import java.util.UUID;
  */
 public class Identities {
 
-    private static IdentityGenerator localGen = new IdentityGenerator() {
-        @Override
-        public Serializable genId() {
-            return UUID.randomUUID().toString();
-        }
-
-        @Override
-        public Serializable genId(Serializable prefix) {
-            if(prefix instanceof String){
-                return genStringId((String) prefix);
-            }
-            return genIntegerId((Number)prefix);
-        }
-    };
-
     private static IdentityGenerator generator;
 
     public static void setGenerator(IdentityGenerator gen){
         generator = gen;
     }
 
-    private static IdentityGenerator getGen(){
-        if (generator == null)
-            return localGen;
-        return generator;
+    private static <Id extends Serializable,P extends Serializable> Id genAId(P prefix){
+        if(generator != null)
+            return (Id)generator.genId(prefix);
+
+        if(prefix == null)
+            return (Id)genStringId(null);
+        if(prefix instanceof String)
+            return (Id)genStringId((String)prefix);
+
+        return (Id)genIntegerId((Number)prefix);
     }
 
-    public static Serializable genId(){
-        return getGen().genId();
+    public static <Id extends Serializable> Id genId(){
+        return genAId(null);
     }
 
-    public static Serializable genId(Serializable prefix){
-        return getGen().genId(prefix);
+    public static <Id extends Serializable,P extends Serializable> Id genId(P prefix){
+        return genAId(prefix);
     }
 
     private static String genStringId(String prefix){
-        String uuid = UUID.randomUUID().toString();
+        String uuid = UUID.randomUUID().toString().replaceAll("-","");
+        if(prefix == null)
+            return uuid;
         return prefix + uuid;
     }
 
     private static BigInteger genIntegerId(Number prefix){
         //TODO
         String s = prefix + (UUID.randomUUID().toString().hashCode()+"");
-        return BigInteger.valueOf(Long.valueOf(s));
+        return BigInteger.TEN;
     }
 }

@@ -2,6 +2,7 @@ package org.echo.share.id;
 
 import lombok.*;
 
+import javax.persistence.MappedSuperclass;
 import java.io.Serializable;
 
 /**
@@ -11,11 +12,13 @@ import java.io.Serializable;
  */
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode
 @Getter
 @Setter
-@EqualsAndHashCode
 @ToString
-public abstract  class AbstractId implements Identity {
+@MappedSuperclass
+public abstract  class AbstractId<Id extends Serializable> implements Identity<Id> {
 
-    private Serializable id;
+    private Id id;
+
 }

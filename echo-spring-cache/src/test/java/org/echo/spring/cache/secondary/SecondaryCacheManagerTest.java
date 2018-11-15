@@ -4,14 +4,17 @@ import org.echo.spring.cache.message.CacheMessage;
 import org.echo.test.config.AbstractConfigurationsTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
 import org.springframework.cache.Cache;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.ContextHierarchy;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -23,16 +26,17 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * @author Liguiqing
  * @since V1.0
  */
-
+@ExtendWith(SpringExtension.class)
 @ContextHierarchy(@ContextConfiguration(
         initializers = {ConfigFileApplicationContextInitializer.class},
         classes = {
                 SecondaryCacheAutoConfiguration.class
         })
 )
+//@PropertySource(value={"classpath:/application.yml"})
 @TestPropertySource(properties = {"spring.config.location = classpath:/application-cache.yml"})
 @DisplayName("Echo : SecondaryCacheManager test")
-public class SecondaryCacheManagerTest extends  AbstractConfigurationsTest{
+public class SecondaryCacheManagerTest extends AbstractConfigurationsTest{
 
     @Autowired
     private SecondaryCacheManager secondaryCacheManager;
@@ -99,7 +103,7 @@ public class SecondaryCacheManagerTest extends  AbstractConfigurationsTest{
         String k1 = cache1.get("k1", () -> "v1");
         assertEquals("v1",k1);
         cache1.clear();
-
+        assertNull(cache1.get("k1"));
 
         secondaryCacheManager.getCache("cache2");
         cacheNames = secondaryCacheManager.getCacheNames();

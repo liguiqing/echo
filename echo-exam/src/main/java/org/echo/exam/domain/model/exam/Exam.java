@@ -4,9 +4,7 @@ import lombok.NoArgsConstructor;
 import org.echo.share.domain.PersistenceEntityObject;
 import org.echo.share.id.commons.ExamId;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 /**
  * 考试
@@ -16,8 +14,9 @@ import javax.persistence.Table;
  */
 @NoArgsConstructor
 @Entity
-@Table(name = "assess_exam")
+@Table(name = "t_ps_Exam")
 public class Exam extends PersistenceEntityObject {
+
 
     @Column
     private ExamId examId;

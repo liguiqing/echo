@@ -11,6 +11,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.redis.connection.RedisClusterConfiguration;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
@@ -63,7 +64,7 @@ public class SecondaryCacheAutoConfiguration {
     }
 
 
-    @Bean
+    @Bean("SecondaryCacheManager")
     @ConditionalOnBean(RedisTemplate.class)
     public SecondaryCacheManager cacheManager(JedisConnectionFactory connectionFactory,
                                               RedisTemplate<Object, Object> redisTemplate) {
@@ -81,6 +82,7 @@ public class SecondaryCacheAutoConfiguration {
      * @return
      */
     @Bean
+    @ConditionalOnBean(SecondaryCacheManager.class)
     public RedisMessageListenerContainer redisMessageListenerContainer(RedisTemplate<Object, Object> redisTemplate,
                                                                        SecondaryCacheManager cacheManager) {
         if(!cacheManager.hasTwoLevel())

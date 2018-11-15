@@ -26,7 +26,7 @@ public abstract class PersistenceEntityObject extends EntityObject implements Pe
 
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
-    private Serializable tid;
+    private Long tid;
 
     public PersistenceEntityObject(Identity id) {
         super(id);

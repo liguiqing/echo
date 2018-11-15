@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 @Getter
 @Setter
 @Component
-@ConfigurationProperties(prefix = "spring.cache.redis-caffeine")
+@ConfigurationProperties(prefix = "test")
 public class TestBean {
 
     private String  master;

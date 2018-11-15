@@ -23,7 +23,12 @@
             <version>${echo.version}</version>
             <scope>compile</scope>
         </dependency>
-
+        <dependency>
+            <groupId>echo</groupId>
+            <artifactId>spring-cache</artifactId>
+            <version>${echo.version}</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
     <build>

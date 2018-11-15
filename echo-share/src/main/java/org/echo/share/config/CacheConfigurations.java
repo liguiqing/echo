@@ -9,6 +9,7 @@ import org.springframework.cache.interceptor.KeyGenerator;
 import org.springframework.cache.support.CompositeCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 
 import java.lang.reflect.Method;
 import java.util.List;
@@ -26,6 +27,7 @@ import java.util.stream.Stream;
 public class CacheConfigurations extends CachingConfigurerSupport {
 
     @Bean
+    @Primary
     public CacheManager cacheManager(List<CacheManager> managers) {
         log.debug("Create Cache ");
 

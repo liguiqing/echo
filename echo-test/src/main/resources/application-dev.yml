@@ -1,0 +1,23 @@
+server:
+  port: 8080
+debug: true
+test:
+  master: master
+  caffeine:
+    expireAfterAccess: 5000
+jdbc:
+  driver: com.mysql.Driver
+  password: newa_newc
+  jndiName: testJndiDs
+  url: jdbc:mysql://192.168.1.251:3306/easytnt_sm_dev?useUnicode=true&amp;characterEncoding=utf-8&amp;autoReconnect=true&amp;rewriteBatchedStatements=true
+  username: root
+hibernate:
+  max_fetch_depth: 10
+  dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+  format_sql: true
+  hbm2ddl:
+    auto: none
+  jdbc:
+    batch_size: 100
+    fetch_size: 50
+  show_sql: false
