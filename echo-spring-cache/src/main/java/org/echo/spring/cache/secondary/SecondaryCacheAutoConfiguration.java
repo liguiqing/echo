@@ -19,6 +19,9 @@ import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPoolConfig;
 
 /**
  * 二级缓存自动配置
@@ -63,6 +66,22 @@ public class SecondaryCacheAutoConfiguration {
                 redisCacheProperties.getStandalone().getPort()));
     }
 
+    @Bean
+    public JedisPool jedisPool(){
+        JedisPoolConfig config = new JedisPoolConfig();
+        config.setMaxTotal(1000);
+        config.setMaxIdle(100);
+        config.setMaxWaitMillis(10000);
+        config.setTestOnBorrow(false);
+        config.setTestOnReturn(false);
+        config.setTestWhileIdle(true);
+        config.setTimeBetweenEvictionRunsMillis(30000);
+        config.setNumTestsPerEvictionRun(10);
+        config.setMinEvictableIdleTimeMillis(60000);
+        JedisPool pool = new JedisPool(config,redisCacheProperties.getStandalone().getHost(),
+                redisCacheProperties.getStandalone().getPort());
+        return pool;
+    }
 
     @Bean("SecondaryCacheManager")
     @ConditionalOnBean(RedisTemplate.class)

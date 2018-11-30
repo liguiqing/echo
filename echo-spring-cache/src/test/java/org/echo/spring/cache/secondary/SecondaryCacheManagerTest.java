@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
 import org.springframework.cache.Cache;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.ContextHierarchy;
@@ -20,7 +19,6 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * @author Liguiqing
@@ -33,7 +31,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
                 SecondaryCacheAutoConfiguration.class
         })
 )
-//@PropertySource(value={"classpath:/application.yml"})
 @TestPropertySource(properties = {"spring.config.location = classpath:/application-cache.yml"})
 @DisplayName("Echo : SecondaryCacheManager test")
 public class SecondaryCacheManagerTest extends AbstractConfigurationsTest{
