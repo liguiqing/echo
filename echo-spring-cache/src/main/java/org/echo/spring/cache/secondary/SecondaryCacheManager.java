@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.echo.spring.cache.CacheFactory;
 import org.echo.spring.cache.message.CacheMessagePusher;
 import org.springframework.cache.Cache;
-import org.springframework.cache.CacheManager;
 import org.springframework.cache.transaction.AbstractTransactionSupportingCacheManager;
 
 import java.util.Collection;

@@ -1,6 +1,10 @@
 package org.echo.share.assess.domain;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+
 import java.io.Serializable;
 
 /**

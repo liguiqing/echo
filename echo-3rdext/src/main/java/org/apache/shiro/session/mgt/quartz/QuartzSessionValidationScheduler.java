@@ -4,19 +4,12 @@
  **/
 package org.apache.shiro.session.mgt.quartz;
 
-import org.apache.shiro.session.mgt.DefaultSessionManager;  
-import org.apache.shiro.session.mgt.SessionValidationScheduler;  
-import org.apache.shiro.session.mgt.ValidatingSessionManager;  
-import org.quartz.JobBuilder;  
-import org.quartz.JobDetail;  
-import org.quartz.Scheduler;  
-import org.quartz.SchedulerException;  
-import org.quartz.SimpleScheduleBuilder;  
-import org.quartz.SimpleTrigger;  
-import org.quartz.TriggerBuilder;  
-import org.quartz.TriggerKey;  
-import org.quartz.impl.StdSchedulerFactory;  
-import org.slf4j.Logger;  
+import org.apache.shiro.session.mgt.DefaultSessionManager;
+import org.apache.shiro.session.mgt.SessionValidationScheduler;
+import org.apache.shiro.session.mgt.ValidatingSessionManager;
+import org.quartz.*;
+import org.quartz.impl.StdSchedulerFactory;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;  
   
 /** 

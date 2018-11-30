@@ -5,11 +5,9 @@ import org.echo.share.config.CacheConfigurations;
 import org.echo.share.config.DataSourceConfigurations;
 import org.echo.share.id.commons.ExamId;
 import org.echo.spring.cache.secondary.SecondaryCacheAutoConfiguration;
-import org.echo.test.config.JunitTestConfigurations;
 import org.echo.test.repository.AbstractRepositoryTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
@@ -17,11 +15,8 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.ContextHierarchy;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.transaction.Transactional;
-import java.io.Serializable;
-import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;

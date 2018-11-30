@@ -5,12 +5,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.echo.share.id.Identity;
 
-
-import javax.persistence.Id;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
-import java.io.Serializable;
 
 /**
  * 可持久化的领域实体对象

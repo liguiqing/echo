@@ -3,7 +3,6 @@ package org.echo.test.config;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.ContextHierarchy;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 /**

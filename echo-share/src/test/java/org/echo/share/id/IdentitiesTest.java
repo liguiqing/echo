@@ -5,7 +5,8 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigInteger;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Copyright (c) 2016,$today.year, 深圳市易考试乐学测评有限公司

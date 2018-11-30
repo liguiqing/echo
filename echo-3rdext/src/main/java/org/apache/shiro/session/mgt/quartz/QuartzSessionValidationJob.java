@@ -4,12 +4,12 @@
  **/
 package org.apache.shiro.session.mgt.quartz;
 
-import org.apache.shiro.session.mgt.ValidatingSessionManager;  
-import org.quartz.Job;  
-import org.quartz.JobDataMap;  
-import org.quartz.JobExecutionContext;  
-import org.quartz.JobExecutionException;  
-import org.slf4j.Logger;  
+import org.apache.shiro.session.mgt.ValidatingSessionManager;
+import org.quartz.Job;
+import org.quartz.JobDataMap;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;  
   
 /** 

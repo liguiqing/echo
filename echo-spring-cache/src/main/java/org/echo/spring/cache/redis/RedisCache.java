@@ -2,7 +2,6 @@ package org.echo.spring.cache.redis;
 
 import lombok.extern.slf4j.Slf4j;
 import org.echo.exception.ThrowableToString;
-import org.echo.util.CollectionsUtil;
 import org.springframework.cache.support.AbstractValueAdaptingCache;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.lang.Nullable;

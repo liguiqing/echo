@@ -5,7 +5,6 @@ import org.springframework.cache.Cache;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.core.RedisTemplate;
 
 import java.time.Duration;
 import java.util.Map;

@@ -1,23 +1,20 @@
 package org.echo.spring.cache.secondary.redis;
 
-import com.google.common.collect.Queues;
 import com.google.common.collect.Sets;
 import org.echo.spring.cache.redis.RedisLock;
 import org.echo.spring.cache.secondary.SecondaryCacheAutoConfiguration;
+import org.echo.util.NumbersUtil;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
-import org.springframework.data.redis.connection.RedisConnection;
-import org.springframework.data.redis.connection.jedis.JedisConnection;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.ContextHierarchy;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
 import java.util.*;
@@ -126,8 +123,6 @@ public class RedisLockTest {
 
 
     private  int getRandomNumberInRange(int min, int max) {
-
-        Random r = new Random();
-        return r.ints(min, (max + 1)).findFirst().getAsInt();
+        return NumbersUtil.randomBetween(min, max);
     }
 }
