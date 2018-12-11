@@ -6,6 +6,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 /**
  * @author Liguiqing
@@ -19,6 +20,9 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "spring.cache.secondary")
 public class SecondaryCacheProperties {
 
+    /** 默认过期时间*/
+    private long defaultTtl = -1;
+
     /** 是否存储空值，默认false，防止缓存穿透*/
     private boolean cacheNullValues = false;
 
@@ -26,7 +30,7 @@ public class SecondaryCacheProperties {
     private boolean dynamic = true;
 
     /** 缓存key的前缀*/
-    private String cachePrefix = "echo:";
+    private String cachePrefix = "echo";
 
     /**是否启动二级缓存,默认值不启用.启用时必须配置redis服务**/
     private boolean level2Enabled = false;

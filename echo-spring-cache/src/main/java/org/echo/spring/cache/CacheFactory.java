@@ -11,4 +11,6 @@ import org.springframework.cache.Cache;
 public interface CacheFactory {
 
     Cache newCache(String name);
+
+    Cache newCache(String name,long ttl,long maxIdleSecond);
 }

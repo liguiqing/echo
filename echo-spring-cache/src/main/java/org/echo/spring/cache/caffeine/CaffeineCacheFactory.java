@@ -27,6 +27,14 @@ public class CaffeineCacheFactory implements CacheFactory {
         return new CaffeineCache(name,caffeineCache(this.caffeineCacheProperties.getProp(name)));
     }
 
+    @Override
+    public Cache newCache(String name, long ttl, long maxIdleSecond) {
+        CaffeineProperties cp = new CaffeineProperties();
+        cp.setExpireAfterWrite(ttl * 1000);
+        cp.setExpireAfterWrite(maxIdleSecond * 1000);
+        return new CaffeineCache(name,caffeineCache(cp));
+    }
+
     private com.github.benmanes.caffeine.cache.Cache<Object, Object> caffeineCache(CaffeineProperties properties){
         Caffeine<Object, Object> cacheBuilder = Caffeine.newBuilder();
         if(properties.getExpireAfterAccess() > 0) {

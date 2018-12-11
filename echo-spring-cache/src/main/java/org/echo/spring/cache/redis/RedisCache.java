@@ -2,6 +2,8 @@ package org.echo.spring.cache.redis;
 
 import lombok.extern.slf4j.Slf4j;
 import org.echo.exception.ThrowableToString;
+import org.echo.spring.cache.CustomizedCache;
+import org.echo.util.Threads;
 import org.springframework.cache.support.AbstractValueAdaptingCache;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.lang.Nullable;
@@ -18,7 +20,7 @@ import java.util.concurrent.TimeUnit;
  * @since V1.0
  */
 @Slf4j
-public class RedisCache extends AbstractValueAdaptingCache {
+public class RedisCache extends AbstractValueAdaptingCache implements CustomizedCache {
 
     private String name;
 
@@ -139,10 +141,20 @@ public class RedisCache extends AbstractValueAdaptingCache {
     }
 
     private Object getKey(Object key) {
+        if(key.toString().startsWith(cachePrefix))
+            return  key;
         return getCachePrefix().concat(key.toString());
     }
 
     private String getCachePrefix(){
         return (StringUtils.isEmpty(cachePrefix)?"echo":cachePrefix).concat(":").concat(this.name).concat(":");
+    }
+
+    @Override
+    public void refresh(Object key) {
+        Threads.getExecutorService().submit(() -> {
+            //Try to other better way??
+            redisTemplate.opsForValue().get(key);
+        });
     }
 }

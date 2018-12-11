@@ -14,4 +14,12 @@ public class Standalone {
     private String host;
 
     private int port;
+
+    public String toUrl(){
+        return "http://".concat(toHost());
+    }
+
+    public String toHost(){
+        return host.concat(":").concat(port + "");
+    }
 }

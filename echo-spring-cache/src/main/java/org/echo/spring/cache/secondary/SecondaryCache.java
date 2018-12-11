@@ -2,11 +2,14 @@ package org.echo.spring.cache.secondary;
 
 import lombok.extern.slf4j.Slf4j;
 import org.echo.exception.ThrowableToString;
+import org.echo.spring.cache.CustomizedCache;
 import org.echo.spring.cache.message.CacheMessage;
 import org.echo.spring.cache.message.CacheMessagePusher;
 import org.springframework.cache.Cache;
 import org.springframework.cache.support.AbstractValueAdaptingCache;
+import org.springframework.util.StringUtils;
 
+import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -18,6 +21,8 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 @Slf4j
 public class SecondaryCache extends AbstractValueAdaptingCache {
+
+    private String identifier = UUID.randomUUID().toString();
 
     private String name;
 
@@ -45,6 +50,10 @@ public class SecondaryCache extends AbstractValueAdaptingCache {
         if(this.cacheL2 == null){
             this.l2Enabled = false;
         }
+    }
+
+    public String getIdentifier(){
+        return this.identifier;
     }
 
     @Override
@@ -135,7 +144,7 @@ public class SecondaryCache extends AbstractValueAdaptingCache {
         }
         putToLevel1(key, value);
         putToLevel2(key,value);
-        push(new CacheMessage(this.name, key));
+        push(new CacheMessage(this.identifier,this.name, key));
     }
 
     @Override
@@ -168,7 +177,7 @@ public class SecondaryCache extends AbstractValueAdaptingCache {
             this.cacheL2.evict(key);
         }
         this.cacheL1.evict(key);
-        push(new CacheMessage(this.name, key));
+        push(new CacheMessage(this.identifier,this.name, key));
     }
 
     @Override
@@ -178,7 +187,7 @@ public class SecondaryCache extends AbstractValueAdaptingCache {
         if(this.l2Enabled){
             this.cacheL2.clear();
         }
-        push(new CacheMessage(this.name,null));
+        push(new CacheMessage(this.identifier,this.name,null));
     }
 
     private Object getFromLevel2(Object key,Object value){

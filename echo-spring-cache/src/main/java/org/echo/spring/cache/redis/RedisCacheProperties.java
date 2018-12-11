@@ -38,7 +38,7 @@ public class RedisCacheProperties implements CacheProperties {
     private Map<String, Long> expires = Maps.newHashMap();
 
     /** 缓存key的前缀*/
-    private String cachePrefix = "echo:";
+    private String cachePrefix = "";
 
     private Set<String> hostsAndPorts = new HashSet<>();
 

@@ -20,8 +20,16 @@ import java.io.Serializable;
 @EqualsAndHashCode
 public class CacheMessage implements Serializable {
 
+    /*****发送方标识****/
+    private String identifier;
+
+    /** 待处理的缓存name **/
     private String cacheName;
 
-    /** 待清理的缓存key;如果为空,清理cacheName缓存 **/
+    /** 待处理的缓存key **/
     private Object key;
+
+    public boolean sameOfIdentifier(String identifier){
+        return this.identifier.equals(identifier);
+    }
 }

@@ -17,6 +17,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -48,12 +49,13 @@ public class SecondaryCacheManagerTest extends AbstractConfigurationsTest{
     @Test
     public void test(){
         assertNotNull(driver);
-        redisTemplate.convertAndSend("Test",new CacheMessage("cache1","c1"));
+        String identifier = UUID.randomUUID().toString();
+        redisTemplate.convertAndSend("Test",new CacheMessage(identifier,"cache1","c1"));
         assertNotNull(secondaryCacheManager);
         Collection<String> cacheNames = secondaryCacheManager.getCacheNames();
         assertEquals(0,cacheNames.size());
 
-        Cache aCache = secondaryCacheManager.getCache("aCache");
+        Cache aCache = secondaryCacheManager.getCache("aCache#100#100");
         assertNotNull(aCache);
         Cache bCache = secondaryCacheManager.getCache("bCache");
         assertNotNull(bCache);
@@ -66,6 +68,12 @@ public class SecondaryCacheManagerTest extends AbstractConfigurationsTest{
         assertNotNull(aCache.get("a"));
         aCache.clear();
         assertNull(aCache.get("a"));
+
+        a = aCache.get("a", () -> "a");
+        redisTemplate.convertAndSend("echo:redis:secondary:topic",new CacheMessage(identifier,"aCache","a"));
+        a = aCache.get("a").get()+"";
+        assertNotNull(a);
+        assertEquals("a",a);
 
         CacheTestBean tb = new CacheTestBean("f1",1,false, LocalDateTime.now());
         CacheTestBean tb_ =  aCache.get(tb,()->tb);
@@ -114,7 +122,7 @@ public class SecondaryCacheManagerTest extends AbstractConfigurationsTest{
         assertEquals(kb1,bCache.get("k1").get());
 
         bCache.get("bc1", () -> "bc1");
-        redisTemplate.convertAndSend("echo:redis:secondary:topic",new CacheMessage("bCache","bc1"));
+        redisTemplate.convertAndSend("echo:redis:secondary:topic",new CacheMessage(identifier,"bCache","bc1"));
         assertEquals(kb1,bCache.get("k1").get());
         assertEquals(kb1,bCache.get("k1").get());
         assertEquals(kb1,bCache.get("k1").get());

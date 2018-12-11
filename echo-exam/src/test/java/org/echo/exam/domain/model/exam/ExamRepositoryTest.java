@@ -59,5 +59,7 @@ class ExamRepositoryTest extends AbstractRepositoryTest {
         for(int i =1000;i>0;i--){
             repository.loadOf(examId);
         }
+        repository.save(exam1);
+        repository.loadOf(examId);
     }
 }
