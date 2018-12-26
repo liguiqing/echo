@@ -1,4 +1,4 @@
-package org.echo.share.id;
+package org.echo.ddd.domain.id;
 
 import java.io.Serializable;
 import java.math.BigInteger;
@@ -27,7 +27,7 @@ public class Identities {
         if(prefix instanceof String)
             return (Id)genStringId((String)prefix);
 
-        return (Id)genIntegerId((Number)prefix);
+        return (Id) genLongId((Number)prefix);
     }
 
     public static <Id extends Serializable> Id genId(){
@@ -45,9 +45,9 @@ public class Identities {
         return prefix + uuid;
     }
 
-    private static BigInteger genIntegerId(Number prefix){
+    private static Long genLongId(Number prefix){
         //TODO
         String s = prefix + (UUID.randomUUID().toString().hashCode()+"");
-        return BigInteger.TEN;
+        return Long.MAX_VALUE;
     }
 }

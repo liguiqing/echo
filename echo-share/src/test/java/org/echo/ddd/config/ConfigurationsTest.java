@@ -1,6 +1,8 @@
-package org.echo.share.config;
+package org.echo.ddd.config;
 
 import lombok.extern.slf4j.Slf4j;
+import org.echo.share.config.CacheConfigurations;
+import org.echo.share.config.DataSourceConfigurations;
 import org.echo.test.config.AbstractConfigurationsTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

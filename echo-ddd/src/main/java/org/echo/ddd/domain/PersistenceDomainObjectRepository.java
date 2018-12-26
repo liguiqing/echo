@@ -1,6 +1,7 @@
-package org.echo.share.domain;
+package org.echo.ddd.domain;
 
-import org.echo.share.id.Identity;
+
+import org.echo.ddd.domain.id.Identity;
 import org.springframework.data.repository.Repository;
 
 /**

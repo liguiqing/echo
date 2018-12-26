@@ -1,5 +1,6 @@
-package org.echo.share.id;
+package org.echo.ddd.id;
 
+import org.echo.ddd.domain.id.Identities;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 

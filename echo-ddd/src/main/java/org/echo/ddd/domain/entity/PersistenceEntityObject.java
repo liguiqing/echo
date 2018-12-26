@@ -1,9 +1,9 @@
-package org.echo.share.domain;
+package org.echo.ddd.domain.entity;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.echo.share.id.Identity;
+import org.echo.ddd.domain.id.Identity;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -20,7 +20,7 @@ import javax.persistence.MappedSuperclass;
 @Getter
 @Setter
 @MappedSuperclass
-public abstract class PersistenceEntityObject extends EntityObject implements PersistenceDomainObject {
+public abstract class PersistenceEntityObject extends EntityObject {
 
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)

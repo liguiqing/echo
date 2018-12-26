@@ -19,6 +19,12 @@
         </dependency>
         <dependency>
             <groupId>echo</groupId>
+            <artifactId>echo-ddd</artifactId>
+            <version>${echo.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>echo</groupId>
             <artifactId>echo-share</artifactId>
             <version>${echo.version}</version>
             <scope>compile</scope>

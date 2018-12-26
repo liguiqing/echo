@@ -1,9 +1,10 @@
 package org.echo.share.id.commons;
 
 import lombok.*;
+import org.echo.ddd.domain.id.Identities;
+import org.echo.ddd.domain.id.Identity;
 import org.echo.share.id.IdPrefix;
-import org.echo.share.id.Identities;
-import org.echo.share.id.Identity;
+
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;

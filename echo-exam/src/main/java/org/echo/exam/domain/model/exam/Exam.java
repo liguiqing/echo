@@ -1,7 +1,9 @@
 package org.echo.exam.domain.model.exam;
 
 import lombok.NoArgsConstructor;
-import org.echo.share.domain.PersistenceEntityObject;
+
+
+import org.echo.ddd.domain.entity.PersistenceEntityObject;
 import org.echo.share.id.commons.ExamId;
 
 import javax.persistence.Column;

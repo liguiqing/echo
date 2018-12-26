@@ -2,7 +2,7 @@
  * Copyright (c) 2016,2017, zhezhu All Rights Reserved. 深圳市天定康科技有限公司 版权所有.
  */
 
-package org.echo.share.domain;
+package org.echo.ddd.domain;
 
 import java.io.Serializable;
 
