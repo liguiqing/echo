@@ -28,29 +28,43 @@ public class SecondaryCache extends AbstractValueAdaptingCache {
 
     private Cache cacheL1;
 
-    /** 是否启动二级缓存,默认值不启用 **/
-    private boolean l2Enabled;
-
     private Cache cacheL2;
 
     private String topic;
 
     private CacheMessagePusher messagePusher;
 
+    public SecondaryCache(boolean allowNullValues){
+        super(allowNullValues);
+    }
+
     public SecondaryCache(String name, Cache cacheL1, Cache cacheL2,
                           SecondaryCacheProperties cacheProperties,
                           CacheMessagePusher messagePusher) {
-        super(cacheProperties.isCacheNullValues());
+        this(cacheProperties.isCacheNullValues());
         this.name = name;
         this.cacheL1 = cacheL1;
-        this.cacheL2 = cacheL2;
-        this.l2Enabled = cacheProperties.isLevel2Enabled();
         this.topic = cacheProperties.getCacheMessageTopic();
         this.messagePusher = messagePusher;
-        if(this.cacheL2 == null){
-            this.l2Enabled = false;
+        if(cacheProperties.isLevel2Enabled()){
+            this.cacheL2 = cacheL2;
         }
     }
+
+    public static SecondaryCache onlyCache1(String name, Cache cacheL1,SecondaryCacheProperties cacheProperties){
+        SecondaryCache cache = new SecondaryCache(cacheProperties.isCacheNullValues());
+        cache.name = name;
+        cache.cacheL1 = cacheL1;
+        return cache;
+    }
+
+    public static SecondaryCache onlyCache2(String name, Cache cacheL2,SecondaryCacheProperties cacheProperties){
+        SecondaryCache cache = new SecondaryCache(cacheProperties.isCacheNullValues());
+        cache.name = name;
+        cache.cacheL2 = cacheL2;
+        return cache;
+    }
+
 
     public String getIdentifier(){
         return this.identifier;
@@ -63,7 +77,7 @@ public class SecondaryCache extends AbstractValueAdaptingCache {
 
     @Override
     public Object getNativeCache() {
-        return this.cacheL1;
+        return this.cacheL1==null?this.cacheL2:this.cacheL1;
     }
 
     @Override
@@ -75,7 +89,7 @@ public class SecondaryCache extends AbstractValueAdaptingCache {
             return value;
         }
 
-        if(!l2Enabled)
+        if(!hasCache2())
             return null;
 
         value = getFromLevel2(key, null);
@@ -86,25 +100,6 @@ public class SecondaryCache extends AbstractValueAdaptingCache {
         return value;
     }
 
-    private Object getFromLevel1(Object key){
-        Object value = cacheL1.get(key);
-        if(value != null) {
-            log.debug("Hits by key [{}] from level1 in cache [{}]", key,this.name);
-            if(value instanceof ValueWrapper){
-                return ((ValueWrapper)value).get();
-            }
-            return value;
-        }
-
-        log.debug("Don't hit by key [{}] from level1 in cache [{}]", key,this.name);
-        return null;
-    }
-
-    private void putToLevel1(Object key,Object value){
-        log.debug("Put cache by key {} into level1 of cache [{}]", key,this.name);
-        this.cacheL1.put(key, value);
-    }
-
     @Override
     public <T> T get(Object key, Callable<T> valueLoader) {
         log.debug("Get Object from cache [{}] by key [{}]",this.name,key);
@@ -113,9 +108,6 @@ public class SecondaryCache extends AbstractValueAdaptingCache {
         if(value != null) {
             return (T) value;
         }
-
-        if(!l2Enabled)
-            return null;
 
         ReentrantLock lock = new ReentrantLock();
         try {
@@ -139,12 +131,13 @@ public class SecondaryCache extends AbstractValueAdaptingCache {
         log.debug("Put cache of {}->{} into cache [{}]",key,value,this.name);
 
         if (!super.isAllowNullValues() && value == null) {
+            //不允许为null时,put null 将清空缓存
             this.evict(key);
             return;
         }
         putToLevel1(key, value);
         putToLevel2(key,value);
-        push(new CacheMessage(this.identifier,this.name, key));
+        push(new CacheMessage(identifier,this.name, key));
     }
 
     @Override
@@ -173,30 +166,57 @@ public class SecondaryCache extends AbstractValueAdaptingCache {
     public void evict(Object key) {
         log.debug("Evict by key [{}] from cache [{}]",key,this.name);
 
-        if(this.l2Enabled) {
+        if(this.hasCache2()) {
             this.cacheL2.evict(key);
         }
-        this.cacheL1.evict(key);
-        push(new CacheMessage(this.identifier,this.name, key));
+        if(this.cacheL1 != null)
+            this.cacheL1.evict(key);
+        push(new CacheMessage(identifier,this.name, key));
     }
 
     @Override
     public void clear() {
         log.debug("Clear cache [{}]",this.name);
-        this.cacheL1.clear();
-        if(this.l2Enabled){
+        if(hasCache1())
+            this.cacheL1.clear();
+        if(this.hasCache2()){
             this.cacheL2.clear();
         }
-        push(new CacheMessage(this.identifier,this.name,null));
+        push(new CacheMessage(identifier,this.name,null));
+    }
+
+    private Object getFromLevel1(Object key){
+        if(!hasCache1())
+            return null;
+
+        Object value = cacheL1.get(key);
+        if(value != null) {
+            log.debug("Hits by key [{}] from level1 in cache [{}]", key,this.name);
+            if(value instanceof ValueWrapper){
+                return ((ValueWrapper)value).get();
+            }
+            return value;
+        }
+
+        log.debug("Don't hit by key [{}] from level1 in cache [{}]", key,this.name);
+        return null;
+    }
+
+    private void putToLevel1(Object key,Object value){
+        if(!hasCache1())
+            return ;
+
+        log.debug("Put cache by key {} into level1 of cache [{}]", key,this.name);
+        this.cacheL1.put(key, value);
     }
 
     private Object getFromLevel2(Object key,Object value){
-        if(this.l2Enabled){
+        if(this.hasCache2()){
             Object o;
             if(value == null)
                 o =  this.cacheL2.get(key);
             else
-                o =  this.cacheL2.get(key, () -> value);
+                o =  this.cacheL2.get(key);
 
             if(o != null)
                 log.debug("Hit by key [{}] from level2 in cache [{}]", key,this.name);
@@ -208,10 +228,18 @@ public class SecondaryCache extends AbstractValueAdaptingCache {
     }
 
     private void putToLevel2(Object key, Object value){
-        if(this.l2Enabled){
+        if(this.hasCache2()){
             log.debug("Put cache by key [{}] into level2 of cache [{}]", key,this.name);
             cacheL2.put(key,value);
         }
+    }
+
+    private boolean hasCache1(){
+        return this.cacheL1 != null;
+    }
+
+    private boolean hasCache2(){
+        return this.cacheL2 != null;
     }
 
     /**
@@ -219,11 +247,13 @@ public class SecondaryCache extends AbstractValueAdaptingCache {
      * @param message a message to Redis server
      */
     private void push(CacheMessage message) {
-        if(message != null) {
+        if(hasCache1() && this.messagePusher != null) {
             log.debug("Push a cache update message");
             this.messagePusher.push(topic, message);
         }
     }
+
+
     /**
      * 清理本地缓存
      * @param key key of cache what's be cleared; clean level1 if key is null

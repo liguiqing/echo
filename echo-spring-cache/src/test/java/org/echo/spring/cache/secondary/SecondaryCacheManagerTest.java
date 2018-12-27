@@ -74,6 +74,12 @@ public class SecondaryCacheManagerTest extends AbstractConfigurationsTest{
         a = aCache.get("a").get()+"";
         assertNotNull(a);
         assertEquals("a",a);
+        aCache.clear();
+
+        aCache = secondaryCacheManager.getCache("aCache#100#100#1");
+        aCache.get("a", () -> "a");
+        assertNotNull(aCache.get("a"));
+        assertEquals(aCache.get("a").get(),"a");
 
         CacheTestBean tb = new CacheTestBean("f1",1,false, LocalDateTime.now());
         CacheTestBean tb_ =  aCache.get(tb,()->tb);

@@ -30,8 +30,8 @@ public class CaffeineCacheFactory implements CacheFactory {
     @Override
     public Cache newCache(String name, long ttl, long maxIdleSecond) {
         CaffeineProperties cp = new CaffeineProperties();
-        cp.setExpireAfterWrite(ttl * 1000);
-        cp.setExpireAfterWrite(maxIdleSecond * 1000);
+        cp.setExpireAfterWrite(ttl * 1000)
+                .setExpireAfterAccess(maxIdleSecond * 1000);
         return new CaffeineCache(name,caffeineCache(cp));
     }
 
@@ -41,6 +41,7 @@ public class CaffeineCacheFactory implements CacheFactory {
             cacheBuilder.expireAfterAccess(properties.getExpireAfterAccess(),
                     TimeUnit.MILLISECONDS);
         }
+
         if(properties.getExpireAfterWrite() > 0) {
             cacheBuilder.expireAfterWrite(properties.getExpireAfterWrite(),
                     TimeUnit.MILLISECONDS);
