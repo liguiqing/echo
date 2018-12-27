@@ -13,15 +13,15 @@ import java.util.Collection;
 @Slf4j
 public class CollectionsUtil {
 
-    public static <E> boolean isNotNullAndNotEmpty(Collection<E> collection){
+    public static boolean isNotNullAndNotEmpty(Collection collection){
         return !isNullOrEmpty(collection);
     }
 
-    public static <E> boolean isNullOrEmpty(Collection<E> collection){
+    public static boolean isNullOrEmpty(Collection collection){
         return (collection == null) || collection.size() == 0;
     }
 
-    public static <E> boolean hasElements(Collection<E> collection){
+    public static boolean hasElements(Collection collection){
         return (collection != null) && collection.size() > 0;
     }
 

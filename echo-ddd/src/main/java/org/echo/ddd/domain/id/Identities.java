@@ -1,7 +1,6 @@
 package org.echo.ddd.domain.id;
 
 import java.io.Serializable;
-import java.math.BigInteger;
 import java.util.UUID;
 
 /**
