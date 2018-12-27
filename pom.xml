@@ -398,7 +398,7 @@
         <module>echo-ddd</module>
         <module>echo-3rdext</module>
         <module>echo-utils</module>
-        <module>echo-exam</module>
+        <module>echo-sample</module>
         <module>echo-core</module>
         <module>echo-share</module>
         <module>echo-spring-cache</module>
