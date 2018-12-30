@@ -56,7 +56,6 @@
             <groupId>de.ruedigermoeller</groupId>
             <artifactId>fst</artifactId>
             <version>2.43</version>
-            <scope>test</scope>
         </dependency>
 
     </dependencies>
