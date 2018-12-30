@@ -5,6 +5,9 @@ import org.echo.test.config.AbstractConfigurationsTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.redisson.api.RBlockingDeque;
+import org.redisson.api.RedissonClient;
+import org.redisson.codec.FstCodec;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
@@ -45,6 +48,8 @@ public class SecondaryCacheManagerTest extends AbstractConfigurationsTest{
     @Value("${jdbc.driver}")
     private String driver;
 
+    @Autowired
+    private RedissonClient redissonClient;
 
     @Test
     public void test(){
@@ -134,6 +139,118 @@ public class SecondaryCacheManagerTest extends AbstractConfigurationsTest{
         assertEquals(kb1,bCache.get("k1").get());
 
         bCache.clear();
+    }
+
+    @Test
+    public void testRedissonCollections(){
+        String dequeueKey = "echo:catch:test:deKey1";
+        RBlockingDeque deque = redissonClient.getBlockingDeque(dequeueKey);
+        deque.clear();
+        CacheTestBean tb1 = new CacheTestBean("f1",1,false, LocalDateTime.now());
+        deque.add(tb1);
+        RBlockingDeque deque_ = redissonClient.getBlockingDeque(dequeueKey);
+        assertTrue(deque_.contains(tb1));
+        deque_.remove(tb1);
+        assertFalse(deque_.contains(tb1));
+
+        deque.add(tb1);
+        deque.add(tb1);
+        deque_.remove(tb1);
+        assertTrue(deque_.contains(tb1));
+        deque_.remove(tb1);
+        assertFalse(deque_.contains(tb1));
+
+        deque.add(tb1);
+        deque.add(tb1);
+        CacheTestBean tb2 = new CacheTestBean("f1",2,false, LocalDateTime.now());
+        deque.add(tb2);
+        deque.add(tb2);
+        deque.add(tb2);
+        assertEquals(5,deque_.size());
+        deque_.remove(tb1);
+        assertEquals(4,deque_.size());
+        assertTrue(deque_.contains(tb1));
+        deque_.remove(tb1);
+        assertEquals(3,deque_.size());
+        assertFalse(deque_.contains(tb1));
+        deque.clear();
+
+        //证明默认的fastJson 是以属性值来比较对象是否相等的,与hashCode及equals无关
+        deque.add(tb1);
+        deque.add(tb1);
+        deque.addFirst(tb2);
+        deque.addFirst(tb2);
+        deque.addFirst(tb2);
+        assertEquals(5,deque_.size());
+        tb1.setF2(2);
+        deque_.remove(tb1);
+        assertEquals(5,deque_.size());
+        assertFalse(deque_.contains(tb1));
+        deque_.remove(tb1);
+        assertEquals(5,deque_.size());
+        assertFalse(deque_.contains(tb1));
+        deque.clear();
+        deque.delete();
+
+
+        //使用FstCodec作为序列化及反序列化
+        deque = redissonClient.getBlockingDeque(dequeueKey,new FstCodec());
+        deque.clear();
+        deque.add(tb1);
+        deque_ = redissonClient.getBlockingDeque(dequeueKey,new FstCodec());
+        assertTrue(deque_.contains(tb1));
+        deque_.remove(tb1);
+        assertFalse(deque_.contains(tb1));
+
+        deque.add(tb1);
+        deque.add(tb1);
+        deque_.remove(tb1);
+        assertTrue(deque_.contains(tb1));
+        deque_.remove(tb1);
+        assertFalse(deque_.contains(tb1));
+
+        deque.add(tb1);
+        deque.add(tb1);
+        deque.add(tb2);
+        deque.add(tb2);
+        deque.add(tb2);
+        assertEquals(5,deque_.size());
+        deque_.remove(tb1);
+        assertEquals(4,deque_.size());
+        assertTrue(deque_.contains(tb1));
+        deque_.remove(tb1);
+        assertEquals(3,deque_.size());
+        assertFalse(deque_.contains(tb1));
+        deque.clear();
+
+        //证明使用的FstCodec 是通过hashCode及equals来比较对象的
+        deque.add(tb1);
+        deque.add(tb1);
+        deque.addFirst(tb2);
+        deque.addFirst(tb2);
+        deque.addFirst(tb2);
+        assertEquals(5,deque_.size());
+        tb1.setF2(2);
+        deque_.remove(tb1);
+        assertTrue(deque_.contains(tb1));
+        tb1.setF3(false);
+        deque_.remove(tb1);
+        assertEquals(3,deque_.size());
+        assertFalse(deque_.contains(tb1));
+        assertTrue(deque_.contains(tb2));
+        tb2.setF3(false);
+        assertTrue(deque_.contains(tb2));
+        tb2.setF1("f2_");
+        assertFalse(deque_.contains(tb2));
+        deque.remove(tb2);
+        assertEquals(3,deque_.size());
+        assertEquals(3,deque.size());
+        //使用removeIf可以删除符合条件的对象
+        deque.removeIf(tb->true);
+        assertEquals(0,deque.size());
+        deque.clear();
+
+        deque.delete();
     }
 
 }

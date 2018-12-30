@@ -1,6 +1,7 @@
 package org.echo.spring.cache.secondary;
 
 import lombok.*;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -13,7 +14,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode
+@Accessors(chain = true)
+@EqualsAndHashCode(of="f1")
 @ToString
 public class CacheTestBean implements Serializable {
     private String f1;

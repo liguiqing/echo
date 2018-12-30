@@ -4,6 +4,7 @@ import org.echo.spring.cache.CacheFactory;
 import org.redisson.api.RMap;
 import org.redisson.api.RMapCache;
 import org.redisson.api.RedissonClient;
+import org.redisson.codec.FstCodec;
 import org.redisson.spring.cache.CacheConfig;
 import org.redisson.spring.cache.RedissonCache;
 import org.springframework.cache.Cache;
@@ -61,7 +62,7 @@ public class RedisCacheFactory implements CacheFactory {
     @Override
     public Cache newCache(String name) {
         if(redissonClient != null){
-            RMap<Object,Object> map = redissonClient.getMapCache(getRedissonCacheName(name));
+            RMap<Object,Object> map = redissonClient.getMapCache(getRedissonCacheName(name),new FstCodec());
             return new RedissonCache(map,cacheProperties.isCacheNullValues());
         }
         return redisCacheManager.getCache(name);
