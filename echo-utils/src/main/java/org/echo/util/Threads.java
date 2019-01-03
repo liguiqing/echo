@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 /**
  * 多线程工具
@@ -14,6 +13,9 @@ import java.util.concurrent.Future;
  */
 @Slf4j
 public class Threads {
+    private Threads(){
+        throw new IllegalArgumentException();
+    }
 
     //TODO
     private static final ExecutorService service = Executors.newCachedThreadPool();
@@ -22,7 +24,4 @@ public class Threads {
         return service;
     }
 
-    public static Future submit(Runnable runnable){
-        return getExecutorService().submit(runnable);
-    }
 }

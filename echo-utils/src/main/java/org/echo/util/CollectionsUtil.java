@@ -13,16 +13,20 @@ import java.util.Collection;
 @Slf4j
 public class CollectionsUtil {
 
+    private CollectionsUtil(){
+        throw new IllegalArgumentException();
+    }
+
     public static boolean isNotNullAndNotEmpty(Collection collection){
         return !isNullOrEmpty(collection);
     }
 
     public static boolean isNullOrEmpty(Collection collection){
-        return (collection == null) || collection.size() == 0;
+        return (collection == null) || collection.isEmpty();
     }
 
     public static boolean hasElements(Collection collection){
-        return (collection != null) && collection.size() > 0;
+        return isNotNullAndNotEmpty(collection);
     }
 
 }

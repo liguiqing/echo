@@ -12,6 +12,18 @@
     <artifactId>echo-ddd</artifactId>
 
     <dependencies>
+        <dependency>
+            <groupId>echo</groupId>
+            <artifactId>echo-test</artifactId>
+            <version>${echo.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>echo</groupId>
+            <artifactId>echo-utils</artifactId>
+            <version>${echo.version}</version>
+        </dependency>
+
         <!-- https://mvnrepository.com/artifact/javax.persistence/javax.persistence-api -->
         <dependency>
             <groupId>javax.persistence</groupId>

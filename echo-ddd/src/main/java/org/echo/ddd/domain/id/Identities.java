@@ -11,42 +11,18 @@ import java.util.UUID;
  */
 public class Identities {
 
-    private static IdentityGenerator generator;
+    private static IdentityGenerator generator = new IdentityGenerator<String,String>(){};
 
-    public static void setGenerator(IdentityGenerator gen){
-        generator = gen;
-    }
-
-    private static <Id extends Serializable,P extends Serializable> Id genAId(P prefix){
-        if(generator != null)
-            return (Id)generator.genId(prefix);
-
-        if(prefix == null)
-            return (Id)genStringId(null);
-        if(prefix instanceof String)
-            return (Id)genStringId((String)prefix);
-
-        return (Id) genLongId((Number)prefix);
+    public static void setGenerator(IdentityGenerator generator){
+        Identities.generator = generator;
     }
 
     public static <Id extends Serializable> Id genId(){
-        return genAId(null);
+        return (Id)generator.genId();
     }
 
     public static <Id extends Serializable,P extends Serializable> Id genId(P prefix){
-        return genAId(prefix);
+        return (Id)generator.genId(prefix);
     }
 
-    private static String genStringId(String prefix){
-        String uuid = UUID.randomUUID().toString().replaceAll("-","");
-        if(prefix == null)
-            return uuid;
-        return prefix + uuid;
-    }
-
-    private static Long genLongId(Number prefix){
-        //TODO
-        String s = prefix + (UUID.randomUUID().toString().hashCode()+"");
-        return Long.MAX_VALUE;
-    }
 }

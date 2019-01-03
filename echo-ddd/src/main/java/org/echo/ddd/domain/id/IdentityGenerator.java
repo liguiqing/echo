@@ -1,6 +1,7 @@
 package org.echo.ddd.domain.id;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 /**
  * Id生成器
@@ -11,7 +12,17 @@ import java.io.Serializable;
 
 public interface IdentityGenerator<Id extends Serializable,P extends Serializable> {
 
-    Id genId();
+    default Id genId(){
+        return (Id)UUID.randomUUID().toString().replaceAll("-","");
+    }
 
-    Id genId(P prefix);
+    default Id genId(P prefix){
+        if(prefix == null)
+            return this.genId();
+        if(prefix instanceof String){
+            return (Id)prefix.toString().concat(this.genId().toString());
+        }
+        //TODO
+        return genId();
+    }
 }

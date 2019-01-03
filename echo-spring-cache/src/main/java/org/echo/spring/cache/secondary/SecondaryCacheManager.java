@@ -1,6 +1,7 @@
 package org.echo.spring.cache.secondary;
 
 import lombok.extern.slf4j.Slf4j;
+import org.echo.lock.DistributedLock;
 import org.echo.spring.cache.CacheFactory;
 import org.echo.spring.cache.message.CacheMessage;
 import org.echo.spring.cache.message.CacheMessagePusher;
@@ -69,7 +70,10 @@ public class SecondaryCacheManager extends AbstractTransactionSupportingCacheMan
     private CacheMessagePusher messagePusher;
 
     @Autowired
-    DefaultListableBeanFactory beanFactory;
+    private DefaultListableBeanFactory beanFactory;
+
+    @Autowired(required = false)
+    private DistributedLock lock;
 
     public SecondaryCacheManager(SecondaryCacheProperties cacheProperties,
                                  CacheFactory cacheL1Factory,
@@ -141,15 +145,15 @@ public class SecondaryCacheManager extends AbstractTransactionSupportingCacheMan
 
     private SecondaryCache createCache(String cacheName,long expirationSecondTime,long expireAfterAccessSecondTime,int level){
         if(level == 1)
-            return SecondaryCache.onlyCache1(cacheName,cacheL1Factory.newCache(cacheName,expirationSecondTime,expireAfterAccessSecondTime),cacheProperties);
+            return SecondaryCache.onlyCache1(cacheName,cacheL1Factory.newCache(cacheName,expirationSecondTime,expireAfterAccessSecondTime),cacheProperties,lock);
 
         if(level == 2)
-            return SecondaryCache.onlyCache2(cacheName,cacheL2Factory.newCache(cacheName,expirationSecondTime,expireAfterAccessSecondTime),cacheProperties);
+            return SecondaryCache.onlyCache2(cacheName,cacheL2Factory.newCache(cacheName,expirationSecondTime,expireAfterAccessSecondTime),cacheProperties,lock);
 
         return new SecondaryCache(cacheName,
                 cacheL1Factory.newCache(cacheName,expirationSecondTime,expireAfterAccessSecondTime),
                 cacheL2Factory.newCache(cacheName,expirationSecondTime,expireAfterAccessSecondTime),
-                cacheProperties,messagePusher);
+                cacheProperties,messagePusher,lock);
     }
 
     /**

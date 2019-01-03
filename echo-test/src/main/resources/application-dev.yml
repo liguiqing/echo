@@ -21,3 +21,7 @@ hibernate:
     batch_size: 100
     fetch_size: 50
   show_sql: false
+app:
+  util:
+    lock:
+      prefix: echo

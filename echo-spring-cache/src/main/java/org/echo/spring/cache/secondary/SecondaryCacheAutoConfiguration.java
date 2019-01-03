@@ -1,6 +1,8 @@
 package org.echo.spring.cache.secondary;
 
 import lombok.extern.slf4j.Slf4j;
+import org.echo.lock.DistributedLock;
+import org.echo.lock.RedisBaseDistributedLock;
 import org.echo.spring.cache.caffeine.CaffeineCacheFactory;
 import org.echo.spring.cache.caffeine.CaffeineCacheProperties;
 import org.echo.spring.cache.message.RedisCacheMessagePusher;
@@ -9,6 +11,7 @@ import org.echo.spring.cache.redis.RedisCacheProperties;
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -23,8 +26,6 @@ import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
-
-import java.io.IOException;
 
 /**
  * 二级缓存自动配置
@@ -58,6 +59,10 @@ public class SecondaryCacheAutoConfiguration {
         return Redisson.create(config);
     }
 
+    @Bean
+    public DistributedLock distributedLock(RedissonClient redissonClient, @Value("${app.util.lock.prefix:echo}")String lockPrefix){
+        return new RedisBaseDistributedLock(lockPrefix, redissonClient);
+    }
 
     @Bean
     public RedisTemplate<Object, Object> redisTemplate(JedisConnectionFactory connectionFactory){
@@ -98,16 +103,6 @@ public class SecondaryCacheAutoConfiguration {
                 redisCacheProperties.getStandalone().getPort());
         return pool;
     }
-
-//    @Bean("SecondaryCacheManager")
-//    @ConditionalOnBean(RedisTemplate.class)
-//    public SecondaryCacheManager cacheManager(JedisConnectionFactory connectionFactory,
-//                                              RedisTemplate<Object, Object> redisTemplate) {
-//        CaffeineCacheFactory caffeineCacheFactory = new CaffeineCacheFactory(caffeineCacheProperties);
-//        RedisCacheFactory redisCacheFactory = new RedisCacheFactory(connectionFactory,redisCacheProperties);
-//        RedisCacheMessagePusher messagePusher = new RedisCacheMessagePusher(redisTemplate);
-//        return new SecondaryCacheManager(cacheProperties, caffeineCacheFactory,redisCacheFactory,messagePusher);
-//    }
 
     @Bean("SecondaryCacheManager")
     @ConditionalOnBean(RedisTemplate.class)

@@ -14,6 +14,10 @@ import java.util.Random;
 @Slf4j
 public class NumbersUtil {
 
+    private NumbersUtil() {
+        throw new IllegalArgumentException();
+    }
+
     /**
      * 取两整数间随机数 开区间
      *

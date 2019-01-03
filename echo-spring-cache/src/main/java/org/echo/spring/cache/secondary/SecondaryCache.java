@@ -2,16 +2,14 @@ package org.echo.spring.cache.secondary;
 
 import lombok.extern.slf4j.Slf4j;
 import org.echo.exception.ThrowableToString;
-import org.echo.spring.cache.CustomizedCache;
+import org.echo.lock.DistributedLock;
 import org.echo.spring.cache.message.CacheMessage;
 import org.echo.spring.cache.message.CacheMessagePusher;
 import org.springframework.cache.Cache;
 import org.springframework.cache.support.AbstractValueAdaptingCache;
-import org.springframework.util.StringUtils;
 
 import java.util.UUID;
 import java.util.concurrent.Callable;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * 两级缓存
@@ -34,6 +32,8 @@ public class SecondaryCache extends AbstractValueAdaptingCache {
 
     private CacheMessagePusher messagePusher;
 
+    private DistributedLock<Object> lock;
+
     public SecondaryCache(boolean allowNullValues){
         super(allowNullValues);
     }
@@ -41,6 +41,13 @@ public class SecondaryCache extends AbstractValueAdaptingCache {
     public SecondaryCache(String name, Cache cacheL1, Cache cacheL2,
                           SecondaryCacheProperties cacheProperties,
                           CacheMessagePusher messagePusher) {
+        this(name,cacheL1,cacheL2,cacheProperties,messagePusher,new DistributedLock() {});
+    }
+
+    public SecondaryCache(String name, Cache cacheL1, Cache cacheL2,
+                          SecondaryCacheProperties cacheProperties,
+                          CacheMessagePusher messagePusher, DistributedLock lock) {
+
         this(cacheProperties.isCacheNullValues());
         this.name = name;
         this.cacheL1 = cacheL1;
@@ -49,22 +56,34 @@ public class SecondaryCache extends AbstractValueAdaptingCache {
         if(cacheProperties.isLevel2Enabled()){
             this.cacheL2 = cacheL2;
         }
+        this.lock = lock;
     }
 
-    public static SecondaryCache onlyCache1(String name, Cache cacheL1,SecondaryCacheProperties cacheProperties){
+    public static SecondaryCache onlyCache1(String name, Cache cacheL1,SecondaryCacheProperties cacheProperties,DistributedLock<Object> lock){
         SecondaryCache cache = new SecondaryCache(cacheProperties.isCacheNullValues());
         cache.name = name;
         cache.cacheL1 = cacheL1;
+        cache.lock = lock==null?new DistributedLock<Object>(){}:lock;
         return cache;
     }
 
-    public static SecondaryCache onlyCache2(String name, Cache cacheL2,SecondaryCacheProperties cacheProperties){
+    public static SecondaryCache onlyCache2(String name, Cache cacheL2,SecondaryCacheProperties cacheProperties,DistributedLock<Object> lock){
         SecondaryCache cache = new SecondaryCache(cacheProperties.isCacheNullValues());
         cache.name = name;
         cache.cacheL2 = cacheL2;
+        cache.lock = lock==null?new DistributedLock<Object>(){}:lock;
         return cache;
     }
 
+    public static SecondaryCache onlyCache1(String name, Cache cacheL1,SecondaryCacheProperties cacheProperties){
+        return onlyCache1(name, cacheL1, cacheProperties, new DistributedLock<Object>() {
+        });
+    }
+
+    public static SecondaryCache onlyCache2(String name, Cache cacheL2,SecondaryCacheProperties cacheProperties){
+        return onlyCache2(name, cacheL2, cacheProperties, new DistributedLock<Object>() {
+        });
+    }
 
     public String getIdentifier(){
         return this.identifier;
@@ -92,7 +111,7 @@ public class SecondaryCache extends AbstractValueAdaptingCache {
         if(!hasCache2())
             return null;
 
-        value = getFromLevel2(key, null);
+        value = getFromLevel2(key);
 
         if(value != null) {
             putToLevel1(key, value);
@@ -109,10 +128,8 @@ public class SecondaryCache extends AbstractValueAdaptingCache {
             return (T) value;
         }
 
-        ReentrantLock lock = new ReentrantLock();
         try {
-            lock.lock();
-
+            lock.lock(key);
             value = valueLoader.call();
             putToLevel1(key, value);
             putToLevel2(key,value);
@@ -120,7 +137,7 @@ public class SecondaryCache extends AbstractValueAdaptingCache {
         } catch (Exception e) {
             log.error(ThrowableToString.toString(e));
         } finally {
-            lock.unlock();
+            lock.unlock(key);
         }
 
         throw new IllegalStateException(key + "");
@@ -148,18 +165,16 @@ public class SecondaryCache extends AbstractValueAdaptingCache {
             return null;
         }
 
-        ReentrantLock lock = new ReentrantLock();
+        ValueWrapper valueWrapper = this.get(key);
+        if(valueWrapper != null && valueWrapper.get() != null)
+            return valueWrapper;
         try {
-            lock.lock();
-            Object prevValue = getFromLevel2(key,value);
-            putToLevel1(key, value);
-            return toValueWrapper(prevValue);
-        }catch (Exception e){
-            log.error(ThrowableToString.toString(e));
-        } finally {
-            lock.unlock();
+            lock.lock(key);
+            this.put(key,value);
+        }finally {
+            lock.unlock(key);
         }
-        return null;
+        return this.get(key);
     }
 
     @Override
@@ -210,13 +225,9 @@ public class SecondaryCache extends AbstractValueAdaptingCache {
         this.cacheL1.put(key, value);
     }
 
-    private Object getFromLevel2(Object key,Object value){
+    private Object getFromLevel2(Object key){
         if(this.hasCache2()){
-            Object o;
-            if(value == null)
-                o =  this.cacheL2.get(key);
-            else
-                o =  this.cacheL2.get(key);
+            Object o = this.cacheL2.get(key);
 
             if(o != null)
                 log.debug("Hit by key [{}] from level2 in cache [{}]", key,this.name);

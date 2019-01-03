@@ -1,5 +1,6 @@
-package org.echo.spring.cache.redis;
+package org.echo.lock;
 
+import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import redis.clients.jedis.Jedis;
@@ -14,6 +15,7 @@ import java.util.Collections;
  * @since V1.0
  */
 @NoArgsConstructor
+@AllArgsConstructor
 @Slf4j
 public class RedisLock {
 
@@ -28,10 +30,6 @@ public class RedisLock {
     private static final String LOCK_KEY = "lock:";
 
     private String lockPrefix = "echo:";
-
-    public RedisLock(String lockPrefix) {
-        this.lockPrefix = lockPrefix;
-    }
 
     /**
      * 尝试获取分布式锁
@@ -49,12 +47,9 @@ public class RedisLock {
         Jedis jedis = jedisPool.getResource();
         String result = jedis.set(lockKey, requestId, SET_IF_NOT_EXIST, SET_WITH_EXPIRE_TIME, expireTime);
         jedis.close();
-        if (LOCK_SUCCESS.equals(result)) {
-            log.debug("Lock redis key {}->{} success",requestId,key);
-            return true;
-        }
-        log.debug("Lock redis key {}->{} failure",requestId,key);
-        return false;
+        Boolean b = LOCK_SUCCESS.equals(result);
+        log.debug("Lock redis key {}->{} {}",requestId,key,b?"success":"failure");
+        return b;
     }
 
     /**
@@ -73,9 +68,6 @@ public class RedisLock {
         Jedis jedis = jedisPool.getResource();
         Object result = jedis.eval(script, Collections.singletonList(lockKey), Collections.singletonList(requestId));
         jedis.close();
-        if (RELEASE_SUCCESS.equals(result)) {
-            return true;
-        }
-        return false;
+        return RELEASE_SUCCESS.equals(result);
     }
 }

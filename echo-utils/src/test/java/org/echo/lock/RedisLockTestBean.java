@@ -1,4 +1,4 @@
-package org.echo.spring.cache.secondary.redis;
+package org.echo.lock;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
