@@ -9,7 +9,6 @@ import org.springframework.data.repository.Repository;
  * @since V1.0
  */
 
-public interface PersistenceDomainObjectRepository <T extends IdentifiedDomainObject,ID extends Identity> extends Repository<T,ID> {
-    ID nextIdentity();
-
+public interface PersistenceDomainObjectRepository <E extends IdentifiedDomainObject,T extends Identity> extends Repository<E,T> {
+    T nextIdentity();
 }

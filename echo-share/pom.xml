@@ -20,11 +20,6 @@
         </dependency>
         <dependency>
             <groupId>echo</groupId>
-            <artifactId>echo-ddd</artifactId>
-            <version>${echo.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>echo</groupId>
             <artifactId>spring-cache</artifactId>
             <version>${echo.version}</version>
         </dependency>

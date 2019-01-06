@@ -46,7 +46,7 @@ jdbc:
   driver: com.mysql.Driver
   password: newa_newc
   jndiName: testJndiDs
-  url: jdbc:mysql://192.168.1.251:3306/easytnt_sm_testing?useUnicode=true&amp;characterEncoding=utf-8&amp;autoReconnect=true&amp;rewriteBatchedStatements=true
+  url: jdbc:mysql://192.168.1.230:3306/echo?useUnicode=true&amp;characterEncoding=utf-8&amp;autoReconnect=true&amp;rewriteBatchedStatements=true
   username: root
 hibernate:
   max_fetch_depth: 10
