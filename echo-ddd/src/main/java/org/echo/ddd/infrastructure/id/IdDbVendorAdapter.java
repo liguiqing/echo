@@ -9,6 +9,7 @@ import java.sql.Statement;
 /**
  * id数据库适配器.
  * 默认为Mysql实现
+ *
  * @author Liguiqing
  * @since V1.0
  */
@@ -21,6 +22,7 @@ public interface IdDbVendorAdapter {
 
     default String nextId(JdbcOperations jdbc,String prefix){
         String sql =  "select idSeq,id from t_cm_dddId where idPrefix='"+prefix+"' for update ";
+        final String prefix_ = prefix == null?"":prefix;
         return jdbc.execute((ConnectionCallback<String>) con -> {
             con.setAutoCommit(false);
             try(Statement ps = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE);
@@ -29,10 +31,10 @@ public interface IdDbVendorAdapter {
                     long idSeq = rs.getLong("idSeq");
                     rs.updateLong("idSeq",idSeq + 1);
                     con.commit();
-                    return prefix.concat(""+idSeq);
+                    return prefix_.concat(""+idSeq);
                 }
             }
-            return prefix.concat("0");
+            return prefix_.concat("0");
         });
     }
 
