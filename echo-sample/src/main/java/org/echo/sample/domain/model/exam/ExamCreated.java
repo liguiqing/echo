@@ -3,7 +3,6 @@ package org.echo.sample.domain.model.exam;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.echo.ddd.domain.events.DomainEvent;
-import org.echo.share.id.commons.ExamId;
 
 /**
  * @author Liguiqing

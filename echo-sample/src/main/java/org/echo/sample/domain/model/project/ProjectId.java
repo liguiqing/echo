@@ -1,19 +1,16 @@
-package org.echo.share.id.commons;
+package org.echo.sample.domain.model.project;
 
 import lombok.*;
+import org.echo.ddd.domain.id.IdPrefix;
 import org.echo.ddd.domain.id.Identities;
 import org.echo.ddd.domain.id.Identity;
-import org.echo.share.id.IdPrefix;
-
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 /**
- * Exam对象唯一标识
- *
  * @author Liguiqing
- * @since V3.0
+ * @since V1.0
  */
 @Embeddable
 @AllArgsConstructor
@@ -21,11 +18,11 @@ import javax.persistence.Embeddable;
 @Setter
 @Getter
 @ToString
-public class ExamId implements Identity<String> {
+public class ProjectId implements Identity<String> {
     @Column(name = "examId")
     private String id;
 
-    public ExamId() {
+    public ProjectId() {
         this.id = Identities.genId(IdPrefix.ExamId);
     }
 }

@@ -1,11 +1,8 @@
 package org.echo.sample.domain.model.exam;
 
 import org.echo.ddd.domain.PersistenceDomainObjectRepository;
+import org.echo.ddd.domain.id.IdPrefix;
 import org.echo.ddd.domain.id.Identities;
-
-import org.echo.share.id.IdPrefix;
-
-import org.echo.share.id.commons.ExamId;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.repository.Modifying;
