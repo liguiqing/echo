@@ -1,4 +1,4 @@
-package org.echo.share.id;
+package org.echo.ddd.domain.id;
 
 /**
  * ID前缀

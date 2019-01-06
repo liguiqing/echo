@@ -7,22 +7,21 @@ import java.util.UUID;
  * Id生成器
  *
  * @author Liguiqing
- * @since V3.0
+ * @since V1.0
  */
 
-public interface IdentityGenerator<Id extends Serializable,P extends Serializable> {
+public interface IdentityGenerator<T extends Serializable,P extends Serializable> {
 
-    default Id genId(){
-        return (Id)UUID.randomUUID().toString().replaceAll("-","");
+    default T genId(){
+        return (T)UUID.randomUUID().toString().replaceAll("-","");
     }
 
-    default Id genId(P prefix){
+    default T genId(P prefix){
         if(prefix == null)
             return this.genId();
         if(prefix instanceof String){
-            return (Id)prefix.toString().concat(this.genId().toString());
+            return (T)prefix.toString().concat(this.genId().toString());
         }
-        //TODO
         return genId();
     }
 }

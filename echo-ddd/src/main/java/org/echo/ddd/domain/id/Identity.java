@@ -9,9 +9,9 @@ import java.io.Serializable;
  * @since V1.0
  */
 
-public interface Identity<Id> extends Serializable {
+public interface Identity<T> extends Serializable {
 
-    Id getId();
+    T getId();
 
-    void setId(Id id);
+    void setId(T id);
 }

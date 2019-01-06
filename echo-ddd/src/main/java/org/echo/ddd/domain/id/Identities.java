@@ -1,7 +1,8 @@
 package org.echo.ddd.domain.id;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.Serializable;
-import java.util.UUID;
 
 /**
  * 唯一标识工厂
@@ -9,6 +10,7 @@ import java.util.UUID;
  * @author Liguiqing
  * @since V1.0
  */
+@Slf4j
 public class Identities {
 
     private static IdentityGenerator generator = new IdentityGenerator<String,String>(){};
@@ -17,12 +19,23 @@ public class Identities {
         Identities.generator = generator;
     }
 
-    public static <Id extends Serializable> Id genId(){
-        return (Id)generator.genId();
+    public static <T extends Serializable> T genId(){
+        return (T)generator.genId();
     }
 
-    public static <Id extends Serializable,P extends Serializable> Id genId(P prefix){
-        return (Id)generator.genId(prefix);
+    public static <T extends Serializable,P extends Serializable> T genId(P prefix){
+        return (T)generator.genId(prefix);
     }
 
+    public static <T extends Identity,P extends Serializable> T genId(P prefix,Class<T> clazz){
+        try {
+            Identity id = clazz.newInstance();
+            id.setId(generator.genId(prefix));
+            return (T)id;
+        } catch (InstantiationException e) {
+            throw new IllegalArgumentException();
+        } catch (IllegalAccessException e) {
+            throw new IllegalArgumentException();
+        }
+    }
 }
