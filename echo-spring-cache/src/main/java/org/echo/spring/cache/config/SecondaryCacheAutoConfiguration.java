@@ -1,4 +1,4 @@
-package org.echo.spring.cache.secondary;
+package org.echo.spring.cache.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.echo.lock.DistributedLock;
@@ -8,6 +8,9 @@ import org.echo.spring.cache.caffeine.CaffeineCacheProperties;
 import org.echo.spring.cache.message.RedisCacheMessagePusher;
 import org.echo.spring.cache.redis.RedisCacheFactory;
 import org.echo.spring.cache.redis.RedisCacheProperties;
+import org.echo.spring.cache.secondary.RedisBaseCacheMessageListener;
+import org.echo.spring.cache.secondary.SecondaryCacheManager;
+import org.echo.spring.cache.secondary.SecondaryCacheProperties;
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -106,7 +109,7 @@ public class SecondaryCacheAutoConfiguration {
 
     @Bean("SecondaryCacheManager")
     @ConditionalOnBean(RedisTemplate.class)
-    public SecondaryCacheManager cacheManager(RedissonClient redissonClient,RedisTemplate<Object, Object> redisTemplate) {
+    public SecondaryCacheManager cacheManager(RedissonClient redissonClient, RedisTemplate<Object, Object> redisTemplate) {
         CaffeineCacheFactory caffeineCacheFactory = new CaffeineCacheFactory(caffeineCacheProperties);
         RedisCacheFactory redisCacheFactory = new RedisCacheFactory(redissonClient,redisCacheProperties);
         RedisCacheMessagePusher messagePusher = new RedisCacheMessagePusher(redisTemplate);

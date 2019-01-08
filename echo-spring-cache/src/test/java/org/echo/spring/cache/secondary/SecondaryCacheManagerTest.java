@@ -1,5 +1,6 @@
 package org.echo.spring.cache.secondary;
 
+import org.echo.spring.cache.config.SecondaryCacheAutoConfiguration;
 import org.echo.spring.cache.message.CacheMessage;
 import org.echo.test.config.AbstractConfigurationsTest;
 import org.junit.jupiter.api.DisplayName;

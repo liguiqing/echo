@@ -191,9 +191,8 @@ public class SecondaryCacheManager extends AbstractTransactionSupportingCacheMan
             if (s.contains(MARK)) {
                 s = beanFactory.resolveEmbeddedValue(s);
             }
-            return NumbersUtil.stringToLong(s);
         }
-        return 0L;
+        return NumbersUtil.stringToLong(s);
     }
 
     /**
