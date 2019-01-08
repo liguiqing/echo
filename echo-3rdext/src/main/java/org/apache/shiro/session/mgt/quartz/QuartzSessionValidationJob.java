@@ -4,18 +4,18 @@
  **/
 package org.apache.shiro.session.mgt.quartz;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.session.mgt.ValidatingSessionManager;
 import org.quartz.Job;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;  
   
 /** 
  * 基于Quartz 2.* 版本的实现 
  *  
- */  
+ */
+@Slf4j
 public class QuartzSessionValidationJob implements Job {  
   
     /** 
@@ -25,9 +25,8 @@ public class QuartzSessionValidationJob implements Job {
   
     /*-------------------------------------------- 
     |    I N S T A N C E   V A R I A B L E S    | 
-    ============================================*/  
-    private static final Logger log = LoggerFactory.getLogger(QuartzSessionValidationJob.class);  
-  
+    ============================================*/
+
     /*-------------------------------------------- 
     |         C O N S T R U C T O R S           | 
     ============================================*/  
@@ -51,17 +50,11 @@ public class QuartzSessionValidationJob implements Job {
     public void execute(JobExecutionContext context) throws JobExecutionException {  
   
         JobDataMap jobDataMap = context.getMergedJobDataMap();  
-        ValidatingSessionManager sessionManager = (ValidatingSessionManager) jobDataMap.get(SESSION_MANAGER_KEY);  
-  
-        if (log.isDebugEnabled()) {  
-            log.debug("Executing session validation Quartz job...");  
-        }  
-  
-        sessionManager.validateSessions();  
-  
-        if (log.isDebugEnabled()) {  
-            log.debug("Session validation Quartz job complete.");  
-        }  
-    }  
+        ValidatingSessionManager sessionManager = (ValidatingSessionManager) jobDataMap.get(SESSION_MANAGER_KEY);
+
+        log.debug("Executing session validation Quartz job...");
+        sessionManager.validateSessions();
+        log.debug("Session validation Quartz job complete.");
+    }
   
 }
