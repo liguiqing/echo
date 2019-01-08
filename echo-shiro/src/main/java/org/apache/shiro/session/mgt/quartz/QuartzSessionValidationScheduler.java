@@ -29,7 +29,11 @@ public class QuartzSessionValidationScheduler implements SessionValidationSchedu
   
     private boolean enabled = false;  
     private ValidatingSessionManager sessionManager;  
-    private long sessionValidationInterval = DEFAULT_SESSION_VALIDATION_INTERVAL;  
+    private long sessionValidationInterval = DEFAULT_SESSION_VALIDATION_INTERVAL;
+
+    public QuartzSessionValidationScheduler() {
+
+    }
 
     public QuartzSessionValidationScheduler(ValidatingSessionManager sessionManager) {  
         this.sessionManager = sessionManager;  
@@ -55,10 +59,8 @@ public class QuartzSessionValidationScheduler implements SessionValidationSchedu
   
             JobDetail detail = JobBuilder.newJob(QuartzSessionValidationJob.class)  
                     .withIdentity(JOB_NAME, Scheduler.DEFAULT_GROUP).build();  
-            detail.getJobDataMap().put(SESSION_MANAGER_KEY, this.sessionManager);  
-            Scheduler scheduler = getScheduler();  
-  
-            scheduler.scheduleJob(detail, trigger);  
+            detail.getJobDataMap().put(SESSION_MANAGER_KEY, this.sessionManager);
+            getScheduler().scheduleJob(detail, trigger);
             if (this.schedulerImplicitlyCreated) {  
                 scheduler.start();
                 log.debug("Successfully started implicitly created Quartz Scheduler instance.");
@@ -72,10 +74,9 @@ public class QuartzSessionValidationScheduler implements SessionValidationSchedu
   
     public void disableSessionValidation() {
         log.debug("Stopping Quartz session validation job...");
-        Scheduler scheduler;
         try {  
-            scheduler = getScheduler();  
-            if (scheduler == null) {  
+            getScheduler();
+            if (this.scheduler == null) {
                 log.warn("getScheduler() method returned a null Quartz scheduler, which is unexpected.  Please check your configuration and/or implementation.  Returning quietly since there is no validation job to remove (scheduler does not exist).");
                 return;
             }  
@@ -83,8 +84,8 @@ public class QuartzSessionValidationScheduler implements SessionValidationSchedu
             log.warn("Unable to acquire Quartz Scheduler.  Ignoring and returning (already stopped?)", e);
             return;
         }  
-        try {  
-            scheduler.unscheduleJob(new TriggerKey("SessionValidationJob", "DEFAULT"));  
+        try {
+            this.scheduler.unscheduleJob(new TriggerKey(JOB_NAME, "DEFAULT"));
             log.debug("Quartz session validation job stopped successfully.");
         } catch (SchedulerException e) {  
             log.warn("Could not cleanly remove SessionValidationJob from Quartz scheduler.  Ignoring and stopping.", e);
@@ -94,7 +95,7 @@ public class QuartzSessionValidationScheduler implements SessionValidationSchedu
   
         if (this.schedulerImplicitlyCreated) {
             try {
-                scheduler.shutdown();
+                this.scheduler.shutdown();
             } catch (SchedulerException e) {
                 log.warn("Unable to cleanly shutdown implicitly created Quartz Scheduler instance.", e);
             } finally {
@@ -102,6 +103,5 @@ public class QuartzSessionValidationScheduler implements SessionValidationSchedu
                 this.schedulerImplicitlyCreated = false;
             }
         }
-    }  
-  
+    }
 }

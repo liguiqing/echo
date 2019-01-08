@@ -1,0 +1,6 @@
+shiro:
+  filter:
+    success:
+      url: /home
+  session:
+    globalSessionTimeout: 1800000

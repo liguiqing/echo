@@ -10,7 +10,7 @@ import org.quartz.Job;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
-  
+
 /** 
  * 基于Quartz 2.* 版本的实现 
  *  
