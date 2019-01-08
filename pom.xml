@@ -477,11 +477,11 @@
     <modules>
         <module>echo-test</module>
         <module>echo-ddd</module>
-        <module>echo-3rdext</module>
         <module>echo-utils</module>
         <module>echo-sample</module>
         <module>echo-core</module>
         <module>echo-share</module>
         <module>echo-spring-cache</module>
+        <module>echo-shiro</module>
     </modules>
 </project>
