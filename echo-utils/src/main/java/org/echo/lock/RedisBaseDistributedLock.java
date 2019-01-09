@@ -1,8 +1,15 @@
 package org.echo.lock;
 
+import com.google.common.collect.Maps;
 import lombok.AllArgsConstructor;
+import org.echo.util.RedisClientUtils;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
+
+import java.util.Optional;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * 基于Redisson实现的分布式锁
@@ -18,21 +25,37 @@ public class RedisBaseDistributedLock implements DistributedLock<Object> {
 
     private RedissonClient redissonClient;
 
+    private static final ConcurrentMap<Object, Optional<Lock>> locks = Maps.newConcurrentMap();
+
     public RedisBaseDistributedLock(RedissonClient redissonClient) {
         this.redissonClient = redissonClient;
     }
 
     @Override
     public void lock(Object key){
-        this.getLock(key.toString()).lock();
+        this.getLock(key.toString()).ifPresent(lock -> lock.lock());
     }
 
     @Override
     public void unlock(Object key){
-        this.getLock(key.toString()).unlock();
+        locks.get(key).ifPresent(lock -> lock.unlock());
+        locks.remove(key);
     }
 
-    private RLock getLock(String key){
+    private  Optional<Lock> getLock(Object key){
+        Optional<Lock> lock = newLock(key);
+        Optional<Lock> other =  locks.putIfAbsent(key, lock);
+        return other == null?lock:other;
+    }
+
+    private Optional<Lock> newLock(Object key) {
+        if (RedisClientUtils.isAlive(this.redissonClient)) {
+            return Optional.of(getRLock(key.toString()));
+        }
+        return Optional.of(new ReentrantLock());
+    }
+
+    private RLock getRLock(String key){
         return redissonClient.getLock(getKey(key));
     }
 
