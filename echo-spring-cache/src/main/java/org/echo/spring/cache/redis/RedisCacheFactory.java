@@ -1,5 +1,7 @@
 package org.echo.spring.cache.redis;
 
+import lombok.extern.slf4j.Slf4j;
+import org.echo.exception.ThrowableToString;
 import org.echo.spring.cache.CacheFactory;
 import org.redisson.api.RMap;
 import org.redisson.api.RMapCache;
@@ -22,6 +24,7 @@ import java.util.stream.Collectors;
  * @author Liguiqing
  * @since V.0
  */
+@Slf4j
 public class RedisCacheFactory implements CacheFactory {
 
     private RedissonClient redissonClient;
@@ -61,11 +64,16 @@ public class RedisCacheFactory implements CacheFactory {
 
     @Override
     public Cache newCache(String name) {
-        if(redissonClient != null){
-            RMap<Object,Object> map = redissonClient.getMapCache(getRedissonCacheName(name),new FstCodec());
-            return new RedissonCache(map,cacheProperties.isCacheNullValues());
+        try {
+            if (redissonClient != null) {
+                RMap<Object, Object> map = redissonClient.getMapCache(getRedissonCacheName(name), new FstCodec());
+                return new RedissonCache(map, cacheProperties.isCacheNullValues());
+            }
+            return redisCacheManager.getCache(name);
+        }catch (Exception e){
+            log.warn(ThrowableToString.toString(e));
+            return new RedisNoneCache(false);
         }
-        return redisCacheManager.getCache(name);
     }
 
     @Override
