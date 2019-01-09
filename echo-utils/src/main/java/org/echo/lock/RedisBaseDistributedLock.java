@@ -33,19 +33,18 @@ public class RedisBaseDistributedLock implements DistributedLock<Object> {
 
     @Override
     public void lock(Object key){
-        this.getLock(key.toString()).ifPresent(lock -> lock.lock());
+        this.getLock(key.toString()).ifPresent(Lock::lock);
     }
 
     @Override
     public void unlock(Object key){
-        locks.get(key).ifPresent(lock -> lock.unlock());
+        locks.get(key).ifPresent(Lock::unlock);
         locks.remove(key);
     }
 
     private  Optional<Lock> getLock(Object key){
-        Optional<Lock> lock = newLock(key);
-        Optional<Lock> other =  locks.putIfAbsent(key, lock);
-        return other == null?lock:other;
+        locks.putIfAbsent(key, newLock(key));
+        return locks.get(key);
     }
 
     private Optional<Lock> newLock(Object key) {
