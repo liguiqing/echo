@@ -3,11 +3,14 @@ package org.echo.spring.cache.secondary;
 import lombok.extern.slf4j.Slf4j;
 import org.echo.exception.ThrowableToString;
 import org.echo.lock.DistributedLock;
+import org.echo.spring.cache.NativeCaches;
 import org.echo.spring.cache.message.CacheMessage;
 import org.echo.spring.cache.message.CacheMessagePusher;
 import org.springframework.cache.Cache;
 import org.springframework.cache.support.AbstractValueAdaptingCache;
 
+import java.util.Collection;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 
@@ -73,16 +76,6 @@ public class SecondaryCache extends AbstractValueAdaptingCache {
         cache.cacheL2 = cacheL2;
         cache.lock = lock==null?new DistributedLock<Object>(){}:lock;
         return cache;
-    }
-
-    public static SecondaryCache onlyCache1(String name, Cache cacheL1,SecondaryCacheProperties cacheProperties){
-        return onlyCache1(name, cacheL1, cacheProperties, new DistributedLock<Object>() {
-        });
-    }
-
-    public static SecondaryCache onlyCache2(String name, Cache cacheL2,SecondaryCacheProperties cacheProperties){
-        return onlyCache2(name, cacheL2, cacheProperties, new DistributedLock<Object>() {
-        });
     }
 
     public String getIdentifier(){
@@ -184,7 +177,7 @@ public class SecondaryCache extends AbstractValueAdaptingCache {
         if(this.hasCache2()) {
             this.cacheL2.evict(key);
         }
-        if(this.cacheL1 != null)
+        if(this.hasCache1())
             this.cacheL1.evict(key);
         push(new CacheMessage(identifier,this.name, key));
     }
@@ -279,4 +272,15 @@ public class SecondaryCache extends AbstractValueAdaptingCache {
         }
     }
 
+    public int size(){
+        return NativeCaches.size(this.cacheL1 == null ? this.cacheL2 : this.cacheL1);
+    }
+
+    public Collection values(){
+        return NativeCaches.values(this.cacheL2 != null ? this.cacheL2 : this.cacheL1);
+    }
+
+    public Set keys(){
+        return NativeCaches.keys(this.cacheL2 != null ? this.cacheL2 : this.cacheL1);
+    }
 }

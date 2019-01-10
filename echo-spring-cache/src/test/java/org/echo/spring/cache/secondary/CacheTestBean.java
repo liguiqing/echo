@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @Setter
 @Accessors(chain = true)
 @EqualsAndHashCode(of="f1")
-@ToString
+@ToString(of = {"f1"})
 public class CacheTestBean implements Serializable {
     private String f1;
 

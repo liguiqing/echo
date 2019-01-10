@@ -1,8 +1,6 @@
 package org.echo.spring.cache.caffeine;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 
@@ -15,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 @Getter
 @Setter
 @Accessors(chain = true)
+@EqualsAndHashCode(of={"name"})
 public class CaffeineProperties {
 
     /** 缓存名称 */

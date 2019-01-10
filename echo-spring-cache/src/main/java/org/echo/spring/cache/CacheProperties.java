@@ -6,7 +6,7 @@ package org.echo.spring.cache;
  * @author Liguiqing
  * @since V1.0
  */
-
+@FunctionalInterface
 public interface CacheProperties {
     String getName();
 }

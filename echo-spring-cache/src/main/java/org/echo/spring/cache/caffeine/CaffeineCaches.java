@@ -2,7 +2,10 @@ package org.echo.spring.cache.caffeine;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import org.springframework.cache.caffeine.CaffeineCache;
 
+import java.util.Collection;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -30,5 +33,20 @@ public class CaffeineCaches {
             cacheBuilder.maximumSize(properties.getMaximumSize());
         }
         return cacheBuilder.build();
+    }
+
+    public static int size(CaffeineCache cache){
+        Cache nativeCache = cache.getNativeCache();
+        return new Long(nativeCache.estimatedSize()).intValue();
+    }
+
+    public static Set keys (CaffeineCache cache){
+        Cache nativeCache = cache.getNativeCache();
+        return nativeCache.asMap().keySet();
+    }
+
+    public static Collection values (CaffeineCache cache){
+        Cache nativeCache = cache.getNativeCache();
+        return nativeCache.asMap().values();
     }
 }

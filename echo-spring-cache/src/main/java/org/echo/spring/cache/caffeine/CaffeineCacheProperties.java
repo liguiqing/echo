@@ -3,6 +3,7 @@ package org.echo.spring.cache.caffeine;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import org.echo.spring.cache.CacheProperties;
 import org.echo.util.CollectionsUtil;
@@ -22,6 +23,7 @@ import java.util.List;
 @Slf4j
 @Getter
 @Setter
+@Accessors(chain = true)
 @Component
 @ConfigurationProperties(prefix = "spring.cache.secondary.caffeine")
 public class CaffeineCacheProperties implements CacheProperties {

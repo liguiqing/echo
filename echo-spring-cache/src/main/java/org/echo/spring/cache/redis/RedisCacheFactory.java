@@ -80,7 +80,7 @@ public class RedisCacheFactory implements CacheFactory {
     public Cache newCache(String name, long ttl, long maxIdleSecond) {
         if(redissonClient != null){
             CacheConfig config = new CacheConfig(ttl * 1000,maxIdleSecond *1000);
-            RMapCache<Object,Object> map = redissonClient.getMapCache(getRedissonCacheName(name));
+            RMapCache<Object,Object> map = redissonClient.getMapCache(getRedissonCacheName(name),new FstCodec());
             new RedissonCache(map, config, cacheProperties.isCacheNullValues());
         }
         return newCache(name);
