@@ -40,7 +40,7 @@ public class RedisCacheFactory implements CacheFactory {
         Map<String,Long> expires = cacheProperties.getExpires();
         Map<String,RedisCacheConfiguration> rcs = expires.entrySet().stream()
                 .collect(Collectors.toMap(
-                e -> e.getKey(),
+                        Map.Entry::getKey,
                 e -> redisCacheConfiguration(Duration.ofMillis(e.getValue()),cacheProperties)
         ));
         this.redisCacheManager = RedisCacheManager.builder(connectionFactory).cacheDefaults(defaultConfig).withInitialCacheConfigurations(rcs).build();

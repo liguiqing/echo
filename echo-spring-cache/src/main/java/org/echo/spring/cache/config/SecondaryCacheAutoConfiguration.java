@@ -30,6 +30,8 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
+import java.util.Objects;
+
 /**
  * 二级缓存自动配置
  *
@@ -84,10 +86,8 @@ public class SecondaryCacheAutoConfiguration {
 
     @Bean
     public JedisConnectionFactory redisConnectionFactory(){
-        JedisConnectionFactory connectionFactory =  new JedisConnectionFactory(new RedisStandaloneConfiguration(redisCacheProperties.getStandalone().getHost(),
+        return new JedisConnectionFactory(new RedisStandaloneConfiguration(redisCacheProperties.getStandalone().getHost(),
                 redisCacheProperties.getStandalone().getPort()));
-        //connectionFactory.setPoolConfig(jedisPoolConfig);
-        return connectionFactory;
     }
 
     @Bean
@@ -102,9 +102,8 @@ public class SecondaryCacheAutoConfiguration {
         config.setTimeBetweenEvictionRunsMillis(30000);
         config.setNumTestsPerEvictionRun(10);
         config.setMinEvictableIdleTimeMillis(60000);
-        JedisPool pool = new JedisPool(config,redisCacheProperties.getStandalone().getHost(),
+        return new JedisPool(config,redisCacheProperties.getStandalone().getHost(),
                 redisCacheProperties.getStandalone().getPort());
-        return pool;
     }
 
     @Bean("SecondaryCacheManager")
@@ -119,9 +118,9 @@ public class SecondaryCacheAutoConfiguration {
     /**
      * 注册一个基于Redis的缓存消息处理器,可以替换为其他消息中间件来实现相同的功能
      *
-     * @param redisTemplate
-     * @param cacheManager
-     * @return
+     * @param redisTemplate RedisTemplate
+     * @param cacheManager CacheManager
+     * @return RedisMessageListenerContainer
      */
     @Bean
     @ConditionalOnBean(SecondaryCacheManager.class)
@@ -130,7 +129,7 @@ public class SecondaryCacheAutoConfiguration {
         if(!cacheManager.hasTwoLevel())
             return null;
         RedisMessageListenerContainer redisMessageListenerContainer = new RedisMessageListenerContainer();
-        redisMessageListenerContainer.setConnectionFactory(redisTemplate.getConnectionFactory());
+        redisMessageListenerContainer.setConnectionFactory(Objects.requireNonNull(redisTemplate.getConnectionFactory()));
         RedisBaseCacheMessageListener cacheMessageListener = new RedisBaseCacheMessageListener(redisTemplate, cacheManager);
         redisMessageListenerContainer.addMessageListener(cacheMessageListener, new ChannelTopic(cacheProperties.getCacheMessageTopic()));
         return redisMessageListenerContainer;
