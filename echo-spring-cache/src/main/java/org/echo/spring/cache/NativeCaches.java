@@ -23,16 +23,16 @@ public class NativeCaches {
 
     public static int size(Cache cache) {
 
-        Cache cache_ = toNativeCache(cache);
+        Cache nativeCache = toNativeCache(cache);
         if (Objects.isNull(cache))
             return 0;
 
-        if(cache_ instanceof CaffeineCache){
-            return CaffeineCaches.size((CaffeineCache)cache_);
+        if(nativeCache instanceof CaffeineCache){
+            return CaffeineCaches.size((CaffeineCache)nativeCache);
         }
 
-        if(cache_ instanceof RedissonCache){
-            RedissonCache redissonCache = (RedissonCache) cache_;
+        if(nativeCache instanceof RedissonCache){
+            RedissonCache redissonCache = (RedissonCache) nativeCache;
             return redissonCache.getNativeCache().size();
         }
 
@@ -40,26 +40,26 @@ public class NativeCaches {
     }
 
     public static Set keys (Cache cache){
-        Cache cache_ = toNativeCache(cache);
-        if(cache_ instanceof CaffeineCache){
-            return CaffeineCaches.keys((CaffeineCache)cache_);
+        Cache nativeCache = toNativeCache(cache);
+        if(nativeCache instanceof CaffeineCache){
+            return CaffeineCaches.keys((CaffeineCache)nativeCache);
         }
 
-        if(cache_ instanceof RedissonCache){
-            RedissonCache redissonCache = (RedissonCache) cache_;
+        if(nativeCache instanceof RedissonCache){
+            RedissonCache redissonCache = (RedissonCache) nativeCache;
             return redissonCache.getNativeCache().keySet();
         }
         return Collections.emptySet();
     }
 
     public static Collection values(Cache cache){
-        Cache cache_ = toNativeCache(cache);
-        if(cache_ instanceof CaffeineCache){
-            return CaffeineCaches.values((CaffeineCache)cache_);
+        Cache nativeCache = toNativeCache(cache);
+        if(nativeCache instanceof CaffeineCache){
+            return CaffeineCaches.values((CaffeineCache)nativeCache);
         }
 
-        if(cache_ instanceof RedissonCache){
-            RedissonCache redissonCache = (RedissonCache) cache_;
+        if(nativeCache instanceof RedissonCache){
+            RedissonCache redissonCache = (RedissonCache) nativeCache;
             return redissonCache.getNativeCache().values();
         }
 

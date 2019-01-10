@@ -37,7 +37,7 @@ public class CaffeineCaches {
 
     public static int size(CaffeineCache cache){
         Cache nativeCache = cache.getNativeCache();
-        return new Long(nativeCache.estimatedSize()).intValue();
+        return Long.valueOf(nativeCache.estimatedSize()).intValue();
     }
 
     public static Set keys (CaffeineCache cache){
