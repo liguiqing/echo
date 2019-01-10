@@ -16,7 +16,7 @@ import java.util.ArrayList;
  */
 @NoArgsConstructor
 @Getter
-@EqualsAndHashCode
+@EqualsAndHashCode(of = {"id"})
 @ToString(of = {"id","name"})
 public class RedisLockTestBean implements Serializable {
     private Long id;

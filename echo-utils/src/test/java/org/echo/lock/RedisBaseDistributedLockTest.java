@@ -6,7 +6,7 @@ import org.redisson.api.RAtomicLong;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 /**
@@ -22,13 +22,16 @@ class RedisBaseDistributedLockTest {
         when(redissonClient.getAtomicLong(any(String.class))).thenReturn(rAtomicLong).thenThrow();
         when(rAtomicLong.expireAt(any(Long.class))).thenReturn(Boolean.TRUE);
         RLock lock = mock(RLock.class);
-        when(redissonClient.getLock(any(String.class))).thenReturn(lock);
+        when(redissonClient.getFairLock(any(String.class))).thenReturn(lock);
         doNothing().when(lock).lock();
         RedisBaseDistributedLock distributedLock = new RedisBaseDistributedLock(redissonClient);
         distributedLock.lock("aa");
         distributedLock.unlock("aa");
         distributedLock.lock("aa");
         distributedLock.unlock("aa");
+        RedisLockTestBean bean1 = new RedisLockTestBean(1L,"Test");
+        distributedLock.lock(bean1);
+        distributedLock.unlock(bean1);
         assertThrows(Exception.class,()->distributedLock.unlock("bb"));
     }
 }

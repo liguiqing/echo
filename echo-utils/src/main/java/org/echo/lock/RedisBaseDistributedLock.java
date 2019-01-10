@@ -1,12 +1,12 @@
 package org.echo.lock;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import lombok.AllArgsConstructor;
 import org.echo.util.RedisClientUtils;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 
-import java.util.Optional;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -25,7 +25,7 @@ public class RedisBaseDistributedLock implements DistributedLock<Object> {
 
     private RedissonClient redissonClient;
 
-    private static final ConcurrentMap<Object, Optional<Lock>> locks = Maps.newConcurrentMap();
+    private static final ConcurrentMap<Object, Lock> locks = Maps.newConcurrentMap();
 
     public RedisBaseDistributedLock(RedissonClient redissonClient) {
         this.redissonClient = redissonClient;
@@ -33,29 +33,27 @@ public class RedisBaseDistributedLock implements DistributedLock<Object> {
 
     @Override
     public void lock(Object key){
-        this.getLock(key.toString()).ifPresent(Lock::lock);
+        locks.putIfAbsent(key,newLock(key));
+        locks.get(key).lock();
     }
 
     @Override
     public void unlock(Object key){
-        locks.get(key).ifPresent(Lock::unlock);
+        Lock lock = locks.get(key);
         locks.remove(key);
+        Preconditions.checkNotNull(lock);
+        lock.unlock();
     }
 
-    private  Optional<Lock> getLock(Object key){
-        locks.putIfAbsent(key, newLock(key));
-        return locks.get(key);
-    }
-
-    private Optional<Lock> newLock(Object key) {
+    private Lock newLock(Object key) {
         if (RedisClientUtils.isAlive(this.redissonClient)) {
-            return Optional.of(getRLock(key.toString()));
+            return getRLock(key.toString());
         }
-        return Optional.of(new ReentrantLock());
+        return new ReentrantLock();
     }
 
     private RLock getRLock(String key){
-        return redissonClient.getLock(getKey(key));
+        return redissonClient.getFairLock(getKey(key));
     }
 
     private String getKey(String key){
