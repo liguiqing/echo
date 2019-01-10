@@ -3,6 +3,7 @@ package org.echo.shiro.cache;
 import lombok.AllArgsConstructor;
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheException;
+import org.echo.spring.cache.NativeCaches;
 
 import java.util.Collection;
 import java.util.Set;
@@ -40,16 +41,16 @@ public class SpringCache<K, V> implements Cache<K, V> {
 
     @Override
     public int size() {
-        return 0;
+        return NativeCaches.size(this.springCache);
     }
 
     @Override
     public Set<K> keys() {
-        return null;
+        return NativeCaches.keys(this.springCache);
     }
 
     @Override
     public Collection<V> values() {
-        return null;
+        return NativeCaches.values(this.springCache);
     }
 }

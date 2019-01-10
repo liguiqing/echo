@@ -8,6 +8,7 @@ import org.apache.shiro.realm.Realm;
 import org.apache.shiro.session.mgt.SessionFactory;
 import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.session.mgt.SessionValidationScheduler;
+import org.apache.shiro.session.mgt.SimpleSessionFactory;
 import org.apache.shiro.session.mgt.eis.EnterpriseCacheSessionDAO;
 import org.apache.shiro.session.mgt.eis.SessionDAO;
 import org.apache.shiro.session.mgt.eis.SessionIdGenerator;
@@ -19,7 +20,6 @@ import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.servlet.Cookie;
 import org.apache.shiro.web.servlet.SimpleCookie;
 import org.echo.shiro.cache.SpringCacheManager;
-import org.echo.shiro.session.mgt.StatelessSessionFactory;
 import org.echo.shiro.session.mgt.eis.SessionIdGeneratorIterator;
 import org.echo.shiro.web.session.mgt.StatelessSessionManager;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
@@ -149,7 +149,7 @@ public class ShiroConfiguration {
 
     @Bean
     public SessionFactory sessionFactory(){
-        return new StatelessSessionFactory();
+        return new SimpleSessionFactory();
     }
 
     @Bean

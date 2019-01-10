@@ -9,6 +9,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author Liguiqing
@@ -32,7 +33,7 @@ public class ShiroProperties {
             return defaultCacheName(cacheName);
         }
         CacheProperties cacheProperties = cachePropertiesMap.get(cacheName);
-        if(cacheProperties != null){
+        if(Objects.isNull(cacheProperties)){
             return defaultCacheName(cacheName);
         }
         return springCacheName(cacheName, cacheProperties.getMaxIdleSecond());

@@ -33,7 +33,7 @@ public class StatelessSessionManager extends DelegateWebSessionManager {
     }
 
     public StatelessSessionManager(DefaultWebSessionManager delegate) {
-        this(delegate,"sessionToken","Stateless request");
+        this(delegate,"x-auth-token","Stateless request");
     }
 
     public StatelessSessionManager(DefaultWebSessionManager delegate, String sessionToken, String referencedSessionIdSource) {
@@ -65,6 +65,7 @@ public class StatelessSessionManager extends DelegateWebSessionManager {
             request.setAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_ID_SOURCE, referencedSessionIdSource);
             request.setAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_ID, id);
             request.setAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_ID_IS_VALID, Boolean.TRUE);
+            request.setAttribute(ShiroHttpServletRequest.SESSION_ID_URL_REWRITING_ENABLED, Boolean.FALSE);
             log.debug("Stateless Session Id {}",id);
             return id;
         }

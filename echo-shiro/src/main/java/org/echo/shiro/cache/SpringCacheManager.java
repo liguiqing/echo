@@ -24,6 +24,6 @@ public class SpringCacheManager extends AbstractCacheManager {
     protected Cache createCache(String name) throws CacheException {
         String springCacheName = properties.getCacheName(name);
         org.springframework.cache.Cache springCache =  cacheManager.getCache(springCacheName);
-        return new SpringCache<>(springCache);
+        return new SpringCache(springCache);
     }
 }
