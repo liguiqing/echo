@@ -19,10 +19,10 @@ class ShiroPropertiesTest {
         assertEquals("test#"+sp.getMaxIdleSecond()+"#"+sp.getMaxIdleSecond()+"#2",sp.getCacheName("test"));
         sp.setMaxIdleSecond(1);
         assertEquals("test#"+sp.getMaxIdleSecond()+"#"+sp.getMaxIdleSecond()+"#2",sp.getCacheName("test"));
-        HashMap<String,CacheProperties> expires = new HashMap<>();
-        expires.put("test1", new CacheProperties("test1",1));
-        expires.put("test2", new CacheProperties("test2",0));
-        expires.put("test3", new CacheProperties("test3",-1));
+        HashMap<String,Long> expires = new HashMap<>();
+        expires.put("test1", 1L);
+        expires.put("test2", 0L);
+        expires.put("test3", -1L);
         sp.setCachePropertiesMap(expires);
         assertEquals("test1#1#1#2",sp.getCacheName("test1"));
         assertEquals("test2#0#0#2",sp.getCacheName("test2"));

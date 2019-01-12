@@ -26,17 +26,17 @@ public class ShiroProperties {
 
     private long maxIdleSecond = 12000;
 
-    private Map<String,CacheProperties> cachePropertiesMap;
+    private Map<String,Long> cachePropertiesMap;
 
     public String getCacheName(String cacheName){
-        if(cachePropertiesMap == null){
+        if(this.cachePropertiesMap == null){
             return defaultCacheName(cacheName);
         }
-        CacheProperties cacheProperties = cachePropertiesMap.get(cacheName);
-        if(Objects.isNull(cacheProperties)){
+        Long maxIdleSecond = this.getCachePropertiesMap().get(cacheName);
+        if(Objects.isNull(maxIdleSecond)){
             return defaultCacheName(cacheName);
         }
-        return springCacheName(cacheName, cacheProperties.getMaxIdleSecond());
+        return springCacheName(cacheName, maxIdleSecond);
     }
 
     private String defaultCacheName(String cacheName){

@@ -1,5 +1,6 @@
 package org.echo.shiro.config;
 
+import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.cache.CacheManager;
@@ -16,21 +17,28 @@ import org.apache.shiro.session.mgt.quartz.QuartzSessionValidationScheduler;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
+import org.apache.shiro.web.filter.authc.FormAuthenticationFilter;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.servlet.Cookie;
 import org.apache.shiro.web.servlet.SimpleCookie;
+import org.echo.shiro.authc.credential.MD5PasswordEncoder;
+import org.echo.shiro.authc.credential.PasswordCredentialsMatcher;
 import org.echo.shiro.cache.SpringCacheManager;
+import org.echo.shiro.realm.PrimusRealm;
 import org.echo.shiro.session.mgt.eis.SessionIdGeneratorIterator;
-import org.echo.shiro.web.session.mgt.StatelessSessionManager;
+import org.echo.shiro.web.session.mgt.StatelessWebSessionManager;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.cache.caffeine.CaffeineCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.core.annotation.Order;
 import org.springframework.web.filter.DelegatingFilterProxy;
 
 import javax.servlet.DispatcherType;
@@ -57,6 +65,11 @@ public class ShiroConfiguration {
     @Autowired
     private ShiroProperties shiroProperties;
 
+    @Bean("shiroPlaceholder")
+    public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
+        return new PropertySourcesPlaceholderConfigurer();
+    }
+
     @Bean
     public FilterRegistrationBean filterRegistrationBean() {
         FilterRegistrationBean filterRegistration = new FilterRegistrationBean();
@@ -72,15 +85,15 @@ public class ShiroConfiguration {
                                               @Value("${shiro.filter.login.url:/index}") String loginUrl,
                                               @Value("${shiro.filter.unauthorized.url:/unauthorized}") String unauthorizedUrl,
                                               SecurityManager securityManager,
-                                              Map<String, Filter> filters){
+                                              Optional<Map<String, Filter>> filters){
         ShiroFilterFactoryBean filterFactory = new ShiroFilterFactoryBean();
         filterFactory.setSecurityManager(securityManager);
         filterFactory.setSuccessUrl(successUrl);
         filterFactory.setLoginUrl(loginUrl);
         filterFactory.setUnauthorizedUrl(unauthorizedUrl);
-        filterFactory.setFilters(filters);
+        filters.ifPresent(filters1->filterFactory.setFilters(filters1));
         Map<String,String> chains  = new HashMap<>();
-        //chains.put("/favicon.ico", "anon");
+        chains.put("/favicon.ico", "anon");
         chains.put("/static/**", "anon");
         chains.put("/logout", "logout");
         chains.put("/**", "user");
@@ -158,7 +171,8 @@ public class ShiroConfiguration {
                                          SessionDAO sessionDAO,
                                          Cookie cookie,
                                          SessionFactory sessionFactory){
-        StatelessSessionManager sessionManager = new StatelessSessionManager();
+        StatelessWebSessionManager sessionManager = new StatelessWebSessionManager();
+        sessionManager.validateSessions();
         sessionManager.setGlobalSessionTimeout(globalSessionTimeout);
         sessionManager.setDeleteInvalidSessions(true);
         sessionManager.setSessionValidationSchedulerEnabled(true);
@@ -172,7 +186,10 @@ public class ShiroConfiguration {
 
     @Bean
     public CacheManager shiroCacheManager(Optional<org.springframework.cache.CacheManager> springCacheManager){
-        return new SpringCacheManager(springCacheManager.get(),this.shiroProperties);
+        HashMap<String,org.springframework.cache.CacheManager> map = Maps.newHashMap();
+        map.put("a", new CaffeineCacheManager());
+        springCacheManager.ifPresent(sc->map.put("a",sc));
+        return new SpringCacheManager(map.get("a"),this.getShiroProperties());
     }
 
     @Bean
@@ -185,5 +202,38 @@ public class ShiroConfiguration {
         securityManager.setCacheManager(cacheManager);
         SecurityUtils.setSecurityManager(securityManager);
         return securityManager;
+    }
+
+    @Bean
+    public MD5PasswordEncoder md5PasswordEncoder(){
+        return new MD5PasswordEncoder();
+    }
+
+    @Bean
+    public PasswordCredentialsMatcher passwordCredentialsMatcher(MD5PasswordEncoder encoder){
+        return new PasswordCredentialsMatcher(encoder);
+    }
+
+    @Bean
+    @Order(100)
+    public Realm primusRealm(MD5PasswordEncoder encoder,PasswordCredentialsMatcher passwordCredentialsMatcher){
+        PrimusRealm realm =  new PrimusRealm(encoder);
+        realm.setCredentialsMatcher(passwordCredentialsMatcher);
+        return realm;
+    }
+
+    @Bean
+    public  Filter formAuthc(@Value("${shiro.authc.form.password.param:password}") String passwordParam,
+                             @Value("${shiro.authc.form.username.param:username}") String userNameParam){
+        FormAuthenticationFilter formAuthenticationFilter = new FormAuthenticationFilter();
+        formAuthenticationFilter.setPasswordParam(passwordParam);
+        formAuthenticationFilter.setUsernameParam(userNameParam);
+        return formAuthenticationFilter;
+    }
+
+    private ShiroProperties getShiroProperties(){
+        if(this.shiroProperties == null)
+            this.shiroProperties = new ShiroProperties();
+        return this.shiroProperties;
     }
 }

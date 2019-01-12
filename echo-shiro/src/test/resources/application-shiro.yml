@@ -1,4 +1,6 @@
 shiro:
+  maxIdleSecond : 1800
+  cachePropertiesMap: {Test1:1800}
   filter:
     success:
       url: /home

@@ -31,7 +31,7 @@ public interface IdDbVendorAdapter {
                     long idSeq = rs.getLong("idSeq");
                     rs.updateLong("idSeq",idSeq + 1);
                     con.commit();
-                    return prefix_.concat(""+idSeq);
+                    return prefix_.concat(Long.toString(idSeq));
                 }
             }
             return prefix_.concat("0");

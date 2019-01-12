@@ -49,18 +49,12 @@ public class EnumFieldConverter implements UserType, DynamicParameterizedType {
 
     //是否相等，不相等会触发JPA update操作
     @Override
-    public boolean equals(Object x, Object y) throws HibernateException {
-        if (x == null && y == null) {
-            return true;
-        }
-        if ((x == null && y != null) || (x != null && y == null)) {
-            return false;
-        }
-        return x.equals(y);
+    public boolean equals(Object x, Object y)  {
+        return Objects.equals(x, y);
     }
 
     @Override
-    public int hashCode(Object x) throws HibernateException {
+    public int hashCode(Object x) {
         return x == null ? 0 : x.hashCode();
     }
 
@@ -87,15 +81,18 @@ public class EnumFieldConverter implements UserType, DynamicParameterizedType {
             }
 
         }
-        throw new RuntimeException(String.format("Unknown name value [%s] for enum class [%s]", value, enumClass.getName()));
+        throw new HibernateException(String.format("Unknown name value [%s] for enum class [%s]", value, enumClass.getName()));
     }
 
     @Override
     public void nullSafeSet(PreparedStatement st, Object value, int index, SharedSessionContractImplementor session) throws HibernateException, SQLException {
         if (value == null) {
             st.setNull(index, SQL_TYPES[0]);
+            return;
+
         } else if (value instanceof Integer) {
             st.setInt(index, (Integer) value);
+            return;
         } else {
             if(typeOf(value,Integer.class)){
                 st.setInt(index, (Integer) ((HibernateEnum) value).getValue());

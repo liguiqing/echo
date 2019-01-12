@@ -36,6 +36,6 @@ class JdbcStringIdentityGeneratorTest extends AbstractConfigurationsTest {
         JdbcStringIdentityGenerator jdbcStringIdentityGenerator = new JdbcStringIdentityGenerator(jdbcTemplate,idDbVendorAdapter);
         jdbcStringIdentityGenerator.createIdTable();
         String testId = jdbcStringIdentityGenerator.genId("TST");
-        assertTrue(testId.equals("TST1"));
+        assertTrue(testId.equals("TST0"));
     }
 }

@@ -1,5 +1,6 @@
 package org.echo.ddd.domain.entity;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -20,6 +21,7 @@ import javax.persistence.MappedSuperclass;
 @Getter
 @Setter
 @MappedSuperclass
+@EqualsAndHashCode(of = {"tid"})
 public abstract class PersistenceEntityObject extends EntityObject {
 
     @Id

@@ -7,7 +7,7 @@ import org.echo.hibernate.converter.HibernateEnum;
 import org.echo.sample.config.AppConfigurations;
 import org.echo.share.config.CacheConfigurations;
 import org.echo.share.config.DataSourceConfigurations;
-import org.echo.spring.cache.secondary.SecondaryCacheAutoConfiguration;
+import org.echo.spring.cache.config.SecondaryCacheAutoConfiguration;
 import org.echo.test.repository.AbstractRepositoryTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -65,7 +65,7 @@ class ExamRepositoryTest extends AbstractRepositoryTest {
         for(int i =1000;i>0;i--){
             repository.loadOf(examId);
         }
-        Identity projectId2 = Identities.genId("PRJ", AssociationId.class);
+        Identity<String> projectId2 = Identities.genId("PRJ", AssociationId.class);
         exam1.joinProject(projectId2);
         repository.save(exam1);
         Exam exam2 = repository.loadOf(examId);

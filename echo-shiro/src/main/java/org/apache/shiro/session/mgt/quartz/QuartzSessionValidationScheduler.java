@@ -46,7 +46,8 @@ public class QuartzSessionValidationScheduler implements SessionValidationSchedu
         }  
         return this.scheduler;  
     }
-  
+
+    @Override
     public void enableSessionValidation() {
         log.debug("Scheduling session validation job using Quartz with session validation interval of [{}]ms...",this.sessionValidationInterval);
 
@@ -71,7 +72,8 @@ public class QuartzSessionValidationScheduler implements SessionValidationSchedu
             log.error("Error starting the Quartz session validation job.  Session validation may not occur.", e);
         }  
     }  
-  
+
+    @Override
     public void disableSessionValidation() {
         log.debug("Stopping Quartz session validation job...");
         try {  

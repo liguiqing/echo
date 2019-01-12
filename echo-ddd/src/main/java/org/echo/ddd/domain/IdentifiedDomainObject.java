@@ -12,7 +12,7 @@ import java.io.Serializable;
  * @author Liguiqing
  * @since V1.0
  */
-
+@FunctionalInterface
 public interface IdentifiedDomainObject extends Serializable {
 
     Serializable getId();

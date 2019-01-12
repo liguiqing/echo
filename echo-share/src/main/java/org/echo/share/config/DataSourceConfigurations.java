@@ -2,6 +2,7 @@ package org.echo.share.config;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import lombok.extern.slf4j.Slf4j;
+import org.echo.exception.ThrowableToString;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -37,9 +38,9 @@ public class DataSourceConfigurations {
         dsLookup.setResourceRef(true);
         try{
             log.debug("Get DataSource from jndi {}",jdbcJndiName);
-            DataSource dataSource = dsLookup.getDataSource("java:comp/env/jdbc/"+jdbcJndiName);
-            return dataSource;
+            return dsLookup.getDataSource("java:comp/env/jdbc/"+jdbcJndiName);
         }catch (Exception e){
+            log.warn(ThrowableToString.toString(e));
             log.debug("DataSource not found with jndi {}",jdbcJndiName);
         }
 
@@ -129,7 +130,6 @@ public class DataSourceConfigurations {
         jpaProperties.setProperty("hibernate.jdbc.batch_size",batchSize);
         jpaProperties.setProperty("hibernate.jdbc.fetch_size",fetchSize);
         jpaProperties.setProperty("hibernate.max_fetch_depth",fetchDepth);
-        //jpaProperties.setProperty("hibernate.cache.region.factory_class","org.hibernate.cache.ehcache.EhCacheRegionFactory");
         return jpaProperties;
     }
 }

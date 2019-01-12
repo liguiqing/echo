@@ -1,6 +1,7 @@
 package org.echo.ddd.domain.id;
 
 import lombok.extern.slf4j.Slf4j;
+import org.echo.exception.ThrowableToString;
 
 import java.io.Serializable;
 
@@ -32,10 +33,9 @@ public class Identities {
             Identity id = clazz.newInstance();
             id.setId(generator.genId(prefix));
             return (T)id;
-        } catch (InstantiationException e) {
-            throw new IllegalArgumentException();
-        } catch (IllegalAccessException e) {
-            throw new IllegalArgumentException();
+        } catch (InstantiationException | IllegalAccessException e) {
+            log.error(ThrowableToString.toString(e));
+            throw new IllegalArgumentException(e);
         }
     }
 }

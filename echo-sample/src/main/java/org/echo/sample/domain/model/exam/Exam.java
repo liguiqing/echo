@@ -27,7 +27,7 @@ import java.time.LocalDateTime;
  */
 @NoArgsConstructor
 @Getter
-@EqualsAndHashCode(of="examId")
+@EqualsAndHashCode(of="examId",callSuper = false)
 @ToString(of={"examId","scope"})
 @Entity
 @Table(name = "t_ps_Exam")
