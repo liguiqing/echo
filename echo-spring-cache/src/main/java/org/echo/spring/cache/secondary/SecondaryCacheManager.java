@@ -179,7 +179,8 @@ public class SecondaryCacheManager extends AbstractTransactionSupportingCacheMan
      */
     private long getMaxIdleSecond(String[] cacheParams) {
         if (cacheParams.length > 2) {
-            return toLong(cacheParams[2]);
+            long maxIdl =  toLong(cacheParams[2]);
+            return maxIdl > 0 ?maxIdl:0;
         }
         // 默认是0
         return cacheProperties.getDefaultTtl();
@@ -192,7 +193,7 @@ public class SecondaryCacheManager extends AbstractTransactionSupportingCacheMan
                 s = beanFactory.resolveEmbeddedValue(s);
             }
         }
-        return NumbersUtil.stringToLong(s);
+        return NumbersUtil.stringToLong(s,0L);
     }
 
     /**

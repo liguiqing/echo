@@ -79,7 +79,13 @@ public class RedisCacheFactory implements CacheFactory {
     @Override
     public Cache newCache(String name, long ttl, long maxIdleSecond) {
         if(redissonClient != null){
-            CacheConfig config = new CacheConfig(ttl * 1000,maxIdleSecond *1000);
+            if(ttl < 0)
+                ttl = 0;
+
+            if(maxIdleSecond < 0)
+                maxIdleSecond = 0;
+
+            CacheConfig config = new CacheConfig(ttl * 1000,maxIdleSecond * 1000);
             RMapCache<Object,Object> map = redissonClient.getMapCache(getRedissonCacheName(name),new FstCodec());
             return new RedissonCache(map, config, cacheProperties.isCacheNullValues());
         }

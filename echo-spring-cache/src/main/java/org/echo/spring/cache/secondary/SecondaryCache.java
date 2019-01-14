@@ -222,11 +222,12 @@ public class SecondaryCache extends AbstractValueAdaptingCache {
         if(this.hasCache2()){
             Object o = this.cacheL2.get(key);
 
-            if(o != null)
-                log.debug("Hit by key [{}] from level2 in cache [{}]", key,this.name);
-            else
+            if(o != null) {
+                log.debug("Hit by key [{}] from level2 in cache [{}]", key, this.name);
+                return (o instanceof ValueWrapper) ?((ValueWrapper)o).get():o;
+            }else {
                 log.debug("Don't hit by key [{}] from level2 in cache [{}]", key,this.name);
-            return (o instanceof ValueWrapper) ?((ValueWrapper)o).get():o;
+            }
         }
         return null;
     }
