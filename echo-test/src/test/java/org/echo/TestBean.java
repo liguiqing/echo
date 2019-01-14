@@ -2,6 +2,7 @@ package org.echo;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Component;
  */
 @Getter
 @Setter
+@Accessors(chain = true)
 @Component
 @ConfigurationProperties(prefix = "test")
 public class TestBean {
@@ -22,6 +24,6 @@ public class TestBean {
     @Getter
     @Setter
     public class Caffeine{
-        long expireAfterAccess;
+        long expireAfterAccess = 1L;
     }
 }

@@ -3,6 +3,7 @@ package org.echo.test.web;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.junit.jupiter.api.BeforeAll;
@@ -24,6 +25,9 @@ import java.util.Collection;
 import java.util.List;
 
 /**
+ * Spring Controller Test 超类
+ *
+ *
  * @author Liguiqing
  * @since V1.0
  */
@@ -38,15 +42,17 @@ public abstract class AbstractSpringControllerTest {
         MockitoAnnotations.initMocks(this);
     }
 
-    protected void injectNoneFielsInConstructor(Object controller, Collection<FieldMapping> fieldMappings){
-        fieldMappings.forEach(m->{
-            try {
-                FieldUtils.writeField(controller,m.field,m.object,true);
-            } catch (IllegalAccessException e) {
-                logger.error(e.getLocalizedMessage());
-            }
-        });
+    protected void injectNoneFieldsInConstructor(Object object, Collection<FieldMapping> fieldMappings){
+        fieldMappings.forEach(m->writField(object, m));
+    }
 
+    private void writField(Object o,FieldMapping m){
+        try {
+            FieldUtils.writeField(o,m.getField(),m.getObject(),true);
+        } catch (IllegalAccessException e) {
+            logger.error(e.getLocalizedMessage());
+            throw new ControllerTestException(e);
+        }
     }
 
     protected void applyController(Object... controller){
@@ -99,20 +105,13 @@ public abstract class AbstractSpringControllerTest {
         return c1;
     }
 
-    protected String toJsonString(Object o)throws Exception{
+    protected String toJsonString(Object o){
         ObjectMapper mapper = new ObjectMapper();
-        String content = mapper.writeValueAsString(o);
-        return content;
-    }
-
-    protected class FieldMapping{
-        private String field;
-
-        private Object object;
-
-        public FieldMapping(String field, Object object){
-            this.field = field;
-            this.object = object;
+        try {
+            return mapper.writeValueAsString(o);
+        } catch (JsonProcessingException e) {
+            logger.error(e.getMessage());
+            throw new ControllerTestException(e);
         }
     }
 

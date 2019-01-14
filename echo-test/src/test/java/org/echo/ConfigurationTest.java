@@ -1,6 +1,7 @@
 package org.echo;
 
 import lombok.extern.slf4j.Slf4j;
+import org.echo.test.config.AbstractConfigurationsTest;
 import org.echo.test.config.JunitTestConfigurations;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -30,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @Configuration
 @EnableConfigurationProperties(TestBean.class)
 
-public class ConfigurationTest {
+public class ConfigurationTest extends AbstractConfigurationsTest {
     @Autowired
     Environment env;
 
