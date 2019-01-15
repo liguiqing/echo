@@ -5,6 +5,7 @@ import org.echo.test.config.AbstractConfigurationsTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.interceptor.KeyGenerator;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.ContextHierarchy;
@@ -21,15 +22,19 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
         DataSourceConfigurations.class
 }))
 @Slf4j
-@DisplayName("Echo : Share module Configurations test")
+@DisplayName("Echo : Share module Configurations exec")
 public class ConfigurationsTest extends AbstractConfigurationsTest {
 
     @Autowired
     JdbcTemplate jdbcTemplate;
 
+    @Autowired
+    KeyGenerator keyGenerator;
+
     @Test
     public void test(){
         log.debug("I will testing ...");
         assertNotNull(jdbcTemplate);
+        assertNotNull(keyGenerator);
     }
 }

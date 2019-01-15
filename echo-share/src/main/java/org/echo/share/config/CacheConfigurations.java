@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Primary;
 
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 /**
@@ -26,25 +27,27 @@ import java.util.stream.Stream;
 @EnableCaching
 public class CacheConfigurations extends CachingConfigurerSupport {
 
+    private static Object generate(Object o, Method method, Object... objects) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(o.getClass().getName());
+        sb.append(method.getName());
+        Stream.of(objects).forEach(oo -> sb.append(oo.toString()));
+        return sb.toString();
+    }
+
     @Bean
     @Primary
-    public CacheManager cacheManager(List<CacheManager> managers) {
+    public CacheManager cacheManager(Optional<List<CacheManager>> managers) {
         log.debug("Create Cache ");
 
         CompositeCacheManager cacheManager = new CompositeCacheManager();
-        cacheManager.setCacheManagers(managers);
+        managers.ifPresent(manager->cacheManager.setCacheManagers(manager));
         cacheManager.setFallbackToNoOpCache(true);
         return cacheManager;
     }
 
     @Bean
     public KeyGenerator keyGenerator() {
-        return (Object o, Method method, Object... objects)->{
-            StringBuilder sb = new StringBuilder();
-            sb.append(o.getClass().getName());
-            sb.append(method.getName());
-            Stream.of(objects).forEach(oo->sb.append(oo.toString()));
-            return sb.toString();
-        };
+        return CacheConfigurations::generate;
     }
 }
