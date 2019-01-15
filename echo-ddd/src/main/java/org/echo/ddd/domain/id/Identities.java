@@ -14,6 +14,10 @@ import java.io.Serializable;
 @Slf4j
 public class Identities {
 
+    private Identities(){
+        throw new AssertionError("No org.echo.ddd.domain.id.Identities instances for you!");
+    }
+
     private static IdentityGenerator generator = new IdentityGenerator<String,String>(){};
 
     public static void setGenerator(IdentityGenerator generator){
@@ -33,7 +37,7 @@ public class Identities {
             Identity id = clazz.newInstance();
             id.setId(generator.genId(prefix));
             return (T)id;
-        } catch (InstantiationException | IllegalAccessException e) {
+        } catch (Exception e) {
             log.error(ThrowableToString.toString(e));
             throw new IllegalArgumentException(e);
         }

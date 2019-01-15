@@ -1,9 +1,10 @@
 package org.echo.ddd.domain.id;
 
+import org.echo.test.PrivateConstructors;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Copyright (c) 2016,$today.year, 深圳市易考试乐学测评有限公司
@@ -17,7 +18,9 @@ class IdentitiesTest {
         assertTrue(id1.startsWith("i1"));
         String id2 = Identities.genId();
         assertTrue(id2.length()==32);
-
+        assertTrue(Identities.genId("ABD",AssociationId.class).getId().startsWith("ABD"));
+        assertFalse(Identities.genId(null,AssociationId.class).getId().startsWith("ABD"));
+        assertFalse(Identities.genId(123,AssociationId.class).getId().startsWith("ABD"));
         IdentityGenerator ig = new IdentityGenerator<Long,Long>(){
             @Override
             public Long genId() {
@@ -34,5 +37,7 @@ class IdentitiesTest {
         assertTrue(id3 == 10000L);
         Long id4 = Identities.genId(10L);
         assertTrue(id4.compareTo(10010L) == 0);
+        assertThrows(IllegalArgumentException.class, () -> assertFalse(Identities.genId(123, AssociationId.class).getId().startsWith("ABD")));
+        assertThrows(Exception.class,()->new PrivateConstructors().exec(Identities.class));
     }
 }

@@ -5,25 +5,29 @@ import org.echo.test.config.AbstractConfigurationsTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.ContextHierarchy;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Copyright (c) 2016,$today.year, 深圳市易考试乐学测评有限公司
  **/
 @ContextHierarchy(@ContextConfiguration(
+        initializers = {ConfigFileApplicationContextInitializer.class},
         classes = {
                 DataSourceConfigurations.class
         }))
 @Transactional
+@TestPropertySource(properties = {"spring.config.location = classpath:/application-ddd.yml"})
 @Rollback
-@DisplayName("Echo : JdbcStringIdentityGenerator test")
+@DisplayName("Echo : JdbcStringIdentityGenerator exec")
 class JdbcStringIdentityGeneratorTest extends AbstractConfigurationsTest {
 
     @Autowired
