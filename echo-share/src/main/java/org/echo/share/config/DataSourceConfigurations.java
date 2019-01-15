@@ -31,7 +31,7 @@ import java.util.Properties;
 public class DataSourceConfigurations {
 
     @Bean("dataSource")
-    public DataSource dataSource(DataSourceProperties dataSourceProperties) throws SQLException {
+    public DataSource dataSource(DataSourceProperties dataSourceProperties)throws SQLException{
 
         final JndiDataSourceLookup dsLookup = new JndiDataSourceLookup();
         String jdbcJndiName = dataSourceProperties.getJndiName();
@@ -48,7 +48,7 @@ public class DataSourceConfigurations {
         String username = dataSourceProperties.getUsername();
         String password = dataSourceProperties.getPassword();
 
-        log.debug("Create DataSource {} {} {}",url,username,password);
+        log.debug("Create DataSource {} {} {}", url, username, password);
         DruidDataSource druidDataSource = new DruidDataSource();
         druidDataSource.setUrl(url);
         druidDataSource.setUsername(username);
@@ -71,8 +71,7 @@ public class DataSourceConfigurations {
 
     @Bean("jdbcTemplate")
     public JdbcTemplate jdbcTemplate(DataSource dataSource) {
-        JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
-        return jdbcTemplate;
+        return new JdbcTemplate(dataSource);
     }
 
     @Bean("jpaVendorAdapter")
@@ -110,8 +109,7 @@ public class DataSourceConfigurations {
 
     @Bean("transactionManager")
     public PlatformTransactionManager transactionManager(EntityManagerFactory emf){
-        JpaTransactionManager transactionManager = new JpaTransactionManager(emf);
-        return transactionManager;
+        return new JpaTransactionManager(emf);
     }
 
     @Bean

@@ -1,4 +1,4 @@
-package org.echo.share.config;
+package org.echo.spring.cache.config;
 
 
 import lombok.extern.slf4j.Slf4j;
@@ -41,12 +41,13 @@ public class CacheConfigurations extends CachingConfigurerSupport {
         log.debug("Create Cache ");
 
         CompositeCacheManager cacheManager = new CompositeCacheManager();
-        managers.ifPresent(manager->cacheManager.setCacheManagers(manager));
+        managers.ifPresent(cacheManager::setCacheManagers);
         cacheManager.setFallbackToNoOpCache(true);
         return cacheManager;
     }
 
     @Bean
+    @Override
     public KeyGenerator keyGenerator() {
         return CacheConfigurations::generate;
     }
