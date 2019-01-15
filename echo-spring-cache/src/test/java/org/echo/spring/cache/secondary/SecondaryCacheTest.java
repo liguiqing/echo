@@ -1,5 +1,6 @@
 package org.echo.spring.cache.secondary;
 
+import org.echo.spring.cache.NativeCaches;
 import org.echo.spring.cache.message.CacheMessagePusher;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -43,11 +44,11 @@ class SecondaryCacheTest {
         cache.clearLocal("Test");
         cache.clearLocal(null);
         cache.clear();
-        assertEquals(0,cache.size());
-        assertEquals(0,cache.keys().size());
-        assertEquals(0,cache.values().size());
+        assertEquals(0, NativeCaches.size(cache));
+        assertEquals(0,NativeCaches.keys(cache).size());
+        assertEquals(0,NativeCaches.values(cache).size());
 
-        cache.put("Test","test");
+        cache.put("Test","exec");
         cache.putIfAbsent("Test","Test");
         cache.putIfAbsent("Test",null);
 
@@ -55,5 +56,35 @@ class SecondaryCacheTest {
         SecondaryCache cache1 = new SecondaryCache("Test",l1,l2,secondaryCacheProperties,pusher);
         assertNull(cache1.putIfAbsent("Test",null));
         cache1.put("Test",null);
+
+        Cache l11 = mock(Cache.class);
+        Cache l22 = mock(Cache.class);
+        when(l22.get("Test")).thenReturn(value);
+        when(l11.get("Test")).thenReturn(value);
+        SecondaryCache cache2 = new SecondaryCache("Cache2",l11,l22,secondaryCacheProperties,pusher);
+        cache2.close(0);
+        assertEquals(value.get(),cache2.get("Test").get());
+        cache2.close(1);
+        assertEquals(value.get(),cache2.get("Test").get());
+        cache2.close(2);
+        assertNull(cache2.get("Test"));
+        cache2.open(0);
+        assertNull(cache2.get("Test"));
+        cache2.open(2);
+        assertEquals(value.get(),cache2.get("Test").get());
+        cache2.close(2);
+        assertNull(cache2.get("Test"));
+        cache2.open(1);
+        assertEquals(value.get(),cache2.get("Test").get());
+        cache2.close(1);
+        assertNull(cache2.get("Test"));
+        when(l22.get("Test")).thenReturn(value);
+        when(l11.get("Test")).thenReturn(value).thenReturn(null);
+        cache2.open(9);
+        assertEquals(value.get(),cache2.get("Test").get());
+        assertEquals(value.get(),cache2.get("Test").get());
+        cache2.close(9);
+        assertNull(cache2.get("Test"));
+        assertNull(cache2.get("Test"));
     }
 }

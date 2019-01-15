@@ -15,6 +15,10 @@ import java.util.concurrent.TimeUnit;
 
 public class CaffeineCaches {
 
+    private CaffeineCaches() {
+        throw new AssertionError("No org.echo.spring.cache.caffeine.CaffeineCaches instances for you!");
+    }
+
     public static Cache newCache(CaffeineProperties properties) {
         Caffeine<Object, Object> cacheBuilder = Caffeine.newBuilder();
         if(properties.getExpireAfterAccess() > 0) {

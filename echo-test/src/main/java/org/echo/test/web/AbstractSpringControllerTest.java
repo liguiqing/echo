@@ -46,10 +46,10 @@ public abstract class AbstractSpringControllerTest {
         fieldMappings.forEach(m->writField(object, m));
     }
 
-    private void writField(Object o,FieldMapping m){
+    protected void writField(Object o,FieldMapping m){
         try {
             FieldUtils.writeField(o,m.getField(),m.getObject(),true);
-        } catch (IllegalAccessException e) {
+        } catch (Exception e) {
             logger.error(e.getLocalizedMessage());
             throw new ControllerTestException(e);
         }

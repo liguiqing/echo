@@ -48,6 +48,9 @@ jdbc:
   jndiName: testJndiDs
   url: jdbc:mysql://192.168.1.230:3306/echo?useUnicode=true&amp;characterEncoding=utf-8&amp;autoReconnect=true&amp;rewriteBatchedStatements=true
   username: root
+jpa:
+   unit:
+     name: hello
 hibernate:
   max_fetch_depth: 10
   dialect: org.hibernate.dialect.MySQL5InnoDBDialect

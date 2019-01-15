@@ -29,6 +29,24 @@ public class CacheMessage implements Serializable {
     /** 待处理的缓存key **/
     private Object key;
 
+    /** 关闭/打开缓存级别:0< 打开;0>关闭;  -9打开所有;9关闭所有**/
+    private int closedLevel;
+
+    public CacheMessage(String identifier, String cacheName, Object key) {
+        this.identifier = identifier;
+        this.cacheName = cacheName;
+        this.key = key;
+        this.closedLevel = 0;
+    }
+
+    public boolean isClosed(){
+        return this.closedLevel > 0 ;
+    }
+
+    public boolean isOpen(){
+        return this.closedLevel < 0;
+    }
+
     public boolean sameOfIdentifier(String identifier){
         return this.identifier.equals(identifier);
     }

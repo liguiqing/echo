@@ -15,7 +15,7 @@ import static org.mockito.Mockito.when;
 /**
  * Copyright (c) 2016,$today.year, 深圳市易考试乐学测评有限公司
  **/
-@DisplayName("PrimusRealm test")
+@DisplayName("PrimusRealm exec")
 class PrimusRealmTest {
 
     @Test

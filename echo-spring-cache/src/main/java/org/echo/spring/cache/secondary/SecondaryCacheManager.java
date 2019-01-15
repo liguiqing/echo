@@ -13,12 +13,14 @@ import org.springframework.cache.transaction.AbstractTransactionSupportingCacheM
 import org.springframework.util.StringUtils;
 
 import java.util.Collection;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 /**
  *
- * 两级缓存管理器.
+ * 两级缓存管理器.可以运行时打开或者关闭任意一级.
+ *
  * 实现了在Spring Cache配置中对key进行超时及空闲时间控制(时间单位:秒).<br/>
  * 使用超时或者空闲时间配置方式如下:<br/>
  * <pre>
@@ -91,8 +93,85 @@ public class SecondaryCacheManager extends AbstractTransactionSupportingCacheMan
         return cacheMap.values();
     }
 
+    /**
+     * 打开所有level级别的缓存
+     *
+     * @param level 1-9, open all Levels if 9
+     */
+    public void openAll(int level){
+        getCacheNames().forEach(cacheName->open(cacheName,level));
+    }
+
+    /**
+     * 打开所有同名同级别缓存
+     *
+     * @param cacheName Cache that will be opened
+     * @param level 1-9. close all Levels if 9
+     */
+    public void open(String cacheName,int level){
+        if(level <= 0 )
+            return;
+
+        closeOrOpen(cacheName,level * -1);
+    }
+
+    /**
+     * 关闭所有level级别的缓存
+     *
+     * @param level 1-9, close all Levels if 9
+     */
+    public void closeAll(int level){
+        getCacheNames().forEach(cacheName->close(cacheName,level));
+    }
+
+    /**
+     * 关闭所有同名同级别缓存
+     *
+     * @param cacheName Cache that will be closed
+     * @param level 1-9. close all Levels if 9
+     */
+    public void close(String cacheName,int level){
+        if(level <= 0 )
+            return;
+
+        closeOrOpen(cacheName,level);
+    }
+
+    private void closeOrOpen(String cacheName,int level){
+        getNativeCache(cacheName).ifPresent(cache->{
+            String identifier = cache.getIdentifier();
+            if(level > 0){
+                cache.close(level);
+            }else{
+                cache.open(level * -1);
+            }
+            this.messagePusher.push(cacheProperties.getCacheMessageTopic(), new CacheMessage(identifier,cacheName,null,level));
+        });
+    }
+
+    /**
+     * 通过CacheMessage 自动关闭/打开缓存
+     *
+     * @param message CacheMessage
+     */
+    public void autoCloseOrOpen(CacheMessage message){
+        getNativeCache(message.getCacheName()).ifPresent(cache->{
+            if(!message.sameOfIdentifier(cache.getIdentifier())){
+                if(message.isClosed()){
+                    cache.close(message.getClosedLevel());
+                }else{
+                    cache.open(message.getClosedLevel());
+                }
+            }
+        });
+    }
+
     @Override
     public Cache getCache(String name) {
+        if (StringUtils.isEmpty(name)) {
+            return null;
+        }
+
         String[] cacheParams = name.split(SEPARATOR);
         String cacheName = cacheParams[0];
         if (StringUtils.isEmpty(cacheName)) {
@@ -116,27 +195,30 @@ public class SecondaryCacheManager extends AbstractTransactionSupportingCacheMan
         int level = getLevel(cacheParams);
 
         cache = createCache(cacheName, ttl, maxIdleSecond,level);
-        Cache oldCache = cacheMap.putIfAbsent(cacheName, cache);
+        cacheMap.put(cacheName, cache);
         log.debug("Create cache instance, the cache name is : {}", cacheName);
-        return oldCache == null ? cache : oldCache;
+        return cache;
+    }
+
+    private Optional<SecondaryCache> getNativeCache(String cacheName){
+        return Optional.ofNullable(cacheMap.get(cacheName));
     }
 
     @Override
     public Collection<String> getCacheNames() {
         return this.cacheMap.keySet();
     }
+
     public void clearLocal(CacheMessage message) {
         log.debug("Clear local {} cache",message.getCacheName());
 
         String cacheName = message.getCacheName();
         Object key = message.getKey();
-        SecondaryCache cache = cacheMap.get(cacheName);
-        if(cache == null) {
-            return ;
-        }
-
-        if(!message.sameOfIdentifier(cache.getIdentifier()))
-            cache.clearLocal(key);
+        getNativeCache(cacheName).ifPresent(cache->{
+            if(!message.sameOfIdentifier(cache.getIdentifier())){
+                cache.clearLocal(key);
+            }
+        });
     }
 
     public boolean hasTwoLevel(){

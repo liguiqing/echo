@@ -10,6 +10,7 @@ import org.echo.spring.cache.redis.RedisCacheProperties;
 import org.echo.spring.cache.redis.RedisNoneCache;
 import org.echo.spring.cache.secondary.SecondaryCache;
 import org.echo.spring.cache.secondary.SecondaryCacheProperties;
+import org.echo.test.PrivateConstructors;
 import org.echo.test.config.AbstractConfigurationsTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -65,7 +66,7 @@ class NativeCachesTest extends AbstractConfigurationsTest {
         CacheTestValue v11 = new CacheTestValue().setV1("v11").setV2(true).setV3(11);
         v1.addChild(v11);
 
-        CaffeineCache  caffeineCache = new CaffeineCache("test",CaffeineCaches.newCache(new CaffeineProperties()));
+        CaffeineCache  caffeineCache = new CaffeineCache("exec",CaffeineCaches.newCache(new CaffeineProperties()));
         assertEquals(0,NativeCaches.size(caffeineCache));
         caffeineCache.put(k1,v1);
         assertEquals(1,NativeCaches.size(caffeineCache));
@@ -75,7 +76,7 @@ class NativeCachesTest extends AbstractConfigurationsTest {
         assertFalse(NativeCaches.values(caffeineCache).contains(v2));
 
         RedisCacheFactory factory = new RedisCacheFactory(redissonClient,redisCacheProperties);
-        Cache redissonCache = factory.newCache("test", 10, 10);
+        Cache redissonCache = factory.newCache("exec", 10, 10);
         redissonClient.getMap(redissonCache.getName()).delete();
         assertEquals(0,NativeCaches.size(redissonCache));
         redissonCache.put(k1,v1);
@@ -88,14 +89,14 @@ class NativeCachesTest extends AbstractConfigurationsTest {
         redissonClient.getMap(redissonCache.getName()).delete();
         DistributedLock lock = mock(DistributedLock.class);
 
-        SecondaryCache sCache = SecondaryCache.onlyCache1("test", caffeineCache, secondaryCacheProperties, lock);
+        SecondaryCache sCache = SecondaryCache.onlyCache1("exec", caffeineCache, secondaryCacheProperties, lock);
         assertEquals(1,NativeCaches.size(sCache));
         assertTrue(NativeCaches.keys(sCache).contains(k1));
         assertFalse(NativeCaches.keys(sCache).contains(k2));
         assertTrue(NativeCaches.values(sCache).contains(v1));
         assertFalse(NativeCaches.values(sCache).contains(v2));
 
-        sCache = SecondaryCache.onlyCache2("test", caffeineCache, secondaryCacheProperties, lock);
+        sCache = SecondaryCache.onlyCache2("exec", caffeineCache, secondaryCacheProperties, lock);
         assertEquals(1,NativeCaches.size(sCache));
         assertTrue(NativeCaches.keys(sCache).contains(k1));
         assertFalse(NativeCaches.keys(sCache).contains(k2));
@@ -103,7 +104,7 @@ class NativeCachesTest extends AbstractConfigurationsTest {
         assertFalse(NativeCaches.values(sCache).contains(v2));
 
         CacheMessagePusher pusher = mock(CacheMessagePusher.class);
-        sCache = new SecondaryCache("test", caffeineCache,redissonCache, secondaryCacheProperties,pusher);
+        sCache = new SecondaryCache("exec", caffeineCache,redissonCache, secondaryCacheProperties,pusher);
         assertEquals(1,NativeCaches.size(sCache));
         assertTrue(NativeCaches.keys(sCache).contains(k1));
         assertFalse(NativeCaches.keys(sCache).contains(k2));
@@ -117,6 +118,6 @@ class NativeCachesTest extends AbstractConfigurationsTest {
         assertFalse(NativeCaches.values(noneCache).contains(v1));
         assertFalse(NativeCaches.values(noneCache).contains(v2));
 
-
+        assertThrows(Exception.class,()->new PrivateConstructors().exec(CaffeineCaches.class));
     }
 }

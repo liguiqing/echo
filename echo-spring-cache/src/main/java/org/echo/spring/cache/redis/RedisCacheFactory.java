@@ -72,24 +72,22 @@ public class RedisCacheFactory implements CacheFactory {
             return redisCacheManager.getCache(name);
         }catch (Exception e){
             log.warn(ThrowableToString.toString(e));
-            return new RedisNoneCache(false);
         }
+        return new RedisNoneCache(false);
     }
 
     @Override
     public Cache newCache(String name, long ttl, long maxIdleSecond) {
         if(redissonClient != null){
-            if(ttl < 0)
-                ttl = 0;
-
-            if(maxIdleSecond < 0)
-                maxIdleSecond = 0;
-
-            CacheConfig config = new CacheConfig(ttl * 1000,maxIdleSecond * 1000);
+            CacheConfig config = new CacheConfig(getValidTime(ttl),getValidTime(maxIdleSecond));
             RMapCache<Object,Object> map = redissonClient.getMapCache(getRedissonCacheName(name),new FstCodec());
             return new RedissonCache(map, config, cacheProperties.isCacheNullValues());
         }
         return newCache(name);
+    }
+
+    private long getValidTime(long time){
+        return time > 0 ? time*1000 : 0;
     }
 
 

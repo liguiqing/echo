@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Liguiqing
  * @since V3.0
  */
-@DisplayName("A org.echo.Junit5Test test case")
+@DisplayName("A org.echo.Junit5Test exec case")
 public class Junit5Test {
 
     @Test

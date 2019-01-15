@@ -20,6 +20,9 @@ import java.util.Set;
  */
 @Slf4j
 public class NativeCaches {
+    private NativeCaches() {
+        throw new AssertionError("No org.echo.spring.cache.NativeCaches instances for you!");
+    }
 
     public static int size(Cache cache) {
 

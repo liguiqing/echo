@@ -1,16 +1,14 @@
 package org.echo.test.web;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
 
 /**
  * @author Liguiqing
  * @since V3.0
  */
 @AllArgsConstructor
-@NoArgsConstructor
-@Data
+@Getter
 public class FieldMapping {
 
     private String field;

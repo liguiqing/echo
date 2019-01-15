@@ -10,11 +10,11 @@ import static org.mockito.Mockito.*;
 /**
  * Copyright (c) 2016,$today.year, 深圳市易考试乐学测评有限公司
  **/
-@DisplayName("Echo : Redis lock test")
+@DisplayName("Echo : Redis lock exec")
 public class RedisLockTest {
 
 
-    private String prefix = "echo:test:";
+    private String prefix = "echo:exec:";
 
     @Test
     public void test(){

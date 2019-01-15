@@ -357,6 +357,7 @@
                         </includes>
                         <excludes>
                             <exclude>**/Abstract*.java</exclude>
+                            <exclude>**/package-info.java</exclude>
                         </excludes>
                         <parallel>methods</parallel>
                         <threadCount>10</threadCount>
@@ -435,6 +436,7 @@
                 <configuration>
                     <excludes>
                         <exclude>**/Abstract*.class</exclude>
+                        <exclude>**/package-info.class</exclude>
                     </excludes>
                 </configuration>
             </plugin>

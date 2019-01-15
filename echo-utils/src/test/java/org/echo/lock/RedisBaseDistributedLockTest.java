@@ -12,7 +12,7 @@ import static org.mockito.Mockito.*;
 /**
  * Copyright (c) 2016,$today.year, 深圳市易考试乐学测评有限公司
  **/
-@DisplayName("Echo : RedisBaseDistributedLock test")
+@DisplayName("Echo : RedisBaseDistributedLock exec")
 class RedisBaseDistributedLockTest {
 
     @Test

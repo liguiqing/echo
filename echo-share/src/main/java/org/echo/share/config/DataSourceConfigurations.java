@@ -96,7 +96,11 @@ public class DataSourceConfigurations {
         //配置persistenceUnitName 必须使用JPA标准,在META-INF目录建立配置
         if(!"null".equalsIgnoreCase(persistenceUnitName) && persistenceUnitName.length() > 0) {
             entityManagerFactoryBean.setPersistenceUnitName(persistenceUnitName);
-            entityManagerFactoryBean.setPersistenceXmlLocation("classpath:META-INF/persistence.xml");
+            try {
+                entityManagerFactoryBean.setPersistenceXmlLocation("classpath:META-INF/persistence.xml");
+            }catch (Exception e){
+                log.warn(ThrowableToString.toString(e));
+            }
         }
         entityManagerFactoryBean.setPackagesToScan("org.echo.*.domain.model.**.*");
         entityManagerFactoryBean.setDataSource(dataSource);

@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 /**
  * Copyright (c) 2016,$today.year, 深圳市易考试乐学测评有限公司
  **/
-@DisplayName("Echo : NumbersUtil test")
+@DisplayName("Echo : NumbersUtil exec")
 class ThreadsTest {
     @Test
     void test(){

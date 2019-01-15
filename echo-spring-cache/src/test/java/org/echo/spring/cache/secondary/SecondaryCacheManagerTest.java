@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.*;
         })
 )
 @TestPropertySource(properties = {"spring.config.location = classpath:/application-cache.yml"})
-@DisplayName("Echo : SecondaryCacheManager test")
+@DisplayName("Echo : SecondaryCacheManager exec")
 public class SecondaryCacheManagerTest extends AbstractConfigurationsTest{
 
     @Autowired
@@ -60,6 +60,10 @@ public class SecondaryCacheManagerTest extends AbstractConfigurationsTest{
         assertNotNull(secondaryCacheManager);
         Collection<String> cacheNames = secondaryCacheManager.getCacheNames();
         assertEquals(0,cacheNames.size());
+
+        assertNull(secondaryCacheManager.getCache(null));
+        assertNull(secondaryCacheManager.getCache(""));
+        assertNull(secondaryCacheManager.getCache("#100#100"));
 
         Cache aCache = secondaryCacheManager.getCache("aCache#100#100");
         assertNotNull(aCache);
@@ -140,11 +144,53 @@ public class SecondaryCacheManagerTest extends AbstractConfigurationsTest{
         assertEquals(kb1,bCache.get("k1").get());
 
         bCache.clear();
+
+        Cache coCache = secondaryCacheManager.getCache("coCache");
+        Object o = coCache.get("co1", () -> "co1");
+        assertEquals("co1",o);
+        secondaryCacheManager.closeAll(1);
+        assertEquals(o,coCache.get("co1").get());
+        secondaryCacheManager.closeAll(2);
+        assertNull(coCache.get("co1"));
+        secondaryCacheManager.open("coCache",1);
+        assertEquals(o,coCache.get("co1",() -> "co1"));
+        secondaryCacheManager.closeAll(1);
+        assertNull(coCache.get("co1"));
+        secondaryCacheManager.open("coCache",2);
+        assertEquals(o,coCache.get("co1",() -> "co1"));
+        secondaryCacheManager.open("coCache",1);
+        assertEquals(o,coCache.get("co1").get());
+        assertEquals(o,coCache.get("co1").get());
+        secondaryCacheManager.closeAll(9);
+        assertNull(coCache.get("co1"));
+        secondaryCacheManager.openAll(9);
+        assertEquals(o,coCache.get("co1",() -> "co1"));
+        assertEquals(o,coCache.get("co1").get());
+        coCache.clear();
+
+        secondaryCacheManager.openAll(-1);
+        secondaryCacheManager.closeAll(-1);
+
+        secondaryCacheManager.autoCloseOrOpen(new CacheMessage("id","coCache","a",1));
+        secondaryCacheManager.autoCloseOrOpen(new CacheMessage("id","coCache","a",-1));
+        secondaryCacheManager.autoCloseOrOpen(new CacheMessage("id","coCache","a",0));
+
+        assertTrue(secondaryCacheManager.hasTwoLevel());
+
+        assertNotNull(secondaryCacheManager.getCache("cN1#1#1#1"));
+        assertNotNull(secondaryCacheManager.getCache("cN2#1#1#2"));
+        assertNotNull(secondaryCacheManager.getCache("cN3#1#1#-1"));
+        assertNotNull(secondaryCacheManager.getCache("cN4#${exec.ttl:1}#1#2"));
+        assertNotNull(secondaryCacheManager.getCache("cN5##1#2"));
+        String id = ((SecondaryCache)coCache).getIdentifier();
+        secondaryCacheManager.clearLocal(new CacheMessage(id,"coCache","k"));
+        secondaryCacheManager.clearLocal(new CacheMessage("id1","coCache","k"));
+        secondaryCacheManager.clearLocal(new CacheMessage("id2","coCache","k"));
     }
 
     @Test
     public void testRedissonCollections(){
-        String dequeueKey = "echo:catch:test:deKey1";
+        String dequeueKey = "echo:catch:exec:deKey1";
         RBlockingDeque deque = redissonClient.getBlockingDeque(dequeueKey);
         deque.clear();
         CacheTestBean tb1 = new CacheTestBean("f1",1,false, LocalDateTime.now());

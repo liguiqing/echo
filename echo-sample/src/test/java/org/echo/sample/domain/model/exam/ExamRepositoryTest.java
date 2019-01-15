@@ -5,7 +5,7 @@ import org.echo.ddd.domain.id.Identities;
 import org.echo.ddd.domain.id.Identity;
 import org.echo.hibernate.converter.HibernateEnum;
 import org.echo.sample.config.AppConfigurations;
-import org.echo.share.config.CacheConfigurations;
+import org.echo.spring.cache.config.CacheConfigurations;
 import org.echo.share.config.DataSourceConfigurations;
 import org.echo.spring.cache.config.SecondaryCacheAutoConfiguration;
 import org.echo.test.repository.AbstractRepositoryTest;
@@ -31,15 +31,15 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @ContextHierarchy(@ContextConfiguration(
         initializers = {ConfigFileApplicationContextInitializer.class},
         classes = {
-        DataSourceConfigurations.class,
-        SecondaryCacheAutoConfiguration.class,
-        CacheConfigurations.class,
-        AppConfigurations.class
+            DataSourceConfigurations.class,
+            SecondaryCacheAutoConfiguration.class,
+            CacheConfigurations.class,
+            AppConfigurations.class
         }))
 @TestPropertySource(properties = {"spring.config.location = classpath:/application-cache.yml"})
 @Transactional
 @Rollback
-@DisplayName("Echo : Exam module ExamRepository test")
+@DisplayName("Echo : Exam module ExamRepository exec")
 class ExamRepositoryTest extends AbstractRepositoryTest {
 
     @Value("${jdb.url}")

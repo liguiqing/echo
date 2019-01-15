@@ -126,8 +126,6 @@ public class SecondaryCacheAutoConfiguration {
     @ConditionalOnBean(SecondaryCacheManager.class)
     public RedisMessageListenerContainer redisMessageListenerContainer(RedisTemplate<Object, Object> redisTemplate,
                                                                        SecondaryCacheManager cacheManager) {
-        if(!cacheManager.hasTwoLevel())
-            return null;
         RedisMessageListenerContainer redisMessageListenerContainer = new RedisMessageListenerContainer();
         redisMessageListenerContainer.setConnectionFactory(Objects.requireNonNull(redisTemplate.getConnectionFactory()));
         RedisBaseCacheMessageListener cacheMessageListener = new RedisBaseCacheMessageListener(redisTemplate, cacheManager);

@@ -12,6 +12,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.ContextHierarchy;
 
 import javax.naming.NamingException;
+import javax.sql.DataSource;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -41,10 +42,12 @@ public class ConfigurationsTest extends AbstractConfigurationsTest {
     @Autowired
     JdbcTemplate jdbcTemplate;
 
+    @Autowired
+    DataSource dataSource;
     @Test
     public void test(){
         log.debug("I will testing ...");
         assertNotNull(jdbcTemplate);
-
+        assertNotNull(dataSource);
     }
 }

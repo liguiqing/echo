@@ -1,6 +1,6 @@
 package org.echo.sample.config;
 
-import org.echo.share.config.CacheConfigurations;
+import org.echo.spring.cache.config.CacheConfigurations;
 import org.echo.share.config.DataSourceConfigurations;
 import org.echo.spring.cache.config.SecondaryCacheAutoConfiguration;
 import org.echo.test.config.AbstractConfigurationsTest;
@@ -24,7 +24,7 @@ import org.springframework.test.context.TestPropertySource;
                 AppConfigurations.class
 }))
 @TestPropertySource(properties = {"spring.config.location = classpath:/application-cache.yml"})
-@DisplayName("Echo : Exam module Configurations test")
+@DisplayName("Echo : Exam module Configurations exec")
 public class ConfigurationsTest extends AbstractConfigurationsTest {
 
     @Test

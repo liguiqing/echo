@@ -90,7 +90,8 @@ class SampleControllerTest extends AbstractSpringControllerTest {
     @Test
     public void testThrows(){
         assertThrows(ControllerTestException.class,()->toJsonString(new Object()));
-        assertThrows(IllegalArgumentException.class,()->injectNoneFieldsInConstructor(new ArrayList(), Arrays.asList(new FieldMapping("uuid", "uuid"))));
+        assertThrows(ControllerTestException.class,()->writField(new ArrayList(), new FieldMapping("uuid", "uuid")));
+        //writField(new ArrayList(), new FieldMapping("uuid", "uuid"));
     }
 
 }

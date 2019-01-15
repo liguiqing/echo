@@ -1,16 +1,15 @@
 package org.echo.spring.cache.secondary;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.echo.exception.ThrowableToString;
 import org.echo.lock.DistributedLock;
-import org.echo.spring.cache.NativeCaches;
 import org.echo.spring.cache.message.CacheMessage;
 import org.echo.spring.cache.message.CacheMessagePusher;
 import org.springframework.cache.Cache;
 import org.springframework.cache.support.AbstractValueAdaptingCache;
 
-import java.util.Collection;
-import java.util.Set;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 
@@ -23,8 +22,10 @@ import java.util.concurrent.Callable;
 @Slf4j
 public class SecondaryCache extends AbstractValueAdaptingCache {
 
+    @Getter
     private String identifier = UUID.randomUUID().toString();
 
+    @Getter
     private String name;
 
     private Cache cacheL1;
@@ -36,6 +37,10 @@ public class SecondaryCache extends AbstractValueAdaptingCache {
     private CacheMessagePusher messagePusher;
 
     private DistributedLock<Object> lock;
+
+    private Cache cacheL1Bak;
+
+    private Cache cacheL2Bak;
 
     public SecondaryCache(boolean allowNullValues){
         super(allowNullValues);
@@ -76,15 +81,6 @@ public class SecondaryCache extends AbstractValueAdaptingCache {
         cache.cacheL2 = cacheL2;
         cache.lock = lock==null?new DistributedLock<Object>(){}:lock;
         return cache;
-    }
-
-    public String getIdentifier(){
-        return this.identifier;
-    }
-
-    @Override
-    public String getName() {
-        return this.name;
     }
 
     @Override
@@ -252,7 +248,7 @@ public class SecondaryCache extends AbstractValueAdaptingCache {
      * @param message a message to Redis server
      */
     private void push(CacheMessage message) {
-        if(hasCache1() && this.messagePusher != null) {
+        if(!Objects.isNull(this.messagePusher)) {
             log.debug("Push a cache update message");
             this.messagePusher.push(topic, message);
         }
@@ -263,7 +259,10 @@ public class SecondaryCache extends AbstractValueAdaptingCache {
      * 清理本地缓存
      * @param key key of cache what's be cleared; clean level1 if key is null
      */
-    public void clearLocal(Object key) {
+    protected void clearLocal(Object key) {
+        if(!hasCache1())
+            return;
+
         if(key != null) {
             log.debug("Clear  level1 by key [{}] in cache [{}]", key,this.name);
             this.cacheL1.evict(key);
@@ -273,15 +272,60 @@ public class SecondaryCache extends AbstractValueAdaptingCache {
         }
     }
 
-    public int size(){
-        return NativeCaches.size(this.cacheL1 == null ? this.cacheL2 : this.cacheL1);
+    protected void close(int level){
+        if(level == 1){
+            closeL1();
+        }else if(level == 2){
+            closeL2();
+        }else if(level == 9){
+           closeL1();
+           closeL2();
+        }
     }
 
-    public Collection values(){
-        return NativeCaches.values(this.cacheL2 != null ? this.cacheL2 : this.cacheL1);
+    private void closeL1(){
+        if(this.hasCache1()){
+            this.cacheL1.clear();
+            this.cacheL1Bak = this.cacheL1;
+            this.cacheL1 = null;
+            log.debug("Cache {} L1 closed !",this.name);
+        }
     }
 
-    public Set keys(){
-        return NativeCaches.keys(this.cacheL2 != null ? this.cacheL2 : this.cacheL1);
+    private void closeL2(){
+        if(this.hasCache2()){
+            this.cacheL2.clear();
+            this.cacheL2Bak = cacheL2;
+            this.cacheL2 = null;
+            log.debug("Cache {} L2 closed !",this.name);
+        }
     }
+
+    protected void open(int level){
+        if(level == 9){
+            openL1();
+            openL2();
+        }else if(level == 1){
+            openL1();
+        }else if(level == 2){
+            openL2();
+        }
+    }
+
+    private void openL1(){
+        if(!hasCache1()){
+            this.cacheL1 = this.cacheL1Bak;
+            this.cacheL1Bak = null;
+            log.debug("Cache {} L1 opened !",this.name);
+        }
+    }
+
+    private void openL2(){
+        if(!hasCache2()){
+            this.cacheL2 = this.cacheL2Bak;
+            this.cacheL2Bak = null;
+            log.debug("Cache {} L2 opened !",this.name);
+        }
+    }
+
 }
