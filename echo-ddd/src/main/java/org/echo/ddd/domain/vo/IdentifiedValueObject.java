@@ -16,7 +16,7 @@ import org.echo.ddd.domain.id.Identity;
 @EqualsAndHashCode
 @Getter
 @ToString
-public abstract class IdentifieldValueObject extends ValueObject implements IdentifiedDomainObject {
+public abstract class IdentifiedValueObject extends ValueObject implements IdentifiedDomainObject {
     private Identity id;
 
 }

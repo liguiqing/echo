@@ -20,11 +20,11 @@ public class EventHandlers {
     }
 
     public static EventHandlers getInstance() {
-        return EventHandlers.Holder.instance;
+        return Holder.instance;
     }
 
     public static void setEventBus(EventBus eventBus){
-        getInstance().eventBus = eventBus;
+        Holder.instance.eventBus = eventBus;
     }
 
     public void register(DomainEventHandler eventHandler){

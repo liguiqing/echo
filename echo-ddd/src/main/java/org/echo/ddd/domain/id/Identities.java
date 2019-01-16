@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.echo.exception.ThrowableToString;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 /**
  * 唯一标识工厂
@@ -18,7 +19,20 @@ public class Identities {
         throw new AssertionError("No org.echo.ddd.domain.id.Identities instances for you!");
     }
 
-    private static IdentityGenerator generator = new IdentityGenerator<String,String>(){};
+    private static IdentityGenerator generator = new IdentityGenerator<String,String>(){
+
+        @Override
+        public String genId() {
+            return UUID.randomUUID().toString().replaceAll("-","");
+        }
+
+        @Override
+        public String genId(String prefix) {
+            if(prefix == null)
+                return this.genId();
+            return prefix.concat(this.genId());
+        }
+    };
 
     public static void setGenerator(IdentityGenerator generator){
         Identities.generator = generator;

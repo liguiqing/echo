@@ -26,10 +26,11 @@ public class RedisLockTest {
         lock.lock(jedisPool, "aa", "bb", 1);
         lock.lock(jedisPool, "aa", "bb", 1);
         lock.unlock(jedisPool, "aa", "bb");
+
+        lock = new RedisLock(prefix);
+        lock.lock(jedisPool, "aa", "bb", 1);
+        lock.lock(jedisPool, "aa", "bb", 1);
+        lock.unlock(jedisPool, "aa", "bb");
     }
 
-
-//    private  int getRandomNumberInRange(int min, int max) {
-//        return NumbersUtil.randomBetween(min, max);
-//    }
 }

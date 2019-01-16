@@ -15,7 +15,7 @@ import java.io.StringWriter;
 public class ThrowableToString {
 
     private ThrowableToString(){
-        throw new IllegalArgumentException();
+        throw new AssertionError("No org.echo.exception.ThrowableToString instances for you!");
     }
 
     public static String toString(Throwable t) {

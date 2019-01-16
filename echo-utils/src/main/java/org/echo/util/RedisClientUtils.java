@@ -12,6 +12,10 @@ import org.redisson.api.RedissonClient;
 
 @Slf4j
 public class RedisClientUtils {
+    private RedisClientUtils(){
+        throw new AssertionError("No org.echo.util.RedisClientUtils instances for you!");
+    }
+
     private static final String RedisAliveTestingKey = "RedisAliveTestingKey";
 
     public static boolean isAlive(RedissonClient redissonClient){

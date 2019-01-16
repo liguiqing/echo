@@ -1,15 +1,17 @@
 package org.echo.exception;
 
+import org.echo.test.PrivateConstructors;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Copyright (c) 2016,$today.year, 深圳市易考试乐学测评有限公司
  **/
-@DisplayName("Echo : ThrowableToString exec")
+@DisplayName("Echo : ThrowableToString Test")
 class ThrowableToStringTest {
 
     @Test
@@ -44,5 +46,7 @@ class ThrowableToStringTest {
         assertTrue(ThrowableToString.toString(e2).contains(""));
         Throwable t = null;
         assertTrue(ThrowableToString.toString(t).contains("Throwable is null"));
+
+        assertThrows(Exception.class,()->new PrivateConstructors().exec(ThrowableToString.class));
     }
 }

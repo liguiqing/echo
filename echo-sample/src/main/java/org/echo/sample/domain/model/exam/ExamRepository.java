@@ -1,7 +1,6 @@
 package org.echo.sample.domain.model.exam;
 
 import org.echo.ddd.domain.PersistenceDomainObjectRepository;
-import org.echo.ddd.domain.id.IdPrefix;
 import org.echo.ddd.domain.id.Identities;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -18,7 +17,7 @@ import org.springframework.stereotype.Repository;
 public interface ExamRepository extends PersistenceDomainObjectRepository<Exam, ExamId> {
 
     default  ExamId nextIdentity(){
-        return new ExamId(Identities.genId(IdPrefix.ExamId));
+        return new ExamId(Identities.genId("EXA"));
     }
 
     @CacheEvict(value = "exam#3600#3600",key="#p0.id.id")

@@ -1,6 +1,5 @@
 package org.echo.sample.domain.model.exam;
 
-import org.echo.ddd.domain.id.IdPrefix;
 import org.echo.ddd.domain.id.Identities;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,7 +12,7 @@ class ExamTest {
 
     @Test
     public void testConstructorExamId()throws Exception{
-        final ExamId examId = new ExamId(Identities.genId(IdPrefix.ExamId));
+        final ExamId examId = new ExamId(Identities.genId("EXAM"));
         //final CountDownLatch cd = new CountDownLatch(1);
 //        EventHandlers.getInstance().register(new DomainEventHandler<ExamCreated>() {
 //            @Override

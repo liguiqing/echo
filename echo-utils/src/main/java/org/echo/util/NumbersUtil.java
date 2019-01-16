@@ -15,7 +15,7 @@ import java.util.Random;
 public class NumbersUtil {
 
     private NumbersUtil() {
-        throw new IllegalArgumentException();
+        throw new AssertionError("No org.echo.util.NumbersUtil instances for you!");
     }
 
     /**

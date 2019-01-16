@@ -9,9 +9,7 @@ import java.time.LocalDate;
 import java.util.concurrent.CountDownLatch;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 /**
  * Copyright (c) 2016,$today.year, 深圳市易考试乐学测评有限公司
@@ -22,7 +20,10 @@ class EventHandlersTest {
     @Test
     public void test()throws Exception{
         final LocalDate now = LocalDate.now();
-        final CountDownLatch cd = new CountDownLatch(6);
+        final CountDownLatch cd = new CountDownLatch(8);
+        final CountDownLatch cd2 = new CountDownLatch(5);
+        final CountDownLatch cd3 = new CountDownLatch(3);
+
         EventHandlers.getInstance().register(new DomainEventHandler<Test1Created>() {
             @Override
             @Subscribe
@@ -30,31 +31,34 @@ class EventHandlersTest {
             public void on(Test1Created event) {
                 assertEquals(now,event.getNow());
                 cd.countDown();
+                cd2.countDown();
             }
         });
-        GuavaEventHandler handler;
-        handler = new GuavaEventHandler<Test1Created>() {
+        GuavaEventHandler<Test1Created> handler = new GuavaEventHandler<Test1Created>() {
 
             @Override
             protected void doOn(Test1Created event) {
                 assertEquals(now,event.getNow());
                 cd.countDown();
+                cd3.countDown();
             }
         };
+        assertNotEquals(new Test1Created(now),new Test1Created(now));
+
         EventHandlers.getInstance().register(handler);
-
         EventHandlers.getInstance().post(new Test1Created(now));
         EventHandlers.getInstance().post(new Test1Created(now));
-
-        DomainEventHandler mockHandler = mock(DomainEventHandler.class);
-        doNothing().when(mockHandler).on(any(Test1Created.class));
-        EventHandlers.getInstance().register(mockHandler);
-        doAnswer(invocation -> {
-            assertFalse(true);
-            return null;
-        }).when(mockHandler).on(any(Test1Created.class));
+        EventHandlers.getInstance().post(new Test1Created(now));
+        EventHandlers.getInstance().unregister(handler);
+        EventHandlers.getInstance().post(new Test1Created(now));
         EventHandlers.getInstance().post(new Test1Created(now));
         cd.await();
+        cd2.await();
+        cd3.await();
         assertEquals(0,cd.getCount());
+        assertEquals(0,cd2.getCount());
+        assertEquals(0,cd3.getCount());
+
+        EventHandlers.setEventBus(new EventBus() {});
     }
 }

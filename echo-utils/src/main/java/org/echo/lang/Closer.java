@@ -13,7 +13,7 @@ import org.echo.exception.ThrowableToString;
 public class Closer {
 
     private Closer() {
-        throw new IllegalArgumentException();
+        throw new AssertionError("No org.echo.lang.Closer instances for you!");
     }
 
     public static <T extends AutoCloseable> void close(T t){

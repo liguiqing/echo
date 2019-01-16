@@ -27,6 +27,7 @@ class AssociationIdConverterTest {
         AssociationId id = converter.convertToEntityAttribute("123");
         assertEquals("123",id.getId());
         assertEquals("AssociationId(id=123)",id.toString());
-
+        assertEquals(new AssociationId("1111"),new AssociationId("1111"));
+        assertNotEquals(new AssociationId("1111a"),new AssociationId("1111"));
     }
 }

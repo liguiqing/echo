@@ -1,16 +1,18 @@
 package org.echo.util;
 
+import org.echo.test.PrivateConstructors;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.ExecutorService;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Copyright (c) 2016,$today.year, 深圳市易考试乐学测评有限公司
  **/
-@DisplayName("Echo : NumbersUtil exec")
+@DisplayName("Echo : Threads Test ")
 class ThreadsTest {
     @Test
     void test(){
@@ -23,5 +25,6 @@ class ThreadsTest {
         ExecutorService es3 = Threads.getExecutorService();
         assertNotNull(es3);
         es3.shutdown();
+        assertThrows(Exception.class,()->new PrivateConstructors().exec(Threads.class));
     }
 }

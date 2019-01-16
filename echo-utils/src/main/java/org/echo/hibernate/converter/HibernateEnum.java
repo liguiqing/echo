@@ -26,8 +26,15 @@ public interface HibernateEnum<V> extends Serializable {
      */
     V getValue();
 
-    //按枚举的value获取枚举实例
-    static <T extends HibernateEnum> T fromValue(Class<T> enumType, Integer value) {
+    /**
+     * 按枚举的value获取枚举实例
+     *
+     * @param enumType class of enum
+     * @param value enum's value
+     * @param <T> enum type
+     * @return enum instance ,throws IllegalArgumentException if value not find
+     */
+    static <T extends HibernateEnum,V> T fromValue(Class<T> enumType, V value) {
         for (T object : enumType.getEnumConstants()) {
             if (Objects.equals(value, object.getValue())) {
                 return object;

@@ -26,13 +26,14 @@ public class EnumFieldConverter implements UserType, DynamicParameterizedType {
 
     private Class<HibernateEnum> enumClass;
 
-    private static final int[] SQL_TYPES = new int[]{Types.INTEGER};
+    private static final int[] SQL_TYPES = new int[]{Types.INTEGER,Types.BIGINT,Types.DATE};
 
     @Override
     public void setParameterValues(Properties parameters) {
-        final ParameterType reader = (ParameterType) parameters.get(PARAMETER_TYPE);
-        if (reader != null) {
-            enumClass = reader.getReturnedClass().asSubclass(Enum.class);
+        Object o = parameters.get(PARAMETER_TYPE);
+        if (o instanceof ParameterType) {
+            ParameterType reader = (ParameterType) o;
+            enumClass = reader.getReturnedClass().asSubclass(HibernateEnum.class);
         }
     }
 
@@ -49,7 +50,7 @@ public class EnumFieldConverter implements UserType, DynamicParameterizedType {
 
     //是否相等，不相等会触发JPA update操作
     @Override
-    public boolean equals(Object x, Object y)  {
+    public boolean equals(Object x, Object y) {
         return Objects.equals(x, y);
     }
 
@@ -66,16 +67,16 @@ public class EnumFieldConverter implements UserType, DynamicParameterizedType {
         }
 
         for (HibernateEnum object : enumClass.getEnumConstants()) {
-            if(typeOf(object,Integer.class)){
+            if (typeOf(object, Integer.class)) {
                 if (Objects.equals(Integer.parseInt(value), object.getValue())) {
                     return object;
                 }
-            }else if(typeOf(object,Long.class)){
+            } else if (typeOf(object, Long.class)) {
                 if (Objects.equals(Long.parseLong(value), object.getValue())) {
                     return object;
                 }
-            }else{
-                if ( Objects.equals(value,object.getValue())){
+            } else {
+                if (Objects.equals(value, object.getValue())) {
                     return object;
                 }
             }
@@ -94,22 +95,22 @@ public class EnumFieldConverter implements UserType, DynamicParameterizedType {
             st.setInt(index, (Integer) value);
             return;
         } else {
-            if(typeOf(value,Integer.class)){
+            if (typeOf(value, Integer.class)) {
                 st.setInt(index, (Integer) ((HibernateEnum) value).getValue());
                 return;
-            } else if(typeOf(value,Long.class)){
+            } else if (typeOf(value, Long.class)) {
                 st.setLong(index, (Long) ((HibernateEnum) value).getValue());
                 return;
             }
         }
-        st.setObject(index,((HibernateEnum) value).getValue());
+        st.setObject(index, ((HibernateEnum) value).getValue());
     }
 
-    private boolean typeOf (Object object,Class clazz){
+    private boolean typeOf(Object object, Class clazz) {
         Type[] types = object.getClass().getGenericInterfaces();
-        if(types.length >0){
-            ParameterizedType p=(ParameterizedType)types[0];
-            Class c =(Class) p.getActualTypeArguments()[0];
+        if (types.length > 0) {
+            ParameterizedType p = (ParameterizedType) types[0];
+            Class c = (Class) p.getActualTypeArguments()[0];
             return c.equals(clazz);
         }
         return false;

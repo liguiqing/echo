@@ -12,7 +12,7 @@ import static org.mockito.Mockito.*;
 /**
  * Copyright (c) 2016,$today.year, 深圳市易考试乐学测评有限公司
  **/
-@DisplayName("Echo : RedisBaseDistributedLock exec")
+@DisplayName("Echo : RedisBaseDistributedLock test")
 class RedisBaseDistributedLockTest {
 
     @Test
@@ -33,5 +33,19 @@ class RedisBaseDistributedLockTest {
         distributedLock.lock(bean1);
         distributedLock.unlock(bean1);
         assertThrows(Exception.class,()->distributedLock.unlock("bb"));
+
+        RedisBaseDistributedLock distributedLock1 = new RedisBaseDistributedLock("echo",null);
+        distributedLock1.lock("aa");
+        distributedLock1.unlock("aa");
+        distributedLock1.lock("aa");
+        distributedLock1.unlock("aa");
+        bean1 = new RedisLockTestBean(1L,"Test");
+        distributedLock1.lock(bean1);
+        distributedLock1.unlock(bean1);
+        assertThrows(Exception.class,()->distributedLock1.unlock("bb"));
+
+        DistributedLock dLock = new DistributedLock(){};
+        dLock.lock("aa");
+        dLock.unlock("aa");
     }
 }

@@ -52,7 +52,7 @@ public class StatelessWebSessionManager extends DefaultSessionManager implements
     @Override
     public Serializable getSessionId(SessionKey key){
         HttpServletRequest request = WebUtils.getHttpRequest(key);
-        if(UserAgentUtils.isBroswer(request)){
+        if(UserAgentUtils.isBrowser(request)){
             return this.delegate.getSessionId(key);
         }
 
@@ -72,7 +72,7 @@ public class StatelessWebSessionManager extends DefaultSessionManager implements
     @Override
     protected void onStart(Session session, SessionContext context){
         HttpServletRequest request = WebUtils.getHttpRequest(context);
-        if(UserAgentUtils.isBroswer(request)){
+        if(UserAgentUtils.isBrowser(request)){
             this.delegate.start(context);
             return;
         }
@@ -87,7 +87,7 @@ public class StatelessWebSessionManager extends DefaultSessionManager implements
     @Override
     protected void onStop(Session session, SessionKey key) {
         HttpServletRequest request = WebUtils.getHttpRequest(key);
-        if(UserAgentUtils.isBroswer(request)){
+        if(UserAgentUtils.isBrowser(request)){
             this.delegate.stop(key);
             return;
         }
@@ -103,7 +103,7 @@ public class StatelessWebSessionManager extends DefaultSessionManager implements
     @Override
     public boolean isServletContainerSessions() {
         HttpServletRequest request =ServletUtilWrapper.getRequest();
-        if(UserAgentUtils.isBroswer(request)){
+        if(UserAgentUtils.isBrowser(request)){
             return this.delegate.isServletContainerSessions();
         }
         return false;
@@ -120,7 +120,7 @@ public class StatelessWebSessionManager extends DefaultSessionManager implements
 
     private Serializable getSessionId(ServletRequest request) {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
-        if(UserAgentUtils.isBroswer(httpRequest)){
+        if(UserAgentUtils.isBrowser(httpRequest)){
             return null;
         }
 

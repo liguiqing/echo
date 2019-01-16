@@ -225,13 +225,6 @@
                 <version>5.1.46</version>
             </dependency>
 
-            <!-- set hibernate -->
-            <!--<dependency>-->
-            <!--<groupId>org.hibernate</groupId>-->
-            <!--<artifactId>hibernate-core</artifactId>-->
-            <!--<version>${hibernate.version}</version>-->
-            <!--</dependency>-->
-
             <!-- set servlet -->
             <dependency>
                 <groupId>javax.servlet</groupId>

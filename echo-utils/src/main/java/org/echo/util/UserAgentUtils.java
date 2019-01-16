@@ -1,5 +1,6 @@
 package org.echo.util;
 
+import eu.bitwalker.useragentutils.Browser;
 import eu.bitwalker.useragentutils.DeviceType;
 import eu.bitwalker.useragentutils.UserAgent;
 
@@ -13,6 +14,9 @@ import javax.servlet.http.HttpServletRequest;
  */
 
 public class UserAgentUtils {
+    private UserAgentUtils(){
+        throw new AssertionError("No org.echo.util.UserAgentUtils instances for you!");
+    }
 
     /**
      * 获取用户代理对象
@@ -75,8 +79,8 @@ public class UserAgentUtils {
      * @param request
      * @return
      */
-    public static boolean isBroswer(HttpServletRequest request){
-        return getUserAgent(request).getBrowser() != null;
+    public static boolean isBrowser(HttpServletRequest request){
+        return getUserAgent(request).getBrowser() != Browser.UNKNOWN;
     }
 
     /**
@@ -86,7 +90,7 @@ public class UserAgentUtils {
      * @return
      */
     public static boolean isWeChat(HttpServletRequest request) {
-        String userAgent = request.getHeader("user-agent").toLowerCase();
+        String userAgent = request.getHeader("User-Agent").toLowerCase();
         return userAgent == null || userAgent.indexOf("micromessenger") == -1 ? false : true;
     }
 

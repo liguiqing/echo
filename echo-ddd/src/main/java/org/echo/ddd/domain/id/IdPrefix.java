@@ -13,8 +13,6 @@ package org.echo.ddd.domain.id;
  * @since V3.0
  */
 
-public class IdPrefix {
-
-    public static final String ExamId = "EXA";
-
+public interface IdPrefix<V> {
+    V contact(V v);
 }

@@ -20,7 +20,7 @@ class IdentitiesTest {
         assertTrue(id2.length()==32);
         assertTrue(Identities.genId("ABD",AssociationId.class).getId().startsWith("ABD"));
         assertFalse(Identities.genId(null,AssociationId.class).getId().startsWith("ABD"));
-        assertFalse(Identities.genId(123,AssociationId.class).getId().startsWith("ABD"));
+        assertFalse(Identities.genId("123",AssociationId.class).getId().startsWith("ABD"));
         IdentityGenerator ig = new IdentityGenerator<Long,Long>(){
             @Override
             public Long genId() {

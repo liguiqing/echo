@@ -14,7 +14,7 @@ import java.util.Collection;
 public class CollectionsUtil {
 
     private CollectionsUtil(){
-        throw new IllegalArgumentException();
+        throw new AssertionError("No org.echo.util.CollectionsUtil instances for you!");
     }
 
     public static boolean isNotNullAndNotEmpty(Collection collection){

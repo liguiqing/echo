@@ -1,7 +1,7 @@
 package org.echo.lock;
 
 /**
- * 公布式锁
+ * 分布式锁
  *
  * @author Liguiqing
  * @since V1.0

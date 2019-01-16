@@ -14,10 +14,9 @@ import java.util.concurrent.Executors;
 @Slf4j
 public class Threads {
     private Threads(){
-        throw new IllegalArgumentException();
+        throw new AssertionError("No org.echo.util.Threads instances for you!");
     }
 
-    //TODO
     private static final ExecutorService service = Executors.newCachedThreadPool();
 
     public static ExecutorService getExecutorService(){

@@ -1,7 +1,6 @@
 package org.echo.sample.domain.model.exam;
 
 import lombok.*;
-import org.echo.ddd.domain.id.IdPrefix;
 import org.echo.ddd.domain.id.Identities;
 import org.echo.ddd.domain.id.Identity;
 
@@ -25,6 +24,6 @@ public class ExamId implements Identity<String> {
     private String id;
 
     public ExamId() {
-        this.id = Identities.genId(IdPrefix.ExamId);
+        this.id = Identities.genId("EXAM");
     }
 }

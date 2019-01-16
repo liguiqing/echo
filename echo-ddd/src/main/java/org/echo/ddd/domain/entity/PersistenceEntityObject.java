@@ -21,7 +21,7 @@ import javax.persistence.MappedSuperclass;
 @Getter
 @Setter
 @MappedSuperclass
-@EqualsAndHashCode(of = {"tid"})
+@EqualsAndHashCode(of = {"tid"},callSuper = true)
 public abstract class PersistenceEntityObject extends EntityObject {
 
     @Id
