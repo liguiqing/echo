@@ -26,7 +26,7 @@ public class EnumFieldConverter implements UserType, DynamicParameterizedType {
 
     private Class<HibernateEnum> enumClass;
 
-    private static final int[] SQL_TYPES = new int[]{Types.INTEGER,Types.BIGINT,Types.DATE};
+    private static final int[] SQL_TYPES = new int[]{Types.INTEGER};
 
     @Override
     public void setParameterValues(Properties parameters) {
@@ -90,25 +90,27 @@ public class EnumFieldConverter implements UserType, DynamicParameterizedType {
         if (value == null) {
             st.setNull(index, SQL_TYPES[0]);
             return;
-
         } else if (value instanceof Integer) {
             st.setInt(index, (Integer) value);
             return;
-        } else {
+        } else if (value instanceof HibernateEnum){
             if (typeOf(value, Integer.class)) {
                 st.setInt(index, (Integer) ((HibernateEnum) value).getValue());
-                return;
             } else if (typeOf(value, Long.class)) {
                 st.setLong(index, (Long) ((HibernateEnum) value).getValue());
-                return;
+            }else if (typeOf(value, String.class)) {
+                st.setString(index, (String) ((HibernateEnum) value).getValue());
+            }else{
+                st.setObject(index, ((HibernateEnum) value).getValue());
             }
+            return;
         }
-        st.setObject(index, ((HibernateEnum) value).getValue());
+        throw new HibernateException(String.format("Unknown type value [%s] for class [%s]", value, value.getClass().getName()));
     }
 
     private boolean typeOf(Object object, Class clazz) {
         Type[] types = object.getClass().getGenericInterfaces();
-        if (types.length > 0) {
+        if (types.length > 0 && types[0] instanceof ParameterizedType ) {
             ParameterizedType p = (ParameterizedType) types[0];
             Class c = (Class) p.getActualTypeArguments()[0];
             return c.equals(clazz);

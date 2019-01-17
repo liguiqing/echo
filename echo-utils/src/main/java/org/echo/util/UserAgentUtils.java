@@ -5,6 +5,7 @@ import eu.bitwalker.useragentutils.DeviceType;
 import eu.bitwalker.useragentutils.UserAgent;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Objects;
 
 /**
  * 客户端工具
@@ -80,6 +81,9 @@ public class UserAgentUtils {
      * @return
      */
     public static boolean isBrowser(HttpServletRequest request){
+        if(Objects.isNull(request))
+            return false;
+
         return getUserAgent(request).getBrowser() != Browser.UNKNOWN;
     }
 

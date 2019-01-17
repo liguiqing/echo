@@ -24,8 +24,11 @@ class SessionIdGeneratorIteratorTest {
         sessionIdGenerator = new SessionIdGeneratorIterator(Optional.empty());
         assertNotNull(sessionIdGenerator.generateId(session));
         SessionIdGeneratorIterator m1 = mock(SessionIdGeneratorIterator.class);
-        when(m1.generateId(any(Session.class))).thenReturn("1");
-        sessionIdGenerator = new SessionIdGeneratorIterator(Optional.of(Arrays.asList(m1)));
+        when(m1.generateId(any(Session.class))).thenReturn("1").thenReturn(null);
+        SessionIdGeneratorIterator m2 = mock(SessionIdGeneratorIterator.class);
+        when(m2.generateId(any(Session.class))).thenReturn("2");
+        sessionIdGenerator = new SessionIdGeneratorIterator(Optional.of(Arrays.asList(m1,m2)));
         assertEquals("1",sessionIdGenerator.generateId(session));
+        assertEquals("2",sessionIdGenerator.generateId(session));
     }
 }

@@ -6,7 +6,7 @@ package org.echo.spring.cache.message;
  * @author Liguiqing
  * @since V1.0
  */
-
+@FunctionalInterface
 public interface CacheMessagePusher {
 
     void push(String topic, CacheMessage message);

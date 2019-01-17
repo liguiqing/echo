@@ -39,7 +39,7 @@ public class QuartzSessionValidationScheduler implements SessionValidationSchedu
         this.sessionManager = sessionManager;  
     }  
   
-    private Scheduler getScheduler() throws SchedulerException {
+    protected Scheduler getScheduler() throws SchedulerException {
         if (this.scheduler == null) {  
             this.scheduler = StdSchedulerFactory.getDefaultScheduler();  
             this.schedulerImplicitlyCreated = true;  
@@ -60,7 +60,7 @@ public class QuartzSessionValidationScheduler implements SessionValidationSchedu
   
             JobDetail detail = JobBuilder.newJob(QuartzSessionValidationJob.class)  
                     .withIdentity(JOB_NAME, Scheduler.DEFAULT_GROUP).build();  
-            detail.getJobDataMap().put(SESSION_MANAGER_KEY, this.sessionManager);
+            detail.getJobDataMap().put(SESSION_MANAGER_KEY, this.getSessionManager());
             getScheduler().scheduleJob(detail, trigger);
             if (this.schedulerImplicitlyCreated) {  
                 scheduler.start();

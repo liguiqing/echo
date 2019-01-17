@@ -8,9 +8,8 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.Mockito.mock;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * Copyright (c) 2016,$today.year, 深圳市易考试乐学测评有限公司
@@ -52,5 +51,10 @@ class RedisCacheFactoryTest {
         assertNotNull(cache1);
         cache1 = redisCacheFactory.newCache("exec");
         assertNotNull(cache1);
+
+        redisCacheFactory  = new RedisCacheFactory(redissonClient,null);
+        Cache cache = redisCacheFactory.newCache("Test");
+        assertNotNull(cache);
+        assertTrue(cache instanceof RedisNoneCache);
     }
 }

@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * Copyright (c) 2016,$today.year, 深圳市易考试乐学测评有限公司
  **/
-@DisplayName("Echo : CollectionsUtil exec")
+@DisplayName("Echo : CollectionsUtil Test")
 class CollectionsUtilTest {
 
     @Test

@@ -193,13 +193,10 @@ public class SecondaryCache extends AbstractValueAdaptingCache {
         if(!hasCache1())
             return null;
 
-        Object value = cacheL1.get(key);
+        ValueWrapper value = cacheL1.get(key);
         if(value != null) {
             log.debug("Hits by key [{}] from level1 in cache [{}]", key,this.name);
-            if(value instanceof ValueWrapper){
-                return ((ValueWrapper)value).get();
-            }
-            return value;
+            return value.get();
         }
 
         log.debug("Don't hit by key [{}] from level1 in cache [{}]", key,this.name);

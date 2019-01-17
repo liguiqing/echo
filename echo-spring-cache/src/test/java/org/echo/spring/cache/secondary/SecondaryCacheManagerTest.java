@@ -1,7 +1,9 @@
 package org.echo.spring.cache.secondary;
 
+import org.echo.spring.cache.CacheFactory;
 import org.echo.spring.cache.config.SecondaryCacheAutoConfiguration;
 import org.echo.spring.cache.message.CacheMessage;
+import org.echo.spring.cache.message.CacheMessagePusher;
 import org.echo.test.config.AbstractConfigurationsTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -24,6 +26,9 @@ import java.util.Collection;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
 /**
  * @author Liguiqing
@@ -182,10 +187,23 @@ public class SecondaryCacheManagerTest extends AbstractConfigurationsTest{
         assertNotNull(secondaryCacheManager.getCache("cN3#1#1#-1"));
         assertNotNull(secondaryCacheManager.getCache("cN4#${exec.ttl:1}#1#2"));
         assertNotNull(secondaryCacheManager.getCache("cN5##1#2"));
+        assertNotNull(secondaryCacheManager.getCache("cN6#${exec.ttl:-1}#1#2"));
         String id = ((SecondaryCache)coCache).getIdentifier();
         secondaryCacheManager.clearLocal(new CacheMessage(id,"coCache","k"));
         secondaryCacheManager.clearLocal(new CacheMessage("id1","coCache","k"));
         secondaryCacheManager.clearLocal(new CacheMessage("id2","coCache","k"));
+        secondaryCacheManager.clearLocal(new CacheMessage("id3","coCache",null));
+
+        SecondaryCacheProperties cacheProperties = spy(new SecondaryCacheProperties());
+        when(cacheProperties.isDynamic()).thenReturn(false).thenReturn(true);
+        CacheFactory cacheL1Factory = mock(CacheFactory.class);
+        CacheFactory cacheL2Factory = mock(CacheFactory.class);
+        CacheMessagePusher messagePusher = mock(CacheMessagePusher.class);
+        SecondaryCacheManager cacheManager = new SecondaryCacheManager(cacheProperties,cacheL1Factory,cacheL2Factory,messagePusher);
+
+        Cache tCache = cacheManager.getCache("Test");
+        assertNull(tCache);
+        assertTrue(cacheManager.hasTwoLevel());
     }
 
     @Test

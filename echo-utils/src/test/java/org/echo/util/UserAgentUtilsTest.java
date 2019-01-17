@@ -76,6 +76,7 @@ class UserAgentUtilsTest {
 
     @Test
     void isBrowser() {
+        assertFalse(UserAgentUtils.isBrowser(null));
         assertTrue(UserAgentUtils.isBrowser(request));
         assertTrue(UserAgentUtils.isBrowser(request));
         assertTrue(UserAgentUtils.isBrowser(request));

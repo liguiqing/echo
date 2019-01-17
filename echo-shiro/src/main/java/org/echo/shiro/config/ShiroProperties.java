@@ -32,11 +32,11 @@ public class ShiroProperties {
         if(this.cachePropertiesMap == null){
             return defaultCacheName(cacheName);
         }
-        Long maxIdleSecond = this.getCachePropertiesMap().get(cacheName);
-        if(Objects.isNull(maxIdleSecond)){
+        Long maxIdle = this.getCachePropertiesMap().get(cacheName);
+        if(Objects.isNull(maxIdle)){
             return defaultCacheName(cacheName);
         }
-        return springCacheName(cacheName, maxIdleSecond);
+        return springCacheName(cacheName, maxIdle);
     }
 
     private String defaultCacheName(String cacheName){

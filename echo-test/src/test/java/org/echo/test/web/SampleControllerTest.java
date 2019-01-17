@@ -23,8 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @since V1.0
  */
 
-@DisplayName("SampController Test")
-
+@DisplayName("SampleController Test")
 class SampleControllerTest extends AbstractSpringControllerTest {
 
     @Mock

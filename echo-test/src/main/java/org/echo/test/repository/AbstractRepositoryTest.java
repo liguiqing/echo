@@ -7,7 +7,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 /**
- *
  * @author Liguiqing
  * @since V1.0
  */
@@ -15,9 +14,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(initializers = ConfigFileApplicationContextInitializer.class,
         classes = {
-        JunitTestConfigurations.class
-})
+                JunitTestConfigurations.class
+        })
 public abstract class AbstractRepositoryTest {
-
-
 }

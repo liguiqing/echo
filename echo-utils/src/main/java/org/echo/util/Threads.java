@@ -13,11 +13,11 @@ import java.util.concurrent.Executors;
  */
 @Slf4j
 public class Threads {
+    private static final ExecutorService service = Executors.newCachedThreadPool();
+
     private Threads(){
         throw new AssertionError("No org.echo.util.Threads instances for you!");
     }
-
-    private static final ExecutorService service = Executors.newCachedThreadPool();
 
     public static ExecutorService getExecutorService(){
         return service;

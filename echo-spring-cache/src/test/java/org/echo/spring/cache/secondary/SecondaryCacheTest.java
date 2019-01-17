@@ -86,5 +86,14 @@ class SecondaryCacheTest {
         cache2.close(9);
         assertNull(cache2.get("Test"));
         assertNull(cache2.get("Test"));
+
+        Cache only = mock(Cache.class);
+        SecondaryCache cache3 = SecondaryCache.onlyCache1("Cache3", only,secondaryCacheProperties, null);
+        cache3.evict("Test");
+        cache3.clear();
+
+        cache3 = SecondaryCache.onlyCache2("Cache3", only,secondaryCacheProperties, null);
+        cache3.evict("Test");
+        cache3.clear();
     }
 }

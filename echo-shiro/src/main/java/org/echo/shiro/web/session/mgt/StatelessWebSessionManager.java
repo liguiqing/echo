@@ -120,23 +120,18 @@ public class StatelessWebSessionManager extends DefaultSessionManager implements
 
     private Serializable getSessionId(ServletRequest request) {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
-        if(UserAgentUtils.isBrowser(httpRequest)){
-            return null;
-        }
-
         String id = httpRequest.getHeader(this.sessionToken);
 
         if (StringUtils.isEmpty(id)) {
             log.debug("Session Id is null ");
-
             return null;
         } else {
             //如果请求头中有 authToken 则其值为sessionId
-            request.setAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_ID_SOURCE, referencedSessionIdSource);
+            request.setAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_ID_SOURCE, this.getReferencedSessionIdSource());
             request.setAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_ID, id);
             request.setAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_ID_IS_VALID, Boolean.TRUE);
             request.setAttribute(ShiroHttpServletRequest.SESSION_ID_URL_REWRITING_ENABLED, Boolean.FALSE);
-            log.debug("Session Id {}",id);
+            log.debug("Session Id {} store to header",id);
             return id;
         }
     }

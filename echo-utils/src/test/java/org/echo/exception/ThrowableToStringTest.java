@@ -23,11 +23,9 @@ class ThrowableToStringTest {
 
     @Test
     void cleanExceptionString() {
-        Exception e1 = new Exception("aaa");
-        String s = ThrowableToString.cleanExceptionString(e1);
-        assertTrue(s.equals("aaa"));
-        s = ThrowableToString.cleanExceptionString(new Exception());
-        assertNull(s);
+        assertEquals("aaa",ThrowableToString.cleanExceptionString(new Exception("aaa")));
+        assertEquals("you are fooled",ThrowableToString.cleanExceptionString(new Exception("Exception:you are fooled")));
+        assertNull(ThrowableToString.cleanExceptionString(new Exception()));
     }
 
     @Test

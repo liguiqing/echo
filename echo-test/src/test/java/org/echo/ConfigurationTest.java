@@ -22,15 +22,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * @since V1.0
  */
 
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {
-        JunitTestConfigurations.class},
-        initializers = ConfigFileApplicationContextInitializer.class)
-@Slf4j
 @DisplayName("Echo Test : Configuration")
-@Configuration
 @EnableConfigurationProperties(TestBean.class)
-
 public class ConfigurationTest extends AbstractConfigurationsTest {
     @Autowired
     Environment env;
@@ -39,11 +32,7 @@ public class ConfigurationTest extends AbstractConfigurationsTest {
     private TestBean testBean;
     @Test
     public void test(){
-        log.debug("I am testing ...");
         assertNotNull(env);
-
         assertEquals(5000,testBean.getCaffeine().getExpireAfterAccess());
-
     }
-
 }

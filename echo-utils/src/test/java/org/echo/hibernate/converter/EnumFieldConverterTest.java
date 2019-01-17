@@ -6,6 +6,7 @@ import org.hibernate.usertype.DynamicParameterizedType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Types;
 import java.time.LocalDate;
@@ -88,8 +89,19 @@ class EnumFieldConverterTest {
     }
 
     @Test
-    void nullSafeSet() {
+    void nullSafeSet() throws Exception{
+        PreparedStatement st = mock(PreparedStatement.class);
+        SharedSessionContractImplementor session = mock(SharedSessionContractImplementor.class);
 
+        EnumFieldConverter converter = new EnumFieldConverter();
+        converter.nullSafeSet(st,null,1,session);
+        converter.nullSafeSet(st,1,1,session);
+        converter.nullSafeSet(st,HibernateEnumIntegerBean.One,1,session);
+        converter.nullSafeSet(st,HibernateEnumLongBean.One,1,session);
+        converter.nullSafeSet(st,HibernateEnumStringBean.Today,1,session);
+        converter.nullSafeSet(st,HibernateEnumDateBean.Today,1,session);
+
+        assertThrows(HibernateException.class, () ->converter.nullSafeSet(st,LocalDate.now(),1,session));
     }
 
 }

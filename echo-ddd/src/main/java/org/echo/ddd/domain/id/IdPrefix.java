@@ -13,6 +13,7 @@ package org.echo.ddd.domain.id;
  * @since V3.0
  */
 
+@FunctionalInterface
 public interface IdPrefix<V> {
     V contact(V v);
 }

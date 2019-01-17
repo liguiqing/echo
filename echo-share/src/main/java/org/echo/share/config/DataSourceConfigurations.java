@@ -87,6 +87,7 @@ public class DataSourceConfigurations {
     @Bean("entityManagerFactory")
     public LocalContainerEntityManagerFactoryBean entityManagerFactory(
             @Value("${jpa.unit.name:null}") String persistenceUnitName,
+            @Value("${jpa.unit.xmlLocation:classpath:META-INF/persistence.xml}") String xmlLocation,
             DataSource dataSource,
             HibernateJpaDialect jpaDialect,
             JpaVendorAdapter jpaVendorAdapter,
@@ -96,12 +97,9 @@ public class DataSourceConfigurations {
         //配置persistenceUnitName 必须使用JPA标准,在META-INF目录建立配置
         if(!"null".equalsIgnoreCase(persistenceUnitName) && persistenceUnitName.length() > 0) {
             entityManagerFactoryBean.setPersistenceUnitName(persistenceUnitName);
-            try {
-                entityManagerFactoryBean.setPersistenceXmlLocation("classpath:META-INF/persistence.xml");
-            }catch (Exception e){
-                log.warn(ThrowableToString.toString(e));
-            }
+            entityManagerFactoryBean.setPersistenceXmlLocation(xmlLocation);
         }
+
         entityManagerFactoryBean.setPackagesToScan("org.echo.*.domain.model.**.*");
         entityManagerFactoryBean.setDataSource(dataSource);
         entityManagerFactoryBean.setJpaVendorAdapter(jpaVendorAdapter);

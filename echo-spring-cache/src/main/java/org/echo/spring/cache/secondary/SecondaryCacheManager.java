@@ -213,10 +213,9 @@ public class SecondaryCacheManager extends AbstractTransactionSupportingCacheMan
         log.debug("Clear local {} cache",message.getCacheName());
 
         String cacheName = message.getCacheName();
-        Object key = message.getKey();
         getNativeCache(cacheName).ifPresent(cache->{
             if(!message.sameOfIdentifier(cache.getIdentifier())){
-                cache.clearLocal(key);
+                cache.clearLocal(message.getKey());
             }
         });
     }
@@ -269,11 +268,9 @@ public class SecondaryCacheManager extends AbstractTransactionSupportingCacheMan
     }
 
     private long toLong(String s){
-        if (!StringUtils.isEmpty(s)) {
+        if (!StringUtils.isEmpty(s) && s.contains(MARK)) {
             // 支持配置刷新时间使用EL表达式读取配置文件时间
-            if (s.contains(MARK)) {
-                s = beanFactory.resolveEmbeddedValue(s);
-            }
+            return NumbersUtil.stringToLong(beanFactory.resolveEmbeddedValue(s),0L);
         }
         return NumbersUtil.stringToLong(s,0L);
     }

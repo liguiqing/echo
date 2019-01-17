@@ -18,7 +18,11 @@ import static org.mockito.Mockito.*;
 class QuartzSessionValidationSchedulerTest {
 
     @Test
-    void enableSessionValidation() {
+    void enableSessionValidation() throws Exception{
+        QuartzSessionValidationScheduler spyQV = spy(new QuartzSessionValidationScheduler());
+        when(spyQV.getScheduler()).thenThrow(new SchedulerException());
+        spyQV.enableSessionValidation();
+
         ValidatingSessionManager sessionManager = mock(ValidatingSessionManager.class);
         QuartzSessionValidationScheduler scheduler = new QuartzSessionValidationScheduler(sessionManager);
         scheduler.enableSessionValidation();
@@ -27,6 +31,12 @@ class QuartzSessionValidationSchedulerTest {
 
     @Test
     void disableSessionValidation()throws Exception{
+        QuartzSessionValidationScheduler spyQV = spy(new QuartzSessionValidationScheduler());
+        when(spyQV.getScheduler()).thenThrow(new SchedulerException()).thenReturn(null);
+        spyQV.disableSessionValidation();
+        spyQV.setScheduler(null);
+        spyQV.disableSessionValidation();
+
         ValidatingSessionManager sessionManager = mock(ValidatingSessionManager.class);
         QuartzSessionValidationScheduler scheduler = new QuartzSessionValidationScheduler(sessionManager);
         scheduler.disableSessionValidation();

@@ -98,7 +98,6 @@ public class ShiroConfiguration {
         chains.put("/logout", "logout");
         chains.put("/**", "user");
         filterFactory.setFilterChainDefinitionMap(chains);
-        //filterFactory.setFilterChainDefinitions(filterChainDefinitions());
         return  filterFactory;
     }
 
