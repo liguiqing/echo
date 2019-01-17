@@ -1,6 +1,7 @@
 package org.echo.ddd.infrastructure.id;
 
 import lombok.AllArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.echo.ddd.domain.id.IdentityGenerator;
 import org.echo.exception.ThrowableToString;
@@ -26,6 +27,9 @@ public class JdbcStringIdentityGenerator implements IdentityGenerator<String,Str
 
     private JdbcTemplate jdbc;
 
+    @Setter
+    private int step = 1;
+
     public String genId(){
         return UUID.randomUUID().toString().replaceAll("-","");
     }
@@ -40,7 +44,7 @@ public class JdbcStringIdentityGenerator implements IdentityGenerator<String,Str
                     if (rs.next()) {
                         long idSeq = rs.getLong("idSeq");
                         rs.absolute(1);
-                        rs.updateLong("idSeq", idSeq + 1);
+                        rs.updateLong("idSeq", idSeq + step);
                         rs.updateRow();
                         con.commit();
                         return idSeq;

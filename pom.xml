@@ -495,5 +495,6 @@
         <module>echo-share</module>
         <module>echo-spring-cache</module>
         <module>echo-shiro</module>
+        <module>echo-ext</module>
     </modules>
 </project>

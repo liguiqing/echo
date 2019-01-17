@@ -45,7 +45,7 @@ class JdbcStringIdentityGeneratorTest extends AbstractConfigurationsTest {
     void test()throws Exception {
         assertNotNull(jdbcTemplate);
         jdbcTemplate.update("DROP TABLE IF EXISTS t_cm_dddId;");
-        JdbcStringIdentityGenerator jdbcStringIdentityGenerator = new JdbcStringIdentityGenerator(jdbcTemplate);
+        JdbcStringIdentityGenerator jdbcStringIdentityGenerator = new JdbcStringIdentityGenerator(jdbcTemplate,1);
         jdbcStringIdentityGenerator.createIdTable();
         jdbcStringIdentityGenerator.createIdTable();
         assertNotNull(jdbcStringIdentityGenerator.genId());
