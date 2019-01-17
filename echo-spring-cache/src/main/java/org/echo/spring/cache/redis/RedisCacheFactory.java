@@ -13,7 +13,6 @@ import org.springframework.cache.Cache;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.util.StringUtils;
 
 import java.time.Duration;
 import java.util.Map;
@@ -66,7 +65,7 @@ public class RedisCacheFactory implements CacheFactory {
     public Cache newCache(String name) {
         try {
             if (redissonClient != null) {
-                RMap<Object, Object> map = redissonClient.getMapCache(getRedissonCacheName(name), new FstCodec());
+                RMap<Object, Object> map = redissonClient.getMapCache(cacheProperties.getCacheName(name), new FstCodec());
                 return new RedissonCache(map, cacheProperties.isCacheNullValues());
             }
             return redisCacheManager.getCache(name);
@@ -80,7 +79,7 @@ public class RedisCacheFactory implements CacheFactory {
     public Cache newCache(String name, long ttl, long maxIdleSecond) {
         if(redissonClient != null){
             CacheConfig config = new CacheConfig(getValidTime(ttl),getValidTime(maxIdleSecond));
-            RMapCache<Object,Object> map = redissonClient.getMapCache(getRedissonCacheName(name),new FstCodec());
+            RMapCache<Object,Object> map = redissonClient.getMapCache(cacheProperties.getCacheName(name),new FstCodec());
             return new RedissonCache(map, config, cacheProperties.isCacheNullValues());
         }
         return newCache(name);
@@ -90,8 +89,4 @@ public class RedisCacheFactory implements CacheFactory {
         return time > 0 ? time*1000 : 0;
     }
 
-
-    private String getRedissonCacheName(String name){
-        return (StringUtils.isEmpty(cacheProperties.getCachePrefix())?"echo":cacheProperties.getCachePrefix()).concat(":").concat(name).concat(":");
-    }
 }

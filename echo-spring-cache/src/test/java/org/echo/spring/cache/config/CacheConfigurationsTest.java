@@ -5,6 +5,7 @@ import org.echo.exception.ThrowableToString;
 import org.echo.test.config.AbstractConfigurationsTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
 import org.springframework.cache.Cache;
@@ -18,6 +19,7 @@ import java.lang.reflect.Method;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.mock;
 
 /**
  * Copyright (c) 2016,$today.year, 深圳市易考试乐学测评有限公司
@@ -55,5 +57,12 @@ class CacheConfigurationsTest extends AbstractConfigurationsTest {
         } catch (NoSuchMethodException e) {
             log.warn(ThrowableToString.toString(e));
         }
+    }
+
+    @Test
+    public void cacheDequeFactory(){
+        SecondaryCacheAutoConfiguration scc = new SecondaryCacheAutoConfiguration();
+        assertNotNull(scc.cacheDequeFactory(null));
+        assertNotNull(scc.cacheDequeFactory(mock(RedissonClient.class)));
     }
 }

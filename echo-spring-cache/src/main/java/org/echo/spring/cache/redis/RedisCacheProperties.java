@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.echo.spring.cache.CacheProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -43,4 +44,8 @@ public class RedisCacheProperties implements CacheProperties {
     private Set<String> hostsAndPorts = new HashSet<>();
 
     private Standalone standalone = new Standalone();
+
+    public String getCacheName(String name){
+        return (StringUtils.isEmpty(this.getCachePrefix())?"echo":this.getCachePrefix()).concat(":").concat(name).concat(":");
+    }
 }

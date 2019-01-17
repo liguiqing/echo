@@ -3,14 +3,17 @@ package org.echo.spring.cache.config;
 import lombok.extern.slf4j.Slf4j;
 import org.echo.lock.DistributedLock;
 import org.echo.lock.RedisBaseDistributedLock;
+import org.echo.spring.cache.CacheDequeFactory;
 import org.echo.spring.cache.caffeine.CaffeineCacheFactory;
 import org.echo.spring.cache.caffeine.CaffeineCacheProperties;
 import org.echo.spring.cache.message.RedisCacheMessagePusher;
 import org.echo.spring.cache.redis.RedisCacheFactory;
 import org.echo.spring.cache.redis.RedisCacheProperties;
+import org.echo.spring.cache.redis.RedissonCacheDequeFactory;
 import org.echo.spring.cache.secondary.RedisBaseCacheMessageListener;
 import org.echo.spring.cache.secondary.SecondaryCacheManager;
 import org.echo.spring.cache.secondary.SecondaryCacheProperties;
+import org.echo.util.RedisClientUtils;
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,6 +70,14 @@ public class SecondaryCacheAutoConfiguration {
     @Bean
     public DistributedLock distributedLock(RedissonClient redissonClient, @Value("${app.util.lock.prefix:echo}")String lockPrefix){
         return new RedisBaseDistributedLock(lockPrefix, redissonClient);
+    }
+
+    @Bean
+    public CacheDequeFactory cacheDequeFactory(RedissonClient redissonClient){
+        if(RedisClientUtils.isAlive(redissonClient)){
+            return new RedissonCacheDequeFactory(redissonClient, redisCacheProperties);
+        }
+        return new CacheDequeFactory(){};
     }
 
     @Bean
