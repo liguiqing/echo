@@ -2,6 +2,7 @@ package org.echo.spring.cache.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.echo.exception.ThrowableToString;
+import org.echo.spring.cache.CacheDequeFactory;
 import org.echo.test.config.AbstractConfigurationsTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -62,7 +63,9 @@ class CacheConfigurationsTest extends AbstractConfigurationsTest {
     @Test
     public void cacheDequeFactory(){
         SecondaryCacheAutoConfiguration scc = new SecondaryCacheAutoConfiguration();
-        assertNotNull(scc.cacheDequeFactory(null));
+        CacheDequeFactory cacheDequeFactory = scc.cacheDequeFactory(null);
+        assertNotNull(cacheDequeFactory);
+        assertNotNull(cacheDequeFactory.getDeque(""));
         assertNotNull(scc.cacheDequeFactory(mock(RedissonClient.class)));
     }
 }

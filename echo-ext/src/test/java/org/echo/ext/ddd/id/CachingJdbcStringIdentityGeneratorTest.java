@@ -66,5 +66,9 @@ class CachingJdbcStringIdentityGeneratorTest  extends AbstractConfigurationsTest
         Arrays.stream(rs).forEach(r->new Thread(r).start());
         cd.await();
         assertEquals(threads, ids.size());
+
+        generator.newPrefix("CMMN","CMMN","");
+        generator.setWithPrefix(false);
+        assertNotNull(generator.genId(""));
     }
 }

@@ -87,7 +87,7 @@ public class CachingJdbcStringIdentityGenerator extends JdbcStringIdentityGenera
 
     private String getPrefix(String prefix){
         if(StringUtils.isEmpty(prefix)){
-            return "common";
+            return "CMMN";
         }
         return prefix;
     }
