@@ -36,7 +36,7 @@ public class SecondaryCache extends AbstractValueAdaptingCache {
 
     private CacheMessagePusher messagePusher;
 
-    private DistributedLock<Object> lock;
+    private DistributedLock<Object,Object> lock;
 
     private Cache cacheL1Bak;
 
@@ -67,19 +67,19 @@ public class SecondaryCache extends AbstractValueAdaptingCache {
         this.lock = lock;
     }
 
-    public static SecondaryCache onlyCache1(String name, Cache cacheL1,SecondaryCacheProperties cacheProperties,DistributedLock<Object> lock){
+    public static SecondaryCache onlyCache1(String name, Cache cacheL1,SecondaryCacheProperties cacheProperties,DistributedLock<Object,Object> lock){
         SecondaryCache cache = new SecondaryCache(cacheProperties.isCacheNullValues());
         cache.name = name;
         cache.cacheL1 = cacheL1;
-        cache.lock = lock==null?new DistributedLock<Object>(){}:lock;
+        cache.lock = lock==null?new DistributedLock<Object,Object>(){}:lock;
         return cache;
     }
 
-    public static SecondaryCache onlyCache2(String name, Cache cacheL2,SecondaryCacheProperties cacheProperties,DistributedLock<Object> lock){
+    public static SecondaryCache onlyCache2(String name, Cache cacheL2,SecondaryCacheProperties cacheProperties,DistributedLock<Object,Object> lock){
         SecondaryCache cache = new SecondaryCache(cacheProperties.isCacheNullValues());
         cache.name = name;
         cache.cacheL2 = cacheL2;
-        cache.lock = lock==null?new DistributedLock<Object>(){}:lock;
+        cache.lock = lock==null?new DistributedLock<Object,Object>(){}:lock;
         return cache;
     }
 
@@ -118,17 +118,16 @@ public class SecondaryCache extends AbstractValueAdaptingCache {
         }
 
         try {
-            lock.lock(key);
-            value = valueLoader.call();
-            putToLevel1(key, value);
-            putToLevel2(key,value);
+            value = lock.lock(key,()->{
+                Object newValue = valueLoader.call();
+                putToLevel1(key, newValue);
+                putToLevel2(key,newValue);
+                return newValue;
+            });
             return (T) value;
         } catch (Exception e) {
             log.error(ThrowableToString.toString(e));
-        } finally {
-            lock.unlock(key);
         }
-
         throw new IllegalStateException(key + "");
     }
 
@@ -158,10 +157,12 @@ public class SecondaryCache extends AbstractValueAdaptingCache {
         if(valueWrapper != null && valueWrapper.get() != null)
             return valueWrapper;
         try {
-            lock.lock(key);
-            this.put(key,value);
-        }finally {
-            lock.unlock(key);
+            lock.lock(key,()->{
+                this.put(key,value);
+                return value;
+            });
+        }catch (Exception e) {
+            log.error(ThrowableToString.toString(e));
         }
         return this.get(key);
     }

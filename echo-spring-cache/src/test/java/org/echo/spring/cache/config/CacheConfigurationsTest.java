@@ -6,6 +6,7 @@ import org.echo.spring.cache.CacheDequeFactory;
 import org.echo.test.config.AbstractConfigurationsTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.redisson.api.RAtomicLong;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
@@ -20,7 +21,9 @@ import java.lang.reflect.Method;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Copyright (c) 2016,$today.year, 深圳市易考试乐学测评有限公司
@@ -66,6 +69,9 @@ class CacheConfigurationsTest extends AbstractConfigurationsTest {
         CacheDequeFactory cacheDequeFactory = scc.cacheDequeFactory(null);
         assertNotNull(cacheDequeFactory);
         assertNotNull(cacheDequeFactory.getDeque(""));
-        assertNotNull(scc.cacheDequeFactory(mock(RedissonClient.class)));
+        RedissonClient client = mock(RedissonClient.class);
+        RAtomicLong rAtomicLong = mock(RAtomicLong.class);
+        when(client.getAtomicLong(any(String.class))).thenReturn(rAtomicLong);
+        assertNotNull(scc.cacheDequeFactory(client));
     }
 }
