@@ -1,13 +1,16 @@
 package org.echo.lock;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.echo.exception.ThrowableToString;
 import org.echo.util.RedisClientUtils;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 
+import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -18,7 +21,8 @@ import java.util.concurrent.locks.ReentrantLock;
  * @since V1.0
  */
 @AllArgsConstructor
-public class RedisBaseDistributedLock implements DistributedLock<Object> {
+@Slf4j
+public class RedisBaseDistributedLock implements DistributedLock<Object,Object> {
     private static final String LOCK_KEY = "lock:";
 
     private String lockPrefix = "echo:";
@@ -32,17 +36,28 @@ public class RedisBaseDistributedLock implements DistributedLock<Object> {
     }
 
     @Override
-    public void lock(Object key){
+    public Object lock(Object key, Callable<Object> call){
         locks.putIfAbsent(key,newLock(key));
-        locks.get(key).lock();
+        Lock lock = locks.get(key);
+        try{
+            return tryLock(lock, call, 1);
+        }catch (Exception e){
+            log.warn(ThrowableToString.toString(e));
+        }finally {
+            lock.unlock();
+        }
+        return null;
     }
 
-    @Override
-    public void unlock(Object key){
-        Lock lock = locks.get(key);
-        locks.remove(key);
-        Preconditions.checkNotNull(lock);
-        lock.unlock();
+    private Object tryLock(Lock lock, Callable call,int reTry)throws Exception{
+        if(lock.tryLock(5, TimeUnit.SECONDS)){
+            return call.call();
+        }else {
+            if(reTry < 12){
+                return tryLock(lock,call,++reTry);
+            }
+        }
+        return null;
     }
 
     private Lock newLock(Object key) {

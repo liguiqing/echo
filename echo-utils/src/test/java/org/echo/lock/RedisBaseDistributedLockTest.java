@@ -6,7 +6,8 @@ import org.redisson.api.RAtomicLong;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import java.util.concurrent.TimeUnit;
+
 import static org.mockito.Mockito.*;
 
 /**
@@ -16,7 +17,7 @@ import static org.mockito.Mockito.*;
 class RedisBaseDistributedLockTest {
 
     @Test
-    void lock() {
+    void lock() throws Exception{
         RedissonClient redissonClient = mock(RedissonClient.class);
         RAtomicLong rAtomicLong = mock(RAtomicLong.class);
         when(redissonClient.getAtomicLong(any(String.class))).thenReturn(rAtomicLong).thenThrow();
@@ -24,28 +25,30 @@ class RedisBaseDistributedLockTest {
         RLock lock = mock(RLock.class);
         when(redissonClient.getFairLock(any(String.class))).thenReturn(lock);
         doNothing().when(lock).lock();
+        when(lock.tryLock(any(Long.class), eq(TimeUnit.SECONDS))).thenReturn(false).thenReturn(false).thenReturn(true);
         RedisBaseDistributedLock distributedLock = new RedisBaseDistributedLock(redissonClient);
-        distributedLock.lock("aa");
-        distributedLock.unlock("aa");
-        distributedLock.lock("aa");
-        distributedLock.unlock("aa");
+        distributedLock.lock("aa",()->"");
+
+        distributedLock.lock("aa",()->"");
+        when(lock.tryLock(any(Long.class), eq(TimeUnit.SECONDS))).thenReturn(false);
+        distributedLock.lock("aa",()->"");
+
+        when(lock.tryLock(any(Long.class),any(TimeUnit.class))).thenThrow(new InterruptedException());
+        distributedLock.lock("aa",()->"");
+
         RedisLockTestBean bean1 = new RedisLockTestBean(1L,"Test");
-        distributedLock.lock(bean1);
-        distributedLock.unlock(bean1);
-        assertThrows(Exception.class,()->distributedLock.unlock("bb"));
+        distributedLock.lock(bean1,()->"");
 
         RedisBaseDistributedLock distributedLock1 = new RedisBaseDistributedLock("echo",null);
-        distributedLock1.lock("aa");
-        distributedLock1.unlock("aa");
-        distributedLock1.lock("aa");
-        distributedLock1.unlock("aa");
+        distributedLock1.lock("aa",()->"");
+
+        distributedLock1.lock("aa",()->"");
+
         bean1 = new RedisLockTestBean(1L,"Test");
-        distributedLock1.lock(bean1);
-        distributedLock1.unlock(bean1);
-        assertThrows(Exception.class,()->distributedLock1.unlock("bb"));
+        distributedLock1.lock(bean1,()->"");
 
         DistributedLock dLock = new DistributedLock(){};
-        dLock.lock("aa");
-        dLock.unlock("aa");
+        dLock.lock("aa",()->"");
+
     }
 }
