@@ -1,6 +1,8 @@
 package org.echo.ext.ddd.id;
 
 import org.assertj.core.util.Sets;
+import org.echo.lock.DistributedLock;
+import org.echo.lock.RedisBaseDistributedLock;
 import org.echo.share.config.DataSourceConfigurations;
 import org.echo.spring.cache.CacheDequeFactory;
 import org.echo.test.config.AbstractConfigurationsTest;
@@ -39,10 +41,12 @@ class CachingJdbcStringIdentityGeneratorTest  extends AbstractConfigurationsTest
     @Autowired
     JdbcTemplate jdbcTemplate;
 
+
     @Test
     void genId() throws Exception {
+        DistributedLock lock = new RedisBaseDistributedLock(null);
         CacheDequeFactory cacheDequeFactory = new CacheDequeFactory(){};
-        CachingJdbcStringIdentityGenerator generator = new CachingJdbcStringIdentityGenerator(jdbcTemplate,cacheDequeFactory);
+        CachingJdbcStringIdentityGenerator generator = new CachingJdbcStringIdentityGenerator(jdbcTemplate,cacheDequeFactory,lock);
         generator.setStep(100);
         generator.newPrefix("TEST","TSA","echo.test.Test");
         String id = generator.genId("TSA");
@@ -70,5 +74,6 @@ class CachingJdbcStringIdentityGeneratorTest  extends AbstractConfigurationsTest
         generator.newPrefix("CMMN","CMMN","");
         generator.setWithPrefix(false);
         assertNotNull(generator.genId(""));
+        generator.clearPrefix("CMMN");
     }
 }

@@ -4,8 +4,10 @@ import com.google.common.collect.Maps;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.echo.ddd.infrastructure.id.JdbcStringIdentityGenerator;
+import org.echo.exception.ThrowableToString;
 import org.echo.lock.DistributedLock;
 import org.echo.spring.cache.CacheDequeFactory;
+import org.echo.util.Threads;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.util.StringUtils;
 
@@ -27,23 +29,24 @@ public class CachingJdbcStringIdentityGenerator extends JdbcStringIdentityGenera
 
     private int threshold;
 
-    @Setter
-    private DistributedLock lock = new DistributedLock(){};
+    private DistributedLock lock;
 
     private CacheDequeFactory cacheDequeFactory;
 
     private static Map<String,Deque<Long>> idCaches = Maps.newConcurrentMap();
 
-    public CachingJdbcStringIdentityGenerator(JdbcTemplate jdbc, CacheDequeFactory cacheDequeFactory) {
-        this(jdbc, 10000,cacheDequeFactory);
+    public CachingJdbcStringIdentityGenerator(JdbcTemplate jdbc, CacheDequeFactory cacheDequeFactory,DistributedLock lock) {
+        this(jdbc, 10000,cacheDequeFactory,lock);
     }
 
-    public CachingJdbcStringIdentityGenerator(JdbcTemplate jdbc, int step, CacheDequeFactory cacheDequeFactory) {
+    public CachingJdbcStringIdentityGenerator(JdbcTemplate jdbc, int step, CacheDequeFactory cacheDequeFactory,DistributedLock lock) {
         super(jdbc, step);
         this.cacheDequeFactory = cacheDequeFactory;
+        this.lock = lock;
         this.setStep(step);
     }
 
+    @Override
     public void setStep(int step){
         this.step = step;
         super.setStep(step);
@@ -56,32 +59,41 @@ public class CachingJdbcStringIdentityGenerator extends JdbcStringIdentityGenera
         log.debug("Get prefix {} next id ",prefix);
         idCaches.putIfAbsent(myPrefix,cacheDequeFactory.getDeque(myPrefix));
         Deque<Long> idQueue = idCaches.get(myPrefix);
-        intDequq(idQueue,myPrefix);
+        initDeque(idQueue,myPrefix);
         Long nextSeq = idQueue.pop();
-        loadMore(idQueue,prefix);
+        callLoadMore(idQueue,prefix);
         if(withPrefix){
             return prefix.concat(nextSeq.toString());
         }
         return nextSeq.toString();
     }
 
-    private void intDequq(Deque<Long> idQueue,String prefix){
-        lock.lock(prefix);
-        if(idQueue.size() == 0){
-            loadMore(idQueue,prefix);
+    private void initDeque(Deque<Long> idQueue,String prefix){
+        try {
+            lock.lock(prefix,()->{
+                if(idQueue.isEmpty()){
+                    loadMore(idQueue,prefix);
+                }
+                return 0;
+            });
+        } catch (Exception e) {
+            log.warn(ThrowableToString.toString(e));
         }
-        lock.unlock(prefix);
+    }
+
+    private void callLoadMore(Deque<Long> idQueue,String prefix){
+        if(idQueue.size() < this.threshold){
+            Threads.getExecutorService().submit(() -> loadMore(idQueue, prefix));
+        }
     }
 
     private void loadMore(Deque<Long> idQueue,String prefix) {
-        if(idQueue.size() < this.threshold){
-            String next = super.genId(prefix);
-            Long nextId = Long.valueOf(next.substring(prefix.length()));
-            int times = 0;
-            while(times < step){
-                times++;
-                idQueue.addLast(nextId++);
-            }
+        String next = super.genId(prefix);
+        Long nextId = Long.valueOf(next.substring(prefix.length()));
+        int times = 0;
+        while (times <= step) {
+            times++;
+            idQueue.addLast(nextId++);
         }
     }
 
