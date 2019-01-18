@@ -56,11 +56,12 @@ public class CachingJdbcStringIdentityGenerator extends JdbcStringIdentityGenera
     @Override
     public String genId(String prefix){
         String myPrefix = getPrefix(prefix);
-        log.debug("Get prefix {} next id ",prefix);
+
         idCaches.putIfAbsent(myPrefix,cacheDequeFactory.getDeque(myPrefix));
         Deque<Long> idQueue = idCaches.get(myPrefix);
         initDeque(idQueue,myPrefix);
         Long nextSeq = idQueue.pop();
+        log.debug("Get prefix {} next id ->{}",prefix,nextSeq);
         callLoadMore(idQueue,prefix);
         if(withPrefix){
             return prefix.concat(nextSeq.toString());
@@ -90,7 +91,7 @@ public class CachingJdbcStringIdentityGenerator extends JdbcStringIdentityGenera
     private void loadMore(Deque<Long> idQueue,String prefix) {
         String next = super.genId(prefix);
         Long nextId = Long.valueOf(next.substring(prefix.length()));
-        int times = 0;
+        int times = 1;
         while (times <= step) {
             times++;
             idQueue.addLast(nextId++);

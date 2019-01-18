@@ -17,7 +17,7 @@ import org.springframework.stereotype.Repository;
 public interface ExamRepository extends PersistenceDomainObjectRepository<Exam, ExamId> {
 
     default  ExamId nextIdentity(){
-        return new ExamId(Identities.genId("EXA"));
+        return new ExamId(Identities.genId(ExamId.class));
     }
 
     @CacheEvict(value = "exam#3600#3600",key="#p0.id.id")

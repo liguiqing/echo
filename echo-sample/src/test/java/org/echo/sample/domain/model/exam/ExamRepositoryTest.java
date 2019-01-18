@@ -65,7 +65,7 @@ class ExamRepositoryTest extends AbstractRepositoryTest {
         for(int i =1000;i>0;i--){
             repository.loadOf(examId);
         }
-        Identity<String> projectId2 = Identities.genId("PRJ", AssociationId.class);
+        Identity<String> projectId2 = Identities.genId(AssociationId.class);
         exam1.joinProject(projectId2);
         repository.save(exam1);
         Exam exam2 = repository.loadOf(examId);

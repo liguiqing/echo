@@ -9,9 +9,9 @@ import java.io.Serializable;
  * @since V1.0
  */
 
-public interface IdentityGenerator<T extends Serializable,P extends T> {
+public interface IdentityGenerator<T extends Serializable,C extends Class<? extends Identity>> {
 
     T genId();
 
-    T genId(P prefix);
+    T genId(C c);
 }

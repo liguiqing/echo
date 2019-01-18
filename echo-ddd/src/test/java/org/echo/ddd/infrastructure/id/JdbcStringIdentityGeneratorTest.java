@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @Transactional
 @TestPropertySource(properties = {"spring.config.location = classpath:/application-ddd.yml"})
 @Rollback
-@DisplayName("Echo : JdbcStringIdentityGenerator exec")
+@DisplayName("Echo : JdbcStringIdentityGenerator Test")
 @Slf4j
 class JdbcStringIdentityGeneratorTest extends AbstractConfigurationsTest {
 
@@ -50,11 +50,12 @@ class JdbcStringIdentityGeneratorTest extends AbstractConfigurationsTest {
         jdbcStringIdentityGenerator.createIdTable();
         assertNotNull(jdbcStringIdentityGenerator.genId());
         jdbcStringIdentityGenerator.clearPrefix("TSA");
-        assertEquals("TSA1",jdbcStringIdentityGenerator.genId("TSA"));
-        assertEquals("TSA1",jdbcStringIdentityGenerator.genId("TSA"));
         jdbcStringIdentityGenerator.newPrefix("TEST","TSA","echo.test.Test");
+        assertEquals("TSA1",jdbcStringIdentityGenerator.genId("TSA"));
         assertEquals("TSA2",jdbcStringIdentityGenerator.genId("TSA"));
+        jdbcStringIdentityGenerator.newPrefix("TEST","TSA","echo.test.Test");
         assertEquals("TSA3",jdbcStringIdentityGenerator.genId("TSA"));
+        assertEquals("TSA4",jdbcStringIdentityGenerator.genId("TSA"));
         int threads = 100;
         final Collection<String> ids = Sets.newHashSet();
         CountDownLatch cd = new CountDownLatch(threads);
