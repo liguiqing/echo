@@ -10,7 +10,6 @@ import org.redisson.api.RedissonClient;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -40,7 +39,8 @@ public class RedisBaseDistributedLock implements DistributedLock<Object,Object> 
         locks.putIfAbsent(key,newLock(key));
         Lock lock = locks.get(key);
         try{
-            return tryLock(lock, call, 1);
+            lock.lock();
+            return call.call();
         }catch (Exception e){
             log.warn(ThrowableToString.toString(e));
         }finally {
@@ -49,16 +49,19 @@ public class RedisBaseDistributedLock implements DistributedLock<Object,Object> 
         return null;
     }
 
-    private Object tryLock(Lock lock, Callable call,int reTry)throws Exception{
-        if(lock.tryLock(5, TimeUnit.SECONDS)){
-            return call.call();
-        }else {
-            if(reTry < 12){
-                return tryLock(lock,call,++reTry);
-            }
-        }
-        return null;
-    }
+//    private Object tryLock(Lock lock, Callable call,int reTry)throws Exception{
+//        lock.lock();
+//        return call.call();
+//
+//        if(lock.tryLock(5, TimeUnit.SECONDS)){
+//            return call.call();
+//        }else {
+//            if(reTry < 12){
+//                return tryLock(lock,call,++reTry);
+//            }
+//        }
+//        return null;
+//    }
 
     private Lock newLock(Object key) {
         if (RedisClientUtils.isAlive(this.redissonClient)) {

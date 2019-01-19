@@ -16,8 +16,8 @@ public abstract class GuavaEventHandler<E extends DomainEvent> implements Domain
     @Subscribe
     @AllowConcurrentEvents
     public void on(E event) {
-        doOn(event);
+        when(event);
     }
 
-    protected abstract void doOn(E event);
+    protected abstract void when(E event);
 }

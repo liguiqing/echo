@@ -110,27 +110,21 @@ public class SecondaryCache extends AbstractValueAdaptingCache {
 
     @Override
     public <T> T get(Object key, Callable<T> valueLoader) {
-        log.debug("Get Object from cache [{}] by key [{}]",this.name,key);
+        log.debug("Get Object from cache [{}] by key [{}]", this.name, key);
 
         Object value = lookup(key);
-        if(value != null) {
+        if (value != null) {
             return (T) value;
         }
 
-        try {
-            value = lock.lock(key,()->{
-                Object newValue = valueLoader.call();
-                putToLevel1(key, newValue);
-                putToLevel2(key,newValue);
-                return newValue;
-            });
-            return (T) value;
-        } catch (Exception e) {
-            log.error(ThrowableToString.toString(e));
-        }
-        throw new IllegalStateException(key + "");
+        value = lock.lock(key, () -> {
+            Object newValue = valueLoader.call();
+            putToLevel1(key, newValue);
+            putToLevel2(key, newValue);
+            return newValue;
+        });
+        return (T) value;
     }
-
     @Override
     public void put(Object key, Object value) {
         log.debug("Put cache of {}->{} into cache [{}]",key,value,this.name);

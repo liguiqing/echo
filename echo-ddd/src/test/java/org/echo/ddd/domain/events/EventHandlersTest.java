@@ -37,7 +37,7 @@ class EventHandlersTest {
         GuavaEventHandler<Test1Created> handler = new GuavaEventHandler<Test1Created>() {
 
             @Override
-            protected void doOn(Test1Created event) {
+            protected void when(Test1Created event) {
                 assertEquals(now,event.getNow());
                 cd.countDown();
                 cd3.countDown();

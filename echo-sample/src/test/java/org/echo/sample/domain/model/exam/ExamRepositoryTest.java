@@ -5,8 +5,8 @@ import org.echo.ddd.domain.id.Identities;
 import org.echo.ddd.domain.id.Identity;
 import org.echo.hibernate.converter.HibernateEnum;
 import org.echo.sample.config.AppConfigurations;
-import org.echo.spring.cache.config.CacheConfigurations;
 import org.echo.share.config.DataSourceConfigurations;
+import org.echo.spring.cache.config.CacheConfigurations;
 import org.echo.spring.cache.config.SecondaryCacheAutoConfiguration;
 import org.echo.test.repository.AbstractRepositoryTest;
 import org.junit.jupiter.api.DisplayName;
@@ -65,7 +65,7 @@ class ExamRepositoryTest extends AbstractRepositoryTest {
         for(int i =1000;i>0;i--){
             repository.loadOf(examId);
         }
-        Identity<String> projectId2 = Identities.genId(AssociationId.class);
+        Identity<String> projectId2 = Identities.genId(new AssociationId());
         exam1.joinProject(projectId2);
         repository.save(exam1);
         Exam exam2 = repository.loadOf(examId);

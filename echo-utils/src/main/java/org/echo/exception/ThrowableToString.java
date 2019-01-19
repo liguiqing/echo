@@ -1,5 +1,6 @@
 package org.echo.exception;
 
+import lombok.extern.slf4j.Slf4j;
 import org.echo.lang.Closer;
 
 import java.io.PrintWriter;
@@ -11,7 +12,7 @@ import java.io.StringWriter;
  * @author Liguiqing
  * @since V1.0
  */
-
+@Slf4j
 public class ThrowableToString {
 
     private ThrowableToString(){
@@ -48,5 +49,9 @@ public class ThrowableToString {
             return "Exception is null";
 
         return toString(t.getCause() == null ? t : t.getCause());
+    }
+
+    public static void logWarn(Exception t){
+        log.warn(toString(t));
     }
 }

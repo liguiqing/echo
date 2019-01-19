@@ -24,6 +24,6 @@ public class ExamId implements Identity<String> {
     private String id;
 
     public ExamId() {
-        this.id = Identities.genId("EXAM");
+        this.id = Identities.genId(getClass());
     }
 }

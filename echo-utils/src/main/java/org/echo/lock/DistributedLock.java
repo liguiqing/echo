@@ -1,5 +1,7 @@
 package org.echo.lock;
 
+import org.echo.exception.ThrowableToString;
+
 import java.util.concurrent.Callable;
 
 /**
@@ -11,5 +13,12 @@ import java.util.concurrent.Callable;
 
 public interface DistributedLock<K,V> {
 
-    default V lock(K key, Callable<V> call)throws Exception{return call.call();}
+    default V lock(K key, Callable<V> call){
+        try {
+            return call.call();
+        } catch (Exception e) {
+            ThrowableToString.logWarn(e);
+        }
+        return null;
+    }
 }

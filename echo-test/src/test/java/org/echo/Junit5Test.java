@@ -19,6 +19,14 @@ import static org.junit.jupiter.api.Assertions.*;
 public class Junit5Test {
 
     @Test
+    void stringTest(){
+        String s1 = "YouAreFooled";
+        String[] s1s = s1.split("(?=[A-Z])");
+        char[] s1s1 = s1s[0].toCharArray();
+        assertAll(()->{assertEquals(3,s1s.length);assertEquals('Y',s1s1[0]);});
+    }
+
+    @Test
     void myFirstTest() {
         assertEquals(2, 1 + 1);
     }

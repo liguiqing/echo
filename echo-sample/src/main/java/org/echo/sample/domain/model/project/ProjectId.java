@@ -22,6 +22,6 @@ public class ProjectId implements Identity<String> {
     private String id;
 
     public ProjectId() {
-        this.id = Identities.genId("PRJE");
+        this.id = Identities.genId(getClass());
     }
 }

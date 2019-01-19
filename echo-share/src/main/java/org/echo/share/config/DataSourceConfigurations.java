@@ -100,7 +100,7 @@ public class DataSourceConfigurations {
             entityManagerFactoryBean.setPersistenceXmlLocation(xmlLocation);
         }
 
-        entityManagerFactoryBean.setPackagesToScan("org.echo.*.domain.model.**.*");
+        entityManagerFactoryBean.setPackagesToScan("**.*.domain.**.*");
         entityManagerFactoryBean.setDataSource(dataSource);
         entityManagerFactoryBean.setJpaVendorAdapter(jpaVendorAdapter);
         entityManagerFactoryBean.setJpaDialect(jpaDialect);
