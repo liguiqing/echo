@@ -27,16 +27,19 @@ public class EventHandlers {
         Holder.instance.eventBus = eventBus;
     }
 
-    public void register(DomainEventHandler eventHandler){
+    public EventHandlers register(DomainEventHandler eventHandler){
         this.eventBus.register(eventHandler);
+        return this;
     }
 
-    public void unregister(DomainEventHandler eventHandler){
+    public EventHandlers unregister(DomainEventHandler eventHandler){
         this.eventBus.unregister(eventHandler);
+        return this;
     }
 
-    public void post(DomainEvent event) {
+    public EventHandlers post(DomainEvent event) {
         this.eventBus.post(event);
+        return this;
     }
 
 }
