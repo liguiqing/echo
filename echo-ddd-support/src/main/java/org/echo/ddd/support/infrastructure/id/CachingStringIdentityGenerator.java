@@ -11,10 +11,10 @@ import org.echo.ddd.domain.id.IdentityGenerator;
 import org.echo.ddd.support.domain.model.id.IdLessThenWarned;
 import org.echo.ddd.support.domain.model.id.IdPrefixBean;
 import org.echo.ddd.support.domain.model.id.IdPrefixBeanRepository;
-import org.echo.exception.ThrowableToString;
 import org.echo.lock.DistributedLock;
 import org.echo.spring.cache.CacheDequeFactory;
 
+import java.math.BigDecimal;
 import java.util.Deque;
 import java.util.Map;
 import java.util.UUID;
@@ -51,12 +51,7 @@ public class CachingStringIdentityGenerator implements IdentityGenerator<String,
     private boolean withPrefix = true;
 
     @Setter
-    private int step = 10000;
-
-    @Setter
-    private int threshold = step;
-
-    private boolean needMore;
+    private int step = 100;
 
     public CachingStringIdentityGenerator(IdPrefixBeanRepository repository, IdPrefix<Class<? extends Identity>> idPrefix,
                                           CacheDequeFactory cacheDequeFactory, DistributedLock lock) {
@@ -82,6 +77,7 @@ public class CachingStringIdentityGenerator implements IdentityGenerator<String,
         String myPrefix = prefixBean.getIdPrefix();
         Deque<Long> idQueue = getIdQueue(myPrefix);
         Long nextId = idQueue.pop();
+        log.debug("Gen Id for {} -> {}",aClass,nextId);
         tryToLoad(prefixBean,idQueue);
         if(withPrefix){
             return prefixBean.getIdPrefix().concat(nextId + "");
@@ -97,8 +93,8 @@ public class CachingStringIdentityGenerator implements IdentityGenerator<String,
     private IdPrefixBean getPrefixBean(Class<? extends Identity> aClass){
         String className = aClass.getName();
         IdPrefixBean prefixBean = this.repository.loadOf(className.hashCode());
+        String prefix = this.idPrefix.of(aClass);
         if(prefixBean == null){
-            String prefix = this.idPrefix.of(aClass);
             prefixBean = this.repository.save(new IdPrefixBean(className,prefix, 1L));
             Deque<Long> idQueue = cacheDequeFactory.getDeque(prefix);
             idCaches.put(prefix, idQueue);
@@ -108,21 +104,17 @@ public class CachingStringIdentityGenerator implements IdentityGenerator<String,
     }
 
     private void initDeque(Deque<Long> idQueue,IdPrefixBean prefixBean){
-        try {
-            lock.lock(prefixBean,()->{
-                if(idQueue.isEmpty()){
-                    loadMore(idQueue,prefixBean);
-                }
-                return true;
-            });
-        } catch (Exception e) {
-            log.warn(ThrowableToString.toString(e));
-        }
+        lock.lock(prefixBean,()->{
+            if(idQueue.isEmpty()){
+                loadMore(idQueue,prefixBean);
+            }
+            return true;
+        });
     }
 
     private void tryToLoad(IdPrefixBean prefixBean,Deque<Long> idQueue){
         if(needMore(idQueue)){
-            this.needMore = this.lock.lock(locker, () -> {
+            this.lock.lock(locker, () -> {
                 EventHandlers.getInstance().post(new IdLessThenWarned(this,prefixBean,idQueue));
                 return true;
             });
@@ -130,16 +122,22 @@ public class CachingStringIdentityGenerator implements IdentityGenerator<String,
     }
 
     private boolean needMore(Deque<Long> idQueue){
-        return idQueue.size() < this.threshold;
+        return idQueue.size() < this.getThreshold();
     }
 
     private void loadMore(Deque<Long> idQueue,IdPrefixBean prefixBean) {
         Long nextId = prefixBean.getIdSeq();
-        int times = 1;
-        while (times <= step) {
+        int times = 0;
+        while (times < this.step) {
             times++;
             idQueue.addLast(nextId++);
         }
         prefixBean.add(times);
+    }
+
+    private int getThreshold(){
+        //最优实现函数为：f(x)=k/(x-h)^n
+        //f(1) 去尝试ｋ，ｈ，ｎ
+        return BigDecimal.valueOf(Math.pow(step, -0.09)).multiply(BigDecimal.valueOf(this.step)).intValue();
     }
 }

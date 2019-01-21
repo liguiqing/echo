@@ -19,7 +19,7 @@ public class Identities {
         throw new AssertionError("No org.echo.ddd.domain.id.Identities instances for you!");
     }
 
-    private static IdPrefix<Class<? extends Identity>> idPrefix =(c)->c.getName().substring(0,4).toUpperCase();
+    private static IdPrefix<Class<? extends Identity>> idPrefix =(c)->c.getSimpleName().substring(0,3).toUpperCase();
 
     private static IdentityGenerator generator = new IdentityGenerator<String,Class<Identity>>(){
 

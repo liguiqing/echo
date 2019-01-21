@@ -6,6 +6,6 @@ package org.echo.ddd.support.infrastructure.id;
  */
 
 @FunctionalInterface
-public interface PrefixExistCallback<R,P> {
+public interface PrefixExists<R,P> {
     R callback(P prefix);
 }
