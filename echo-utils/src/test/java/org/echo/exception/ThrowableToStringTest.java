@@ -44,7 +44,12 @@ class ThrowableToStringTest {
         assertTrue(ThrowableToString.toString(e2).contains(""));
         Throwable t = null;
         assertTrue(ThrowableToString.toString(t).contains("Throwable is null"));
-
+        assertTrue(ThrowableToString.toString(new Exception(new IllegalArgumentException(" Fuck"))).contains("Fuck"));
         assertThrows(Exception.class,()->new PrivateConstructors().exec(ThrowableToString.class));
+    }
+
+    @Test
+    void logWarn(){
+        ThrowableToString.logWarn(new Exception());
     }
 }

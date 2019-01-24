@@ -28,10 +28,14 @@ public class IdPrefixGenerator implements IdPrefix<Class<? extends Identity>>{
 
         String className = aClass.getSimpleName();
         String[] words = className.split("(?=[A-Z])");
-        return this.wordsToString.toString(words, this.length,(s)->true);
+        return this.wordsToString.toString(words, this.length, this::prefixExists);
     }
 
-    private IdPrefixBean get(Class<? extends Identity> aClass){
+    private IdPrefixBean get(Class aClass){
         return this.repository.loadOf(aClass.getName().hashCode());
+    }
+
+    private boolean prefixExists(String prefix){
+        return this.repository.findByIdPrefix(prefix) != null;
     }
 }

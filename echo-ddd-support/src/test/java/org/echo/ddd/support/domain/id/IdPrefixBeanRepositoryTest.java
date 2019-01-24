@@ -19,6 +19,7 @@ import org.springframework.test.context.TestPropertySource;
 import javax.transaction.Transactional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -50,7 +51,13 @@ public class IdPrefixBeanRepositoryTest extends AbstractRepositoryTest {
         IdPrefixBean bean = repository.loadOf(idPrefixBean.getIdClassNameHash());
         assertEquals(idPrefixBean,bean);
         for(int i=1000;i>0;i--){
-            repository.loadOf(idPrefixBean.getIdClassNameHash());
+            bean = repository.loadOf(idPrefixBean.getIdClassNameHash());
         }
+        assertEquals(idPrefixBean.getIdClassName(),bean.getIdClassName());
+        assertEquals("IdPrefixBean(idClassNameHash=522100336, idClassName=foo.bar.Bar, idPrefix=ABC)",bean.toString());
+
+        bean = repository.findByIdPrefix(prefix);
+        assertEquals(idPrefixBean,bean);
+        assertNull(repository.findByIdPrefix("as"));
     }
 }

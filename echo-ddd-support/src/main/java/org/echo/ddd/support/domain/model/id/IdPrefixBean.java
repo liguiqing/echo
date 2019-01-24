@@ -15,8 +15,8 @@ import java.io.Serializable;
  */
 
 @NoArgsConstructor
-@EqualsAndHashCode(of = {"className"},callSuper = false)
-@ToString(of = {"className","prefix","idSeq"})
+@EqualsAndHashCode(of = {"idClassName"},callSuper = false)
+@ToString(of = {"idClassName","idClassNameHash","idPrefix"})
 @Getter
 @Entity
 @Table(name = "t_ddd_IdPrefix")

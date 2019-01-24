@@ -25,3 +25,8 @@ app:
   util:
     lock:
       prefix: echo
+  ddd:
+    domain:
+      id:
+        prefix:
+          length : 4

@@ -15,42 +15,42 @@ import java.util.Set;
 @AllArgsConstructor
 public class SpringCache<K, V> implements Cache<K, V> {
 
-    private org.springframework.cache.Cache springCache;
+    private org.springframework.cache.Cache proxyCache;
 
     @Override
     public V get(K k) throws CacheException {
-        return (V)springCache.get(k).get();
+        return (V) proxyCache.get(k).get();
     }
 
     @Override
     public V put(K k, V v) throws CacheException {
-        return (V)this.springCache.putIfAbsent(k,v).get();
+        return (V)this.proxyCache.putIfAbsent(k,v).get();
     }
 
     @Override
     public V remove(K k) throws CacheException {
         V v = get(k);
-        this.springCache.evict(k);
+        this.proxyCache.evict(k);
         return v;
     }
 
     @Override
     public void clear() throws CacheException {
-        this.springCache.clear();
+        this.proxyCache.clear();
     }
 
     @Override
     public int size() {
-        return NativeCaches.size(this.springCache);
+        return NativeCaches.size(this.proxyCache);
     }
 
     @Override
     public Set<K> keys() {
-        return NativeCaches.keys(this.springCache);
+        return NativeCaches.keys(this.proxyCache);
     }
 
     @Override
     public Collection<V> values() {
-        return NativeCaches.values(this.springCache);
+        return NativeCaches.values(this.proxyCache);
     }
 }

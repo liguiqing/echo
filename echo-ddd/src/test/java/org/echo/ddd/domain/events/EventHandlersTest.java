@@ -60,5 +60,7 @@ class EventHandlersTest {
         assertEquals(0,cd3.getCount());
 
         EventHandlers.setEventBus(new EventBus() {});
+
+
     }
 }

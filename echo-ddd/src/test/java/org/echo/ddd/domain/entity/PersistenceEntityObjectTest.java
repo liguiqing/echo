@@ -17,6 +17,14 @@ class PersistenceEntityObjectTest {
 
     @Test
     void test(){
+        PersistenceEntityObject pe = new PersistenceEntityObject(){};
+        pe.setTid(1l);
+        PersistenceEntityObject pe2 = new PersistenceEntityObject(){};
+        pe2.setTid(1l);
+        assertEquals(pe,pe2);
+        pe2.setTid(11l);
+        assertNotEquals(pe,pe2);
+
         assertEquals(new PersistenceEntityObject(){},new PersistenceEntityObject(){});
         assertEquals(new PersistenceEntityObject(new AssociationId("123")){}, new PersistenceEntityObject(new AssociationId("123")){});
         PersistenceEntityObject eo = new PersistenceEntityObject(new AssociationId("123")){};

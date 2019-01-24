@@ -23,6 +23,5 @@ public interface IdPrefixBeanRepository extends CrudRepository<IdPrefixBean, Lon
     @Query("From IdPrefixBean where idClassNameHash=?1")
     IdPrefixBean loadOf(Integer idClassNameHash);
 
-    IdPrefixBean findDistinctByIdPrefix(IdPrefixBean sample);
-
+    IdPrefixBean findByIdPrefix(String idPrefix);
 }

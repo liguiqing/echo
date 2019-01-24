@@ -24,6 +24,7 @@ public class SessionIdGeneratorIterator implements SessionIdGenerator {
         sessionIdGenerators.ifPresent(sessionIdGenerators1 -> this.sessionIdGenerators = sessionIdGenerators1);
     }
 
+    @Override
     public Serializable generateId(Session session){
         if(CollectionsUtil.isNotNullAndNotEmpty(this.sessionIdGenerators)){
             for(SessionIdGenerator sessionIdGenerator:sessionIdGenerators){

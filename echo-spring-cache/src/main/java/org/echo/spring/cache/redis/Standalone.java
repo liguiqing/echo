@@ -16,6 +16,6 @@ public class Standalone {
     private int port;
 
     public String toHost(){
-        return host.concat(":").concat(port + "");
+        return host.concat(":").concat(Integer.toString(port));
     }
 }

@@ -6,8 +6,10 @@ import org.redisson.api.RAtomicLong;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 
+import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -18,6 +20,13 @@ class RedisBaseDistributedLockTest {
 
     @Test
     void lock() throws Exception{
+        Callable c = mock(Callable.class);
+        when(c.call()).thenReturn("aa").thenThrow(NullPointerException.class);
+        DistributedLock iLock = new DistributedLock(){};
+        assertEquals("aa", iLock.lock("bb",c));
+        assertNull(iLock.lock("cc", c));
+
+
         RedissonClient redissonClient = mock(RedissonClient.class);
         RAtomicLong rAtomicLong = mock(RAtomicLong.class);
         when(redissonClient.getAtomicLong(any(String.class))).thenReturn(rAtomicLong).thenThrow();
@@ -46,9 +55,7 @@ class RedisBaseDistributedLockTest {
 
         bean1 = new RedisLockTestBean(1L,"Test");
         distributedLock1.lock(bean1,()->"");
-
-        DistributedLock dLock = new DistributedLock(){};
-        dLock.lock("aa",()->"");
+        assertNull(distributedLock1.lock("AA", c));
 
     }
 }

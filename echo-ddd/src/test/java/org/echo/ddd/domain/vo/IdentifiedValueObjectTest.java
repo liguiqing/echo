@@ -24,5 +24,9 @@ class IdentifiedValueObjectTest {
         assertEquals(ivo,new IdentifiedValueObject(id){});
         assertEquals(id,ivo.getId());
         assertEquals("IdentifiedValueObject(id=AssociationId(id=123))",ivo.toString());
+
+        assertEquals(new IdentifiedValueObject(new AssociationId("123")){},new IdentifiedValueObject(new AssociationId("123")){});
+
+        assertEquals(new AssociationId("123"),new AssociationId("123"));
     }
 }

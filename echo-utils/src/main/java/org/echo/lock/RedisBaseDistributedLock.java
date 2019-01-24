@@ -49,20 +49,6 @@ public class RedisBaseDistributedLock implements DistributedLock<Object,Object> 
         return null;
     }
 
-//    private Object tryLock(Lock lock, Callable call,int reTry)throws Exception{
-//        lock.lock();
-//        return call.call();
-//
-//        if(lock.tryLock(5, TimeUnit.SECONDS)){
-//            return call.call();
-//        }else {
-//            if(reTry < 12){
-//                return tryLock(lock,call,++reTry);
-//            }
-//        }
-//        return null;
-//    }
-
     private Lock newLock(Object key) {
         if (RedisClientUtils.isAlive(this.redissonClient)) {
             return getRLock(key.toString());
