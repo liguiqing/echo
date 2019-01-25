@@ -12,14 +12,15 @@ import java.util.Deque;
  * 1、由一个单词构成的类，取前三个字母，若有冲突，则依次再取，直到不重复；
  * 2、由两个单词构成的类，取首单词两个字母，再取次单词首字母，若有冲突，则取次单词二字母，依此后推，直到不重复
  * 3、由三个以上单词构成的类，取前三个单词首字母，若有冲突，则取三单词二字母，依此后推，直到不重复
- *
+ * 4、如果字母不够用，则用数字代替
+ * 
  * @author Liguiqing
  * @since V1.0
  */
 @Slf4j
 
 public class WordsToUpperCaseString implements WordsToString {
-    private static final String mark = "#";
+    private static final String MARK = "#";
 
     @Override
     public String toString(String[] words, int length, PrefixExists<Boolean, String> callback) {
@@ -35,14 +36,14 @@ public class WordsToUpperCaseString implements WordsToString {
     private String[] initResult(int length) {
         String[] s = new String[length];
         for (int i = 0; i < length; i++) {
-            s[i] = mark;
+            s[i] = MARK;
         }
         return s;
     }
 
     private boolean isFilled(String[] ss) {
         for (String s : ss) {
-            if (s.equals(mark))
+            if (s.equals(MARK))
                 return false;
         }
         return true;
