@@ -1,6 +1,5 @@
 package org.echo.sample.config;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -17,7 +16,7 @@ import javax.persistence.PersistenceContext;
  * @author Liguiqing
  * @since V1.0
  */
-@Slf4j
+
 @Configuration
 @EnableCaching
 @EnableJpaRepositories(value = "org.echo.sample.domain.model.**.*",

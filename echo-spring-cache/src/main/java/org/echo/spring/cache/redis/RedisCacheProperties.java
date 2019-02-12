@@ -24,7 +24,7 @@ import java.util.Set;
 @Getter
 @Setter
 @Component
-@ConfigurationProperties(prefix = "spring.cache.secondary.redis")
+@ConfigurationProperties(prefix = "redis")
 public class RedisCacheProperties implements CacheProperties {
 
     private String name;

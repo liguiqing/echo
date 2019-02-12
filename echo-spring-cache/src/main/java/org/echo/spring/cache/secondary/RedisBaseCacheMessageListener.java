@@ -6,6 +6,8 @@ import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.connection.MessageListener;
 import org.springframework.data.redis.core.RedisTemplate;
 
+import java.util.Optional;
+
 /**
  * Redis+CaffeineProperties 基于redis消息机制的消息监听器,用于集群时通知各节点处理缓存
  *
@@ -19,15 +21,19 @@ public class RedisBaseCacheMessageListener implements MessageListener {
 
     private SecondaryCacheManager cacheManager;
 
-    public RedisBaseCacheMessageListener(RedisTemplate<Object, Object> redisTemplate,
+    public RedisBaseCacheMessageListener(Optional<RedisTemplate<Object, Object>> redisTemplate,
                                          SecondaryCacheManager cacheManager) {
         super();
-        this.redisTemplate = redisTemplate;
+        redisTemplate.ifPresent(this::setRedisTemplate);
         this.cacheManager = cacheManager;
     }
 
     @Override
     public void onMessage(Message message, byte[] pattern) {
+        if(this.redisTemplate == null){
+            return;
+        }
+
         CacheMessage cacheMessage = (CacheMessage) redisTemplate.getValueSerializer().deserialize(message.getBody());
         log.debug("Receive a redis topic message, clear local cache, the cacheName is {}, the key is {}", cacheMessage.getCacheName(), cacheMessage.getKey());
         if(cacheMessage.isClosed()){
@@ -35,6 +41,10 @@ public class RedisBaseCacheMessageListener implements MessageListener {
         }else{
             cacheManager.clearLocal(cacheMessage);
         }
+    }
+
+    private void setRedisTemplate(RedisTemplate<Object, Object> redisTemplate){
+        this.redisTemplate = redisTemplate;
     }
 
 }

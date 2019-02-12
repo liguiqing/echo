@@ -4,8 +4,7 @@ import org.echo.ddd.support.config.DddSupportConfigurations;
 import org.echo.ddd.support.domain.model.id.IdPrefixBean;
 import org.echo.ddd.support.domain.model.id.IdPrefixBeanRepository;
 import org.echo.share.config.DataSourceConfigurations;
-import org.echo.spring.cache.config.CacheConfigurations;
-import org.echo.spring.cache.config.SecondaryCacheAutoConfiguration;
+import org.echo.spring.cache.config.AutoCacheConfigurations;
 import org.echo.test.repository.AbstractRepositoryTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,9 +17,7 @@ import org.springframework.test.context.TestPropertySource;
 
 import javax.transaction.Transactional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Copyright (c) 2016,$today.year, 深圳市易考试乐学测评有限公司
@@ -29,11 +26,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         initializers = {ConfigFileApplicationContextInitializer.class},
         classes = {
                 DataSourceConfigurations.class,
-                SecondaryCacheAutoConfiguration.class,
-                CacheConfigurations.class,
+                AutoCacheConfigurations.class,
                 DddSupportConfigurations.class
         }))
-@TestPropertySource(properties = {"spring.config.location = classpath:/application-cache.yml"})
+@TestPropertySource(properties = {"spring.config.location = classpath:/application-cache.yml,classpath:/application-redis.yml"})
 @Transactional
 @Rollback
 @DisplayName("Echo : IdPrefixBeanRepository Test")

@@ -1,5 +1,5 @@
 cache:
-  name: exec
+  name: echo
 spring:
   cache:
     # 配置两级缓存,所有缓存时间类参数单位均为毫秒
@@ -35,13 +35,3 @@ spring:
           refreshAfterWrite: 100
           initialCapacity: 500
           maximumSize: 500
-      # 采用redis实现第二级缓存
-      redis:
-        cacheNullValues: false
-        defaultExpiration: 360000
-        cachePrefix: echo
-        expires: {cache1: 6000,cache2: 5000}
-        hostsAndPorts: 192.168.1.251:9999
-        standalone:
-          host: 192.168.1.251
-          port: 9999

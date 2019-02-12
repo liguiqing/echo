@@ -3,7 +3,9 @@ package org.echo.spring.cache;
 import org.echo.lock.DistributedLock;
 import org.echo.spring.cache.caffeine.CaffeineCaches;
 import org.echo.spring.cache.caffeine.CaffeineProperties;
-import org.echo.spring.cache.config.SecondaryCacheAutoConfiguration;
+import org.echo.spring.cache.config.CacheConfigurations;
+import org.echo.spring.cache.config.RedisCacheConfigurations;
+import org.echo.spring.cache.config.SecondaryCacheConfigurations;
 import org.echo.spring.cache.message.CacheMessagePusher;
 import org.echo.spring.cache.redis.RedisCacheFactory;
 import org.echo.spring.cache.redis.RedisCacheProperties;
@@ -38,11 +40,10 @@ import static org.mockito.Mockito.mock;
 @ContextHierarchy(@ContextConfiguration(
         initializers = {ConfigFileApplicationContextInitializer.class},
         classes = {
-                SecondaryCacheAutoConfiguration.class,
-                RedisCacheProperties.class
+                RedisCacheConfigurations.class, SecondaryCacheConfigurations.class, CacheConfigurations.class
         })
 )
-@TestPropertySource(properties = {"spring.config.location = classpath:/application-cache.yml"})
+@TestPropertySource(properties = {"spring.config.location = classpath:/application-cache.yml,classpath:/application-redis.yml"})
 @DisplayName("NativeCaches Test")
 class NativeCachesTest extends AbstractConfigurationsTest {
 

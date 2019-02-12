@@ -155,15 +155,7 @@ public class SecondaryCacheManager extends AbstractTransactionSupportingCacheMan
      * @param message CacheMessage
      */
     public void autoCloseOrOpen(CacheMessage message){
-        getNativeCache(message.getCacheName()).ifPresent(cache->{
-            if(!message.sameOfIdentifier(cache.getIdentifier())){
-                if(message.isClosed()){
-                    cache.close(message.getClosedLevel());
-                }else{
-                    cache.open(message.getClosedLevel());
-                }
-            }
-        });
+        getNativeCache(message.getCacheName()).ifPresent(cache-> closeOrOpen(message,cache));
     }
 
     @Override
@@ -220,8 +212,17 @@ public class SecondaryCacheManager extends AbstractTransactionSupportingCacheMan
         });
     }
 
+    public void removeCache(String cacheName){
+        this.cacheMap.getOrDefault(cacheName,new SecondaryCache(false)).clear();
+        this.cacheMap.remove(cacheName);
+    }
+
+    public void removeAllCache(){
+        this.cacheMap.keySet().forEach(this::removeCache);
+    }
+
     public boolean hasTwoLevel(){
-        return cacheL2Factory != null;
+        return cacheL2Factory != null && cacheL2Factory != cacheL1Factory;
     }
 
     private SecondaryCache createCache(String cacheName,long expirationSecondTime,long expireAfterAccessSecondTime,int level){
@@ -287,5 +288,22 @@ public class SecondaryCacheManager extends AbstractTransactionSupportingCacheMan
         }
 
         return 0;
+    }
+
+
+    /**
+     * 关闭或者打开某级缓存
+     *
+     * @param message　CacheMessage　
+     * @param cache　SecondaryCache
+     */
+    private void closeOrOpen(CacheMessage message,SecondaryCache cache){
+        if(!message.sameOfIdentifier(cache.getIdentifier())){
+            if(message.isClosed()){
+                cache.close(message.getClosedLevel());
+            }else{
+                cache.open(message.getClosedLevel());
+            }
+        }
     }
 }

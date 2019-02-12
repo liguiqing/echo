@@ -1,7 +1,9 @@
 package org.echo.spring.cache.secondary;
 
 import org.echo.spring.cache.CacheFactory;
-import org.echo.spring.cache.config.SecondaryCacheAutoConfiguration;
+import org.echo.spring.cache.config.CacheConfigurations;
+import org.echo.spring.cache.config.RedisCacheConfigurations;
+import org.echo.spring.cache.config.SecondaryCacheConfigurations;
 import org.echo.spring.cache.message.CacheMessage;
 import org.echo.spring.cache.message.CacheMessagePusher;
 import org.echo.test.config.AbstractConfigurationsTest;
@@ -26,9 +28,7 @@ import java.util.Collection;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Liguiqing
@@ -38,11 +38,11 @@ import static org.mockito.Mockito.when;
 @ContextHierarchy(@ContextConfiguration(
         initializers = {ConfigFileApplicationContextInitializer.class},
         classes = {
-                SecondaryCacheAutoConfiguration.class
+                RedisCacheConfigurations.class, SecondaryCacheConfigurations.class, CacheConfigurations.class
         })
 )
-@TestPropertySource(properties = {"spring.config.location = classpath:/application-cache.yml"})
-@DisplayName("Echo : SecondaryCacheManager exec")
+@TestPropertySource(properties = {"spring.config.location = classpath:/application-cache.yml,classpath:/application-redis.yml"})
+@DisplayName("Echo : SecondaryCacheManager Test")
 public class SecondaryCacheManagerTest extends AbstractConfigurationsTest{
 
     @Autowired
@@ -60,6 +60,7 @@ public class SecondaryCacheManagerTest extends AbstractConfigurationsTest{
     @Test
     public void test(){
         assertNotNull(driver);
+        secondaryCacheManager.removeAllCache();
         String identifier = UUID.randomUUID().toString();
         redisTemplate.convertAndSend("Test",new CacheMessage(identifier,"cache1","c1"));
         assertNotNull(secondaryCacheManager);

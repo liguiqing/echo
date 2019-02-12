@@ -1,0 +1,9 @@
+redis:
+  cacheNullValues: false
+  defaultExpiration: 360000
+  cachePrefix: echo
+  expires: {cache1: 6000,cache2: 5000}
+  hostsAndPorts: 192.168.1.251:9999
+  standalone:
+    host: 192.168.1.251
+    port: 9999

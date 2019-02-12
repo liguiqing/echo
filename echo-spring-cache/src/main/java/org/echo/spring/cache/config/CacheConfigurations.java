@@ -1,7 +1,6 @@
 package org.echo.spring.cache.config;
 
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.cache.annotation.EnableCaching;
@@ -22,7 +21,6 @@ import java.util.stream.Stream;
  * @author Liguiqing
  * @since V1.0
  */
-@Slf4j
 @Configuration
 @EnableCaching
 public class CacheConfigurations extends CachingConfigurerSupport {
@@ -38,8 +36,6 @@ public class CacheConfigurations extends CachingConfigurerSupport {
     @Bean
     @Primary
     public CacheManager cacheManager(Optional<List<CacheManager>> managers) {
-        log.debug("Create Cache ");
-
         CompositeCacheManager cacheManager = new CompositeCacheManager();
         managers.ifPresent(cacheManager::setCacheManagers);
         cacheManager.setFallbackToNoOpCache(true);

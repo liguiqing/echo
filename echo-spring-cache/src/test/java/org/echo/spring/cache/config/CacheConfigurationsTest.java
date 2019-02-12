@@ -31,12 +31,11 @@ import static org.mockito.Mockito.when;
 @ContextHierarchy(@ContextConfiguration(
         initializers = {ConfigFileApplicationContextInitializer.class},
         classes = {
-            CacheConfigurations.class,
-            SecondaryCacheAutoConfiguration.class
+            RedisCacheConfigurations.class,SecondaryCacheConfigurations.class,CacheConfigurations.class
 }))
-@TestPropertySource(properties = {"spring.config.location = classpath:/application-cache.yml"})
+@TestPropertySource(properties = {"spring.config.location = classpath:/application-cache.yml,classpath:/application-redis.yml"})
 @Slf4j
-@DisplayName("Echo : Spring-cache module Configurations exec")
+@DisplayName("Echo : Spring-cache Configurations Test")
 class CacheConfigurationsTest extends AbstractConfigurationsTest {
 
     @Autowired
@@ -61,11 +60,12 @@ class CacheConfigurationsTest extends AbstractConfigurationsTest {
         } catch (NoSuchMethodException e) {
             log.warn(ThrowableToString.toString(e));
         }
+        cacheManager.getCache("tesT");
     }
 
     @Test
     public void cacheDequeFactory(){
-        SecondaryCacheAutoConfiguration scc = new SecondaryCacheAutoConfiguration();
+        RedisCacheConfigurations scc = new RedisCacheConfigurations();
         CacheDequeFactory cacheDequeFactory = scc.cacheDequeFactory(null);
         assertNotNull(cacheDequeFactory);
         assertNotNull(cacheDequeFactory.getDeque(""));
