@@ -3,6 +3,7 @@ package org.echo.spring.cache.config;
 import org.echo.lock.DistributedLock;
 import org.echo.lock.RedisBaseDistributedLock;
 import org.echo.spring.cache.CacheDequeFactory;
+import org.echo.spring.cache.message.RedisCacheMessagePusher;
 import org.echo.spring.cache.redis.RedisCacheFactory;
 import org.echo.spring.cache.redis.RedisCacheProperties;
 import org.echo.spring.cache.redis.RedissonCacheDequeFactory;
@@ -102,5 +103,10 @@ public class RedisCacheConfigurations {
     @Bean
     public RedisCacheFactory secondaryCacheFactory(RedisConnectionFactory connectionFactory){
         return new RedisCacheFactory(connectionFactory, this.redisCacheProperties);
+    }
+
+    @Bean
+    public RedisCacheMessagePusher redisCacheMessagePusher(RedisTemplate<Object, Object> redisTemplate){
+        return new RedisCacheMessagePusher(redisTemplate);
     }
 }

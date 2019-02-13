@@ -1,5 +1,6 @@
 package org.echo.spring.cache.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.echo.spring.cache.CacheFactory;
 import org.echo.spring.cache.caffeine.CaffeineCacheFactory;
 import org.echo.spring.cache.caffeine.CaffeineCacheProperties;
@@ -23,6 +24,7 @@ import java.util.Optional;
  * @author Liguiqing
  * @since V3.0
  */
+@Slf4j
 @Configuration
 @PropertySource(value={"classpath:/application-cache.yml"})
 @EnableConfigurationProperties(
@@ -45,10 +47,11 @@ public class SecondaryCacheConfigurations {
                                               CaffeineCacheProperties caffeineCacheProperties) {
         CaffeineCacheFactory caffeineCacheFactory = new CaffeineCacheFactory(caffeineCacheProperties);
         setSecondaryCacheFactory(caffeineCacheFactory);
-        setMessagePusher((a,b)->{});
+        setMessagePusher((topic,message)->log.debug("Publish nothing of {}",topic));
         secondaryCacheFactory.ifPresent(this::setSecondaryCacheFactory);
         messagePusher.ifPresent(this::setMessagePusher);
-        return new SecondaryCacheManager(this.cacheProperties, caffeineCacheFactory,this.secondaryCacheFactory,this.messagePusher);
+        return new SecondaryCacheManager(this.cacheProperties, caffeineCacheFactory,
+                this.secondaryCacheFactory,this.messagePusher);
     }
 
 

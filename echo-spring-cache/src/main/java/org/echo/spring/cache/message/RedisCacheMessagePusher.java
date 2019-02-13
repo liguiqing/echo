@@ -8,7 +8,6 @@ import org.springframework.data.redis.core.RedisTemplate;
  * @author Liguiqing
  * @since V1.0
  */
-
 public class RedisCacheMessagePusher implements CacheMessagePusher{
     private RedisTemplate<Object, Object> redisTemplate;
 

@@ -1,10 +1,13 @@
 package org.echo.spring.cache.secondary;
 
+import org.echo.lock.DistributedLock;
 import org.echo.spring.cache.NativeCaches;
 import org.echo.spring.cache.message.CacheMessagePusher;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.cache.Cache;
+
+import java.util.concurrent.Callable;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -95,5 +98,10 @@ class SecondaryCacheTest {
         cache3 = SecondaryCache.onlyCache2("Cache3", only,secondaryCacheProperties, null);
         cache3.evict("Test");
         cache3.clear();
+
+        DistributedLock lock = mock(DistributedLock.class);
+        when(lock.lock(any(Object.class), any(Callable.class))).thenThrow(new RuntimeException());
+        Cache lockThrow = SecondaryCache.onlyCache2("Cache3", only,secondaryCacheProperties, lock);
+        lockThrow.putIfAbsent("", "");
     }
 }

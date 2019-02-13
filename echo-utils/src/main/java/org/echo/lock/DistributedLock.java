@@ -18,7 +18,7 @@ public interface DistributedLock<K,V> {
             return call.call();
         } catch (Exception e) {
             ThrowableToString.logWarn(e);
+            throw new RuntimeException(e);
         }
-        return null;
     }
 }

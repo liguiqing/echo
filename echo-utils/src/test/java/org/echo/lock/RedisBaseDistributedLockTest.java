@@ -24,8 +24,7 @@ class RedisBaseDistributedLockTest {
         when(c.call()).thenReturn("aa").thenThrow(NullPointerException.class);
         DistributedLock iLock = new DistributedLock(){};
         assertEquals("aa", iLock.lock("bb",c));
-        assertNull(iLock.lock("cc", c));
-
+        assertThrows(RuntimeException.class,()->iLock.lock("cc", c));
 
         RedissonClient redissonClient = mock(RedissonClient.class);
         RAtomicLong rAtomicLong = mock(RAtomicLong.class);
