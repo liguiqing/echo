@@ -32,5 +32,14 @@ class LabelValueObjectTest {
         assertEquals(2,lvo1.getDetail().getSeq());
         lvo1.newDetail(lvo4.getDetail());
         assertEquals(11,lvo1.getDetail().getSeq());
+
+        LabelValueObject lvo5 = new LabelValueObject();
+        assertFalse(lvo5.equals(lvo1));
+        lvo5 = new LabelValueObject(0,"a-1", null, "A-A");
+        assertFalse(lvo5.equals(lvo1));
+        lvo5 = new LabelValueObject(0,"a-1", null, null);
+        assertFalse(lvo5.equals(lvo1));
+        lvo5 = new LabelValueObject(0,"a-1", "", null);
+        assertFalse(lvo5.equals(lvo1));
     }
 }

@@ -12,7 +12,7 @@ import javax.persistence.Embeddable;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-@EqualsAndHashCode(of = {"label","valueText","category"},callSuper = false)
+@EqualsAndHashCode(of = {"valueText","category"},callSuper = false)
 @ToString(of = {"label","valueText","category","seq"})
 @Embeddable
 public class LabelDetail extends ValueObject {
