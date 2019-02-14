@@ -496,5 +496,6 @@
         <module>echo-spring-cache</module>
         <module>echo-shiro</module>
         <module>echo-ddd-support</module>
+        <module>echo-commons</module>
     </modules>
 </project>
