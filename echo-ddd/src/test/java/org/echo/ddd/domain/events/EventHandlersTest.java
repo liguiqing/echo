@@ -24,6 +24,17 @@ class EventHandlersTest {
         final CountDownLatch cd2 = new CountDownLatch(5);
         final CountDownLatch cd3 = new CountDownLatch(3);
 
+        EventHandlers.getInstance().register(new DomainEventHandler<Test2Created>() {
+            @Override
+            @Subscribe
+            @AllowConcurrentEvents
+            public void on(Test2Created event) {
+                assertEquals(now,event.getNow());
+                cd.countDown();
+                cd2.countDown();
+            }
+        });
+
         EventHandlers.getInstance().register(new DomainEventHandler<Test1Created>() {
             @Override
             @Subscribe
