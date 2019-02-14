@@ -55,4 +55,5 @@ public class DddSupportConfigurations {
                                                                          IdPrefixBeanRepository repository){
         return new CachingStringIdentityGenerator(repository,idPrefix,cacheDequeFactory,distributedLock);
     }
+
 }

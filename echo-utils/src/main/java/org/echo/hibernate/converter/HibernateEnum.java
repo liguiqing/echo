@@ -35,9 +35,9 @@ public interface HibernateEnum<V> extends Serializable {
      * @return enum instance ,throws IllegalArgumentException if value not find
      */
     static <T extends HibernateEnum,V> T fromValue(Class<T> enumType, V value) {
-        for (T object : enumType.getEnumConstants()) {
-            if (Objects.equals(value, object.getValue())) {
-                return object;
+        for (T t : enumType.getEnumConstants()) {
+            if (Objects.equals(value, t.getValue())) {
+                return t;
             }
         }
         throw new IllegalArgumentException("No enum value " + value + " of " + enumType.getCanonicalName());
