@@ -56,5 +56,7 @@ class RedisBaseDistributedLockTest {
         distributedLock1.lock(bean1,()->"");
         assertNull(distributedLock1.lock("AA", c));
 
+        assertThrows(LockFailureException.class,()->{throw new LockFailureException("aa");});
+        assertThrows(LockFailureException.class,()->{throw new LockFailureException();});
     }
 }
