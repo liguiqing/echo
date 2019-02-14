@@ -5,6 +5,7 @@ import com.google.common.eventbus.Subscribe;
 import org.echo.ddd.domain.events.DomainEventHandler;
 import org.echo.ddd.domain.events.EventHandlers;
 import org.echo.ddd.domain.id.Identities;
+import org.echo.ddd.support.domain.model.vo.LabelDetail;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -32,8 +33,10 @@ class ExamTest {
             }
         });
 
-        Exam exam1 = new Exam(examId);
+
+        new Exam(examId,new LabelDetail(1,"1","a-1","ExamCategory"));
         cd.await();
         assertEquals(0,cd.getCount());
+
     }
 }

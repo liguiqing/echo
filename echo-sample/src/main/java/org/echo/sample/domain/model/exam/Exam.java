@@ -10,12 +10,10 @@ import org.echo.ddd.domain.id.AssociationId;
 import org.echo.ddd.domain.id.AssociationIdConverter;
 import org.echo.ddd.domain.id.Identity;
 
+import org.echo.ddd.support.domain.model.vo.LabelDetail;
 import org.hibernate.annotations.Type;
 
-import javax.persistence.Column;
-import javax.persistence.Convert;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -48,17 +46,21 @@ public class Exam extends PersistenceEntityObject {
     @Type(type = "org.echo.hibernate.converter.EnumFieldConverter")
     private ExamScope scope;
 
-    public Exam(ExamId examId) {
+    @Embedded
+    private ExamCategory category;
+
+    public Exam(ExamId examId, LabelDetail category) {
         super(examId);
         this.examId = examId;
         this.createTime = LocalDateTime.now();
         this.dateFrom = LocalDate.now();
         this.scope = ExamScope.School;
+        this.category = new ExamCategory(category);
         EventHandlers.getInstance().post(new ExamCreated(this.examId));
     }
 
-    public void joinProject(Identity<String> projectId){
-        this.joinProject(projectId.getId());
+    public void joinProject(Identity projectId){
+        this.joinProject(projectId.getId().toString());
     }
 
     public void joinProject(String projectId){

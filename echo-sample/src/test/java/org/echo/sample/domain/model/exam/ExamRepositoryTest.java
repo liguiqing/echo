@@ -3,6 +3,7 @@ package org.echo.sample.domain.model.exam;
 import org.echo.ddd.domain.id.AssociationId;
 import org.echo.ddd.domain.id.Identities;
 import org.echo.ddd.domain.id.Identity;
+import org.echo.ddd.support.domain.model.vo.LabelDetail;
 import org.echo.hibernate.converter.HibernateEnum;
 import org.echo.sample.config.AppConfigurations;
 import org.echo.share.config.DataSourceConfigurations;
@@ -50,7 +51,7 @@ class ExamRepositoryTest extends AbstractRepositoryTest {
     void test(){
         ExamId examId = repository.nextIdentity();
         assertNotNull(examId);
-        Exam exam = new Exam(examId);
+        Exam exam = new Exam(examId,new LabelDetail(1,"1","a-1","ExamCategory"));
 
         repository.save(exam);
         Exam exam1 = repository.loadOf(examId);

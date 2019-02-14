@@ -26,6 +26,7 @@ import javax.persistence.PersistenceContext;
                 @ComponentScan.Filter(type=FilterType.ANNOTATION,value= Service.class),
                 @ComponentScan.Filter(type=FilterType.ANNOTATION,value= Component.class)},
         useDefaultFilters = false)
+@ComponentScan(value = "org.echo.ddd.support.config")
 @PropertySource("classpath:/META-INF/app.properties")
 @PersistenceContext()
 public class AppConfigurations {

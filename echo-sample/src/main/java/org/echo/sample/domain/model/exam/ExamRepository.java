@@ -16,6 +16,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ExamRepository extends PersistenceDomainObjectRepository<Exam, ExamId> {
 
+    @Override
     default  ExamId nextIdentity(){
         return new ExamId(Identities.genId(ExamId.class));
     }

@@ -4,7 +4,7 @@ import org.echo.hibernate.converter.HibernateEnum;
 
 /**
  * 考试范围
- * 班级考试(Clazz)，年级考试(School)，多校联考(Union)，区域统考(),中考(High),高考(College)
+ * 班级考试(Clazz)，年级考试(School)，多校联考(Union)，区域统考(Uniform),中考(High),高考(College)
  *
  * @author Liguiqing
  * @since V1.0
@@ -33,5 +33,5 @@ public enum  ExamScope implements HibernateEnum<Integer> {
         return value;
     }
 
-    private static final String keyPrefix = "org.echo.sample.domain.model.exam.ExamScope";
+    private static final String keyPrefix = ExamScope.class.getName();
 }

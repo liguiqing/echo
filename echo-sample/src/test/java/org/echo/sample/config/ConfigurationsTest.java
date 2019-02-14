@@ -1,15 +1,19 @@
 package org.echo.sample.config;
 
-import org.echo.spring.cache.config.CacheConfigurations;
+import org.echo.sample.domain.model.exam.ExamRepository;
 import org.echo.share.config.DataSourceConfigurations;
+import org.echo.spring.cache.config.CacheConfigurations;
 import org.echo.spring.cache.config.RedisCacheConfigurations;
 import org.echo.test.config.AbstractConfigurationsTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.ContextHierarchy;
 import org.springframework.test.context.TestPropertySource;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * @author Liguiqing
@@ -27,6 +31,12 @@ import org.springframework.test.context.TestPropertySource;
 @DisplayName("Echo : Exam module Configurations exec")
 public class ConfigurationsTest extends AbstractConfigurationsTest {
 
+
+    @Autowired
+    private ExamRepository examRepository;
+
     @Test
-    public void test(){}
+    public void test(){
+        assertNotNull(examRepository);
+    }
 }
