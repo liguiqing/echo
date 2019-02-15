@@ -13,6 +13,8 @@ import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.vendor.HibernateJpaDialect;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.ContextHierarchy;
+import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import javax.naming.NamingException;
 import javax.sql.DataSource;
@@ -28,10 +30,13 @@ import static org.mockito.Mockito.spy;
  */
 
 @ContextHierarchy(@ContextConfiguration(classes = {
-        DataSourceConfigurations.class
+        DataSourceConfigurations.class,
+        SpringMvcConfiguration.class
 }))
 @Slf4j
-@DisplayName("Echo : Share module Configurations exec")
+@DisplayName("Echo : Share module Configurations ")
+@WebAppConfiguration
+@EnableWebMvc
 public class ConfigurationsTest extends AbstractConfigurationsTest {
     static SimpleNamingContextBuilder builder;
 
