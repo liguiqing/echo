@@ -22,26 +22,7 @@ spring:
   devtools:
     restart:
       enabled: true
-  redis:
-    cluster:
-      maxRedirects: 10
-      nodes:
-      - 192.168.1.251:9999
-    sentinel:
-      master: 192.168.1.251
-      sentinel:
-        nodes:
-        - 192.168.1.251:9999
-    jedis:
-      pool:
-        maxActive: 8
-        maxWait: -1
-        maxIdle: 8
-        minIdle: 0
-      timeout: 10000
-      cluster:
-        nodes:
-        - 192.168.1.251:9999
+
 jdbc:
   driver: com.mysql.Driver
   password: newa_newc
@@ -51,6 +32,7 @@ jdbc:
 jpa:
    unit:
      name: hello
+
 hibernate:
   max_fetch_depth: 10
   dialect: org.hibernate.dialect.MySQL5InnoDBDialect
