@@ -23,9 +23,7 @@ public class DateUtils {
      */
     public static Date fromLocalDate(LocalDate localDate){
         ZonedDateTime zonedDateTime = localDate.atStartOfDay(ZoneId.systemDefault());
-        Instant instant1 = zonedDateTime.toInstant();
-        Date from = Date.from(instant1);
-        return  from;
+        return Date.from(zonedDateTime.toInstant());
     }
 
     /**
