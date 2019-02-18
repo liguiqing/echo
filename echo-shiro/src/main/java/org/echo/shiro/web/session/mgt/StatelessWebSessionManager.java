@@ -13,6 +13,7 @@ import org.apache.shiro.web.servlet.ShiroHttpServletRequest;
 import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 import org.apache.shiro.web.session.mgt.WebSessionManager;
 import org.apache.shiro.web.util.WebUtils;
+import org.echo.util.ClassUtils;
 import org.echo.util.UserAgentUtils;
 import org.springframework.util.StringUtils;
 
@@ -73,7 +74,7 @@ public class StatelessWebSessionManager extends DefaultSessionManager implements
     protected void onStart(Session session, SessionContext context){
         HttpServletRequest request = WebUtils.getHttpRequest(context);
         if(UserAgentUtils.isBrowser(request)){
-            this.delegate.start(context);
+            ClassUtils.invoke(this.delegate,"onStart",session,context);
             return;
         }
 
@@ -88,7 +89,7 @@ public class StatelessWebSessionManager extends DefaultSessionManager implements
     protected void onStop(Session session, SessionKey key) {
         HttpServletRequest request = WebUtils.getHttpRequest(key);
         if(UserAgentUtils.isBrowser(request)){
-            this.delegate.stop(key);
+            ClassUtils.invoke(this.delegate,"onStop",session,key);
             return;
         }
 

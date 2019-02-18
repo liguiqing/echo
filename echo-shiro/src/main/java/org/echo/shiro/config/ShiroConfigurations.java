@@ -89,7 +89,7 @@ public class ShiroConfigurations {
         filterFactory.setSuccessUrl(successUrl);
         filterFactory.setLoginUrl(loginUrl);
         filterFactory.setUnauthorizedUrl(unauthorizedUrl);
-        filters.ifPresent(filters1->filterFactory.setFilters(filters1));
+        filters.ifPresent(filterFactory::setFilters);
         Map<String,String> chains  = new HashMap<>();
         chains.put("/favicon.ico", "anon");
         chains.put("/static/**", "anon");
@@ -125,16 +125,14 @@ public class ShiroConfigurations {
     }
 
     @Bean
-    public Cookie sessionIdCookie(@Value("${shiro.session.id:SHIROSESSION}") String name,
-                                  @Value("${shiro.session.id:zhezhu}") String sessionId,
+    public Cookie sessionIdCookie(@Value("${shiro.session.name:SHIROSESSION}") String name,
                                   @Value("${shiro.cookie.maxAge:-1}") int maxAge,
                                   @Value("${shiro.cookie.domain:}") String domain,
                                   @Value("${shiro.cookie.path:/}") String path){
-        SimpleCookie cookie = new SimpleCookie(sessionId);
+        SimpleCookie cookie = new SimpleCookie(name);
         cookie.setHttpOnly(true);
         cookie.setDomain(domain);
         cookie.setPath(path);
-        cookie.setName(name);
         cookie.setMaxAge(maxAge);
         return  cookie;
     }
@@ -144,7 +142,7 @@ public class ShiroConfigurations {
                                  SessionIdGeneratorIterator sessionIdGenerator,
                                  Optional<CacheManager> cacheManager){
         EnterpriseCacheSessionDAO sessionDAO = new EnterpriseCacheSessionDAO();
-        cacheManager.ifPresent(cacheManager1 -> sessionDAO.setCacheManager(cacheManager1));
+        cacheManager.ifPresent(sessionDAO::setCacheManager);
         sessionDAO.setActiveSessionsCacheName(activeSessionCache);
         sessionDAO.setSessionIdGenerator(sessionIdGenerator);
         return sessionDAO;
@@ -168,6 +166,7 @@ public class ShiroConfigurations {
                                          SessionDAO sessionDAO,
                                          Cookie cookie,
                                          SessionFactory sessionFactory){
+        //DefaultWebSessionManager sessionManager = new DefaultWebSessionManager();//new StatelessWebSessionManager();
         StatelessWebSessionManager sessionManager = new StatelessWebSessionManager();
         sessionManager.validateSessions();
         sessionManager.setGlobalSessionTimeout(globalSessionTimeout);
@@ -195,7 +194,7 @@ public class ShiroConfigurations {
                                            Optional<List<Realm>> realms){
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
         securityManager.setSessionManager(sessionManager);
-        realms.ifPresent(realms1 -> securityManager.setRealms(realms1));
+        realms.ifPresent(securityManager::setRealms);
         securityManager.setCacheManager(cacheManager);
         SecurityUtils.setSecurityManager(securityManager);
         return securityManager;
