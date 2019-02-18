@@ -166,7 +166,6 @@ public class ShiroConfigurations {
                                          SessionDAO sessionDAO,
                                          Cookie cookie,
                                          SessionFactory sessionFactory){
-        //DefaultWebSessionManager sessionManager = new DefaultWebSessionManager();//new StatelessWebSessionManager();
         StatelessWebSessionManager sessionManager = new StatelessWebSessionManager();
         sessionManager.validateSessions();
         sessionManager.setGlobalSessionTimeout(globalSessionTimeout);
