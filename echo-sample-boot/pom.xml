@@ -20,6 +20,12 @@
         </dependency>
         <dependency>
             <groupId>echo</groupId>
+            <artifactId>echo-shiro</artifactId>
+            <version>${echo.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>echo</groupId>
             <artifactId>echo-sample</artifactId>
             <version>${echo.version}</version>
             <scope>compile</scope>

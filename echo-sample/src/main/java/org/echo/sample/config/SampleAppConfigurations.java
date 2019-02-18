@@ -1,10 +1,11 @@
 package org.echo.sample.config;
 
+import org.echo.ddd.support.config.DddSupportConfigurations;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.FilterType;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
@@ -26,9 +27,8 @@ import javax.persistence.PersistenceContext;
                 @ComponentScan.Filter(type=FilterType.ANNOTATION,value= Service.class),
                 @ComponentScan.Filter(type=FilterType.ANNOTATION,value= Component.class)},
         useDefaultFilters = false)
-@ComponentScan(value = "org.echo.ddd.support.config")
-@PropertySource("classpath:/META-INF/app.properties")
+@Import({DddSupportConfigurations.class})
 @PersistenceContext()
-public class AppConfigurations {
+public class SampleAppConfigurations {
 
 }

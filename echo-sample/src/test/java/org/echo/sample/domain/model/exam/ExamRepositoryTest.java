@@ -5,7 +5,7 @@ import org.echo.ddd.domain.id.Identities;
 import org.echo.ddd.domain.id.Identity;
 import org.echo.ddd.support.domain.model.vo.LabelDetail;
 import org.echo.hibernate.converter.HibernateEnum;
-import org.echo.sample.config.AppConfigurations;
+import org.echo.sample.config.SampleAppConfigurations;
 import org.echo.share.config.DataSourceConfigurations;
 import org.echo.spring.cache.config.AutoCacheConfigurations;
 import org.echo.test.repository.AbstractRepositoryTest;
@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
         classes = {
             DataSourceConfigurations.class,
                 AutoCacheConfigurations.class,
-            AppConfigurations.class
+            SampleAppConfigurations.class
         }))
 @TestPropertySource(properties = {"spring.config.location = classpath:/application-cache.yml,classpath:/application-redis.yml"})
 @Transactional

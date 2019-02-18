@@ -1,0 +1,115 @@
+app:
+  util:
+    lock:
+      prefix: echo
+  ddd:
+    domain:
+      id:
+        prefix:
+          length : 3
+  commons:
+    dateFormat: yyyy-MM-dd HH:mm:ss
+cache:
+  name: echo
+
+server:
+  port: 8080
+  servlet:
+    context-path: /sample
+
+debug: true
+test:
+  master: master
+  caffeine:
+    expireAfterAccess: 5000
+
+redis:
+  cacheNullValues: false
+  defaultExpiration: 360000
+  cachePrefix: echo
+  expires: {cache1: 6000,cache2: 5000}
+  hostsAndPorts: 192.168.1.251:9999
+  standalone:
+    host: 192.168.1.251
+    port: 9999
+
+shiro:
+  maxIdleSecond : 1800
+  cachePropertiesMap: {Test1:1800}
+  filter:
+    success:
+      url: /home
+  session:
+    globalSessionTimeout: 1800000
+
+spring:
+
+  freemarker:
+    charset: UTF-8
+    cache: false
+    expose-request-attributes: true
+    request-context-attribute: request
+    expose-session-attributes: true
+    content-type: text/html
+    template-loader-path: classpath:/META-INF/ftl
+    suffix: .ftl
+    check-template-location: true
+  mvc:
+    favicon:
+      enabled: false
+  devtools:
+    restart:
+      enabled: true
+  cache:
+    # 配置两级缓存,所有缓存时间类参数单位均为毫秒
+    secondary:
+      dynamic: true
+      level2Enabled: true
+      cacheMessageTopic: echo:redis:secondary:topic
+      # 采用caffeine实现第一级缓存
+      caffeine:
+        # 默认一级缓存配置
+        defaultProp:
+          cacheNullValues: false
+          expireAfterAccess: 600
+          expireAfterWrite: 600
+          refreshAfterWrite: 1
+          initialCapacity: 50
+          maximumSize: 50
+        # 程序启动时加载的缓存
+        cachesOnBoot:
+        - name: cache1
+          cacheNullValues: false
+          expireAfterAccess: 600
+          expireAfterWrite: 600
+          refreshAfterWrite: 1
+          initialCapacity: 50
+          maximumSize: 50
+        - name: cache2
+          cacheNullValues: false
+          expireAfterAccess: 6000
+          expireAfterWrite: 6000
+          refreshAfterWrite: 100
+          initialCapacity: 500
+          maximumSize: 500
+
+jdbc:
+  driver: com.mysql.Driver
+  password: newa_newc
+  jndiName: testJndiDs
+  url: jdbc:mysql://192.168.1.230:3306/echo?useUnicode=true&amp;characterEncoding=utf-8&amp;autoReconnect=true&amp;rewriteBatchedStatements=true
+  username: root
+jpa:
+  unit:
+    name: echo-sample
+
+hibernate:
+  max_fetch_depth: 10
+  dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+  format_sql: true
+  hbm2ddl:
+    auto: none
+  jdbc:
+    batch_size: 100
+    fetch_size: 50
+  show_sql: false

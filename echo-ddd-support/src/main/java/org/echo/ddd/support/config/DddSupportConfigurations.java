@@ -44,7 +44,9 @@ public class DddSupportConfigurations {
     }
 
     @Bean
-    public IdPrefixGenerator idPrefix(@Value("${app.ddd.domain.id.prefix.length:3}")int length, WordsToString wordsToString, IdPrefixBeanRepository repository){
+    public IdPrefixGenerator idPrefix(@Value("${app.ddd.domain.id.prefix.length:3}")int length,
+                                      WordsToString wordsToString,
+                                      IdPrefixBeanRepository repository){
         return new IdPrefixGenerator(length,wordsToString, repository);
     }
 

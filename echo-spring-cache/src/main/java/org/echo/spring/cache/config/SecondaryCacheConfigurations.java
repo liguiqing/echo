@@ -13,7 +13,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
@@ -26,7 +25,6 @@ import java.util.Optional;
  */
 @Slf4j
 @Configuration
-@PropertySource(value={"classpath:/application-cache.yml"})
 @EnableConfigurationProperties(
         value = {
                 SecondaryCacheProperties.class,

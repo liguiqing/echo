@@ -36,7 +36,6 @@ import org.springframework.cache.caffeine.CaffeineCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.annotation.Order;
 import org.springframework.web.filter.DelegatingFilterProxy;
@@ -55,12 +54,11 @@ import java.util.Optional;
  */
 @Slf4j
 @Configuration
-@PropertySource(value={"classpath:/application-shiro.yml"})
 @EnableConfigurationProperties(
         value = {
                 ShiroProperties.class
         })
-public class ShiroConfiguration {
+public class ShiroConfigurations {
 
     @Autowired
     private ShiroProperties shiroProperties;

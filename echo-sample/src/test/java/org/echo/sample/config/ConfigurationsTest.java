@@ -25,10 +25,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
                 RedisCacheConfigurations.class,
                 CacheConfigurations.class,
                 DataSourceConfigurations.class,
-                AppConfigurations.class
+                SampleAppConfigurations.class
 }))
 @TestPropertySource(properties = {"spring.config.location = classpath:/application-cache.yml,classpath:/application-redis.yml"})
-@DisplayName("Echo : Exam module Configurations exec")
+@DisplayName("Echo : Exam module Configurations")
 public class ConfigurationsTest extends AbstractConfigurationsTest {
 
 

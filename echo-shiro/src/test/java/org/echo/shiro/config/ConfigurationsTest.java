@@ -15,7 +15,7 @@ import org.springframework.test.context.TestPropertySource;
 @ContextHierarchy(@ContextConfiguration(
         initializers = {ConfigFileApplicationContextInitializer.class},
         classes = {
-                ShiroConfiguration.class
+                ShiroConfigurations.class
         }))
 @TestPropertySource(properties = {"spring.config.location = classpath:/application-shiro.yml"})
 @DisplayName("Echo : Exam module Configurations exec")
