@@ -1,7 +1,11 @@
 package org.echo.util;
 
 import lombok.extern.slf4j.Slf4j;
+import org.echo.exception.ThrowableToString;
+import org.springframework.beans.BeanUtils;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Arrays;
@@ -56,5 +60,26 @@ public class ClassUtils {
             }
         }
         return false;
+    }
+
+    public static Object invoke(Object o,String methodName,Object... args){
+        Class[] argsClasses = null;
+        if(args != null){
+            argsClasses = new Class[args.length];
+            int i = 0;
+            for(Object arg:args){
+                argsClasses[i++] = arg.getClass();
+            }
+        }
+        Method method = BeanUtils.findMethod(o.getClass(), methodName, argsClasses);
+        if(method == null)
+            return null;
+        method.setAccessible(true);
+        try {
+            return method.invoke(o, args);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            log.error(ThrowableToString.toString(e));
+        }
+        return null;
     }
 }

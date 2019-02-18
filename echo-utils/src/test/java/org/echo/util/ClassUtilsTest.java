@@ -24,4 +24,16 @@ class ClassUtilsTest {
 
         assertThrows(Exception.class,()->new PrivateConstructors().exec(ClassUtils.class));
     }
+
+    @Test
+    void invoke(){
+        ClassUtilsTestBean bean1 = new ClassUtilsTestBean();
+        assertNotNull(ClassUtils.invoke(bean1,"m1"));
+        ClassUtils.invoke(bean1,"m2","a",1L);
+        Object oo = ClassUtils.invoke(bean1,"m3","a");
+        assertTrue(oo instanceof String[]);
+        assertNull(ClassUtils.invoke(bean1,"m2","a",1F));
+        assertNull(ClassUtils.invoke(bean1,"m44"));
+        assertNull(ClassUtils.invoke(bean1,"m45"));
+    }
 }
