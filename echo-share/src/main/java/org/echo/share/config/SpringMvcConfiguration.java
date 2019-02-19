@@ -4,6 +4,7 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
 import com.alibaba.fastjson.support.spring.FastJsonJsonView;
+import freemarker.template.TemplateException;
 import org.echo.share.web.servlet.handler.SpringMvcExceptionResolver;
 import org.echo.share.web.servlet.http.ResponseTextFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,15 +13,18 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.ui.freemarker.FreeMarkerConfigurationFactory;
 import org.springframework.web.servlet.View;
+import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 import org.springframework.web.servlet.view.ContentNegotiatingViewResolver;
+import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
+import org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver;
 
+import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * @author Liguiqing
@@ -30,18 +34,18 @@ import java.util.Properties;
 @Configuration
 public class SpringMvcConfiguration extends WebMvcConfigurationSupport {
 
+    @Value("${app.commons.charset:UTF-8}")
+    private String charset;
+
+    @Value("${app.commons.dateFormat:yyyy-MM-dd HH:mm:sss}")
+    private String dateFormat ;
+
+    @Value("${spring.freemarker.cache:false}")
+    private boolean freeMarkerViewResolverCached;
+
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
-
         super.configureMessageConverters(converters);
-        FastJsonConfig fastJsonConfig = new FastJsonConfig();
-        fastJsonConfig.setCharset(Charset.forName("UTF-8"));
-        fastJsonConfig.setSerializerFeatures(SerializerFeature.WriteDateUseDateFormat,
-                SerializerFeature.WriteMapNullValue,
-                SerializerFeature.WriteNullStringAsEmpty,
-                SerializerFeature.WriteNullNumberAsZero,
-                SerializerFeature.WriteNullBooleanAsFalse,
-                SerializerFeature.WriteEnumUsingToString);
         FastJsonHttpMessageConverter c1 = new FastJsonHttpMessageConverter();
         List<MediaType> supportedMediaTypes = new ArrayList<>();
         supportedMediaTypes.add(MediaType.TEXT_HTML);
@@ -63,8 +67,26 @@ public class SpringMvcConfiguration extends WebMvcConfigurationSupport {
         supportedMediaTypes.add(MediaType.TEXT_PLAIN);
         supportedMediaTypes.add(MediaType.TEXT_XML);
         c1.setSupportedMediaTypes(supportedMediaTypes);
-        c1.setFastJsonConfig(fastJsonConfig);
+        c1.setFastJsonConfig(newFastJsonConfig());
         converters.add(c1);
+    }
+
+    @Bean
+    public FastJsonConfig fastJsonConfig(){
+        return newFastJsonConfig();
+    }
+
+    private FastJsonConfig newFastJsonConfig(){
+        FastJsonConfig fastJsonConfig = new FastJsonConfig();
+        fastJsonConfig.setCharset(Charset.forName(charset));
+        fastJsonConfig.setSerializerFeatures(SerializerFeature.WriteDateUseDateFormat,
+                SerializerFeature.WriteMapNullValue,
+                SerializerFeature.WriteNullStringAsEmpty,
+                SerializerFeature.WriteNullNumberAsZero,
+                SerializerFeature.WriteNullBooleanAsFalse,
+                SerializerFeature.WriteEnumUsingToString);
+        fastJsonConfig.setDateFormat(dateFormat);
+        return fastJsonConfig;
     }
 
     @Override
@@ -77,15 +99,7 @@ public class SpringMvcConfiguration extends WebMvcConfigurationSupport {
     }
 
     @Bean
-    public FastJsonJsonView fastJsonJsonView(@Value("${app.commons.dateFormat:yyyy-MM-dd HH:mm:sss}") String dateFormat) {
-        FastJsonConfig fastJsonConfig = new FastJsonConfig();
-        fastJsonConfig.setSerializerFeatures(SerializerFeature.WriteDateUseDateFormat,
-                SerializerFeature.WriteMapNullValue,
-                SerializerFeature.WriteNullStringAsEmpty,
-                SerializerFeature.WriteNullNumberAsZero,
-                SerializerFeature.WriteNullBooleanAsFalse,
-                SerializerFeature.WriteEnumUsingToString);
-        fastJsonConfig.setDateFormat(dateFormat);
+    public FastJsonJsonView fastJsonJsonView(FastJsonConfig fastJsonConfig) {
         FastJsonJsonView view = new FastJsonJsonView();
         view.setFastJsonConfig(fastJsonConfig);
         return view;
@@ -122,5 +136,52 @@ public class SpringMvcConfiguration extends WebMvcConfigurationSupport {
         statusCodes.setProperty("/405","405");
         exceptionResolver.setStatusCodes(statusCodes);
         return  exceptionResolver;
+    }
+
+
+    @Bean
+    public ViewResolver viewResolverFtl(Optional<FreemarkerStaticModels> freemarkerStaticModels) {
+        return freemarkerViewResolver(".ftl",0,freemarkerStaticModels);
+    }
+
+    @Bean
+    public ViewResolver viewResolverHtml(Optional<FreemarkerStaticModels> freemarkerStaticModels) {
+        return freemarkerViewResolver(".html",1,freemarkerStaticModels);
+    }
+
+    private ViewResolver freemarkerViewResolver(String suffix,int order,
+                                                Optional<FreemarkerStaticModels> freemarkerStaticModels){
+        FreeMarkerViewResolver resolver = new FreeMarkerViewResolver();
+        resolver.setCache(freeMarkerViewResolverCached);
+        resolver.setViewClass(org.springframework.web.servlet.view.freemarker.FreeMarkerView.class);
+        resolver.setRequestContextAttribute("request");
+        resolver.setExposeRequestAttributes(true);
+        resolver.setExposeSessionAttributes(true);
+        resolver.setOrder(order);
+        resolver.setSuffix(suffix);
+        resolver.setContentType("text/html;charset=UTF-8");
+        freemarkerStaticModels.ifPresent(mf->resolver.setAttributesMap((Map)mf));
+        return resolver;
+    }
+
+
+    @Bean
+    public FreeMarkerConfigurer freeMarkerConfigurer() throws IOException, TemplateException {
+        FreeMarkerConfigurationFactory factory = new FreeMarkerConfigurationFactory();
+        factory.setTemplateLoaderPath("classpath:META-INF/ftl");
+        factory.setDefaultEncoding("UTF-8");
+        factory.setPreferFileSystemAccess(false);
+        FreeMarkerConfigurer result = new FreeMarkerConfigurer();
+        freemarker.template.Configuration configuration = factory.createConfiguration();
+        configuration.setClassicCompatible(true);
+        result.setConfiguration(configuration);
+        Properties settings = new Properties();
+        settings.put("template_update_delay", "0");
+        settings.put("default_encoding", "UTF-8");
+        settings.put("number_format", "0.######");
+        settings.put("classic_compatible", true);
+        settings.put("template_exception_handler", "ignore");
+        result.setFreemarkerSettings(settings);
+        return result;
     }
 }
