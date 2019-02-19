@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
         initializers = {ConfigFileApplicationContextInitializer.class},
         classes = {
             DataSourceConfigurations.class,
-                AutoCacheConfigurations.class,
+            AutoCacheConfigurations.class,
             SampleAppConfigurations.class
         }))
 //@TestPropertySource(properties = {"spring.config.location = classpath:/application-cache.yml,classpath:/application-redis.yml"})
