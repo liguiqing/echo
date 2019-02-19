@@ -93,6 +93,8 @@ public class ShiroConfigurations {
         Map<String,String> chains  = new HashMap<>();
         chains.put("/favicon.ico", "anon");
         chains.put("/static/**", "anon");
+        chains.put(loginUrl, "anon");
+        chains.put("/", "anon");
         chains.put("/logout", "logout");
         chains.put("/**", "user");
         filterFactory.setFilterChainDefinitionMap(chains);

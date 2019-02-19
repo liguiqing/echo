@@ -43,14 +43,16 @@ public class QuartzSessionValidationJob implements Job {
      * Called when the job is executed by quartz. This method delegates to the <tt>validateSessions()</tt> method on the 
      * associated session manager. 
      *  
-     * @param context 
-     *            the Quartz job execution context for this execution. 
+     * @param context  the Quartz job execution context for this execution.
+     *
      */
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {  
   
         JobDataMap jobDataMap = context.getMergedJobDataMap();  
         ValidatingSessionManager sessionManager = (ValidatingSessionManager) jobDataMap.get(SESSION_MANAGER_KEY);
+        if(sessionManager == null)
+            return;
 
         log.debug("Executing session validation Quartz job...");
         sessionManager.validateSessions();

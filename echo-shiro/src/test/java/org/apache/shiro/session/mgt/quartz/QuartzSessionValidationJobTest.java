@@ -21,7 +21,9 @@ class QuartzSessionValidationJobTest {
         JobDataMap jobDataMap = mock(JobDataMap.class);
         ValidatingSessionManager sessionManager = mock(ValidatingSessionManager.class);
         when(context.getMergedJobDataMap()).thenReturn(jobDataMap);
-        when(jobDataMap.get(any(String.class))).thenReturn(sessionManager);
+        when(jobDataMap.get(any(String.class))).thenReturn(sessionManager).thenReturn(null);
+        validation.execute(context);
+        validation.execute(context);
         validation.execute(context);
 
     }

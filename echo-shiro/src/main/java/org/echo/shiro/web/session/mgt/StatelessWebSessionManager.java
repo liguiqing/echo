@@ -40,7 +40,6 @@ public class StatelessWebSessionManager extends DefaultSessionManager implements
 
     private interface Excludes {
         Serializable getSessionId(SessionKey key);
-        boolean isServletContainerSessions();
     }
 
     @Delegate(excludes= Excludes.class)
@@ -52,15 +51,17 @@ public class StatelessWebSessionManager extends DefaultSessionManager implements
 
     @Override
     public Serializable getSessionId(SessionKey key){
+        Serializable sessionId = key.getSessionId();
+        if(sessionId != null){
+            return sessionId;
+        }
+
         HttpServletRequest request = WebUtils.getHttpRequest(key);
         if(UserAgentUtils.isBrowser(request)){
             return this.delegate.getSessionId(key);
         }
 
-        Serializable sessionId = key.getSessionId();
-        if(Objects.isNull(sessionId)){
-            sessionId = this.getSessionId(request);
-        }
+        sessionId = this.getSessionId(request);
 
         if(!Objects.isNull(sessionId)){
             HttpServletResponse response = WebUtils.getHttpResponse(key);
@@ -99,15 +100,6 @@ public class StatelessWebSessionManager extends DefaultSessionManager implements
         } else {
             log.debug("SessionKey argument is not HTTP compatible or does not have an HTTP request/response pair. Session ID cookie will not be removed due to stopped session.");
         }
-    }
-
-    @Override
-    public boolean isServletContainerSessions() {
-        HttpServletRequest request =ServletUtilWrapper.getRequest();
-        if(UserAgentUtils.isBrowser(request)){
-            return this.delegate.isServletContainerSessions();
-        }
-        return false;
     }
 
     /**

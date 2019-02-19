@@ -15,9 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -44,11 +42,11 @@ class StatelessWebSessionManagerTest {
         when(sessionKey.getServletRequest()).thenReturn(request);
         when(sessionKey.getServletResponse()).thenReturn(response);
 
-        when(sessionKey.getSessionId()).thenReturn(session).thenReturn(null).thenReturn(session).thenReturn(null).thenReturn(session);
+        when(sessionKey.getSessionId()).thenReturn(session).thenReturn(null).thenReturn(null).thenReturn(null).thenReturn(null);
 
         assertEquals(session,sessionManager.getSessionId(sessionKey));
         assertNull(sessionManager.getSessionId(sessionKey));
-
+        assertNull(sessionManager.getSessionId(sessionKey));
         assertEquals(session,sessionManager.getSessionId(sessionKey));
         assertEquals(session,sessionManager.getSessionId(sessionKey));
     }
