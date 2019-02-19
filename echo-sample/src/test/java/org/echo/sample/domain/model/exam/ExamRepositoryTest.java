@@ -12,12 +12,10 @@ import org.echo.test.repository.AbstractRepositoryTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.ContextHierarchy;
-import org.springframework.test.context.TestPropertySource;
 
 import javax.transaction.Transactional;
 
@@ -35,14 +33,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
                 AutoCacheConfigurations.class,
             SampleAppConfigurations.class
         }))
-@TestPropertySource(properties = {"spring.config.location = classpath:/application-cache.yml,classpath:/application-redis.yml"})
+//@TestPropertySource(properties = {"spring.config.location = classpath:/application-cache.yml,classpath:/application-redis.yml"})
 @Transactional
 @Rollback
 @DisplayName("Echo : Sample module ExamRepository Test")
 class ExamRepositoryTest extends AbstractRepositoryTest {
-
-    @Value("${jdb.url}")
-    private String jdbcUrl;
 
     @Autowired
     ExamRepository repository;

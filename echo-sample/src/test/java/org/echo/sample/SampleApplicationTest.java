@@ -1,4 +1,4 @@
-package org.echo.sample.boot;
+package org.echo.sample;
 
 import org.echo.test.config.AbstractConfigurationsTest;
 import org.junit.jupiter.api.Test;

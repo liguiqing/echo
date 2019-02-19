@@ -1,4 +1,4 @@
-package org.echo.sample.boot;
+package org.echo.sample;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;

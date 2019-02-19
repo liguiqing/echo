@@ -9,6 +9,7 @@ app:
           length : 3
   commons:
     dateFormat: yyyy-MM-dd HH:mm:ss
+
 cache:
   name: echo
 
@@ -43,7 +44,6 @@ shiro:
     globalSessionTimeout: 1800000
 
 spring:
-
   freemarker:
     charset: UTF-8
     cache: false

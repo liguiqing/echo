@@ -1,7 +1,7 @@
-package org.echo.sample.boot.config;
+package org.echo.sample.config;
 
-import org.echo.sample.config.SampleAppConfigurations;
 import org.echo.share.config.DataSourceConfigurations;
+import org.echo.share.config.SpringMvcConfiguration;
 import org.echo.shiro.config.ShiroConfigurations;
 import org.echo.spring.cache.config.AutoCacheConfigurations;
 import org.springframework.cache.annotation.EnableCaching;
@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Import;
  */
 @Configuration
 @Import({DataSourceConfigurations.class, AutoCacheConfigurations.class,
-        SampleAppConfigurations.class, ShiroConfigurations.class})
+        SampleAppConfigurations.class, ShiroConfigurations.class, SpringMvcConfiguration.class})
 @EnableAspectJAutoProxy
 @EnableCaching
 public class SampleBootConfigurations {

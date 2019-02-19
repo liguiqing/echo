@@ -3,7 +3,5 @@
 
     <persistence-unit name="sample-boot">
         <!--<provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>-->
-        <jar-file>WEB-INF/lib/echo-ddd-support-1.0.0-SNAPSHOT.jar</jar-file>
-        <jar-file>WEB-INF/lib/echo-sample-1.0.0-SNAPSHOT.jar</jar-file>
     </persistence-unit>
 </persistence>

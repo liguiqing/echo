@@ -11,7 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.ContextHierarchy;
-import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -27,10 +28,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
                 DataSourceConfigurations.class,
                 SampleAppConfigurations.class
 }))
-@TestPropertySource(properties = {"spring.config.location = classpath:/application-cache.yml,classpath:/application-redis.yml"})
+@WebAppConfiguration
+@EnableWebMvc
+//@TestPropertySource(properties = {"spring.config.location = classpath:/application-cache.yml,classpath:/application-redis.yml"})
 @DisplayName("Echo : Exam module Configurations")
 public class ConfigurationsTest extends AbstractConfigurationsTest {
-
 
     @Autowired
     private ExamRepository examRepository;
