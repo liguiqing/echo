@@ -5,6 +5,8 @@ import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
 import com.alibaba.fastjson.support.spring.FastJsonJsonView;
 import freemarker.template.TemplateException;
+import lombok.extern.slf4j.Slf4j;
+import org.echo.exception.ThrowableToString;
 import org.echo.share.web.servlet.handler.SpringMvcExceptionResolver;
 import org.echo.share.web.servlet.http.ResponseTextFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,7 +32,7 @@ import java.util.*;
  * @author Liguiqing
  * @since V1.0
  */
-
+@Slf4j
 @Configuration
 public class SpringMvcConfiguration extends WebMvcConfigurationSupport {
 
@@ -166,15 +168,20 @@ public class SpringMvcConfiguration extends WebMvcConfigurationSupport {
 
 
     @Bean
-    public FreeMarkerConfigurer freeMarkerConfigurer() throws IOException, TemplateException {
+    public FreeMarkerConfigurer freeMarkerConfigurer() {
         FreeMarkerConfigurationFactory factory = new FreeMarkerConfigurationFactory();
         factory.setTemplateLoaderPath("classpath:META-INF/ftl");
         factory.setDefaultEncoding("UTF-8");
         factory.setPreferFileSystemAccess(false);
         FreeMarkerConfigurer result = new FreeMarkerConfigurer();
-        freemarker.template.Configuration configuration = factory.createConfiguration();
-        configuration.setClassicCompatible(true);
-        result.setConfiguration(configuration);
+        try {
+            freemarker.template.Configuration configuration = factory.createConfiguration();
+            configuration.setClassicCompatible(true);
+            result.setConfiguration(configuration);
+        } catch (IOException | TemplateException e) {
+            log.error(ThrowableToString.toString(e));
+        }
+
         Properties settings = new Properties();
         settings.put("template_update_delay", "0");
         settings.put("default_encoding", "UTF-8");
