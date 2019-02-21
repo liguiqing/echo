@@ -7,16 +7,18 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.http.MediaType;
+import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 /**
  * @author Liguiqing
@@ -40,7 +42,7 @@ class SampleControllerTest extends AbstractSpringControllerTest {
         when(serviceInterface.getSomething(any(String.class))).thenReturn(new TestBean().setMaster("master"));
         SampleController controller = new SampleController(serviceInterface);
         injectNoneFieldsInConstructor(controller, Arrays.asList(new FieldMapping("uuid", "uuid")));
-        applyController(controller);
+        applyController(controller,new FreeMarkerConfigurer());
     }
 
     @Test

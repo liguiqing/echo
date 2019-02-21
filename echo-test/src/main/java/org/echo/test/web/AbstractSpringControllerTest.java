@@ -6,15 +6,19 @@ import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.reflect.FieldUtils;
+import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeAll;
 import org.mockito.MockitoAnnotations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
+import org.springframework.http.converter.FormHttpMessageConverter;
+import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.test.web.servlet.setup.StandaloneMockMvcBuilder;
 import org.springframework.web.accept.ContentNegotiationManagerFactoryBean;
+import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.view.ContentNegotiatingViewResolver;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
@@ -31,11 +35,12 @@ import java.util.List;
  * @author Liguiqing
  * @since V1.0
  */
-
 public abstract class AbstractSpringControllerTest {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     protected MockMvc mvc;
+
+    protected List<ViewResolver> viewResolvers  = Lists.newArrayList();
 
     @BeforeAll
     public void before(){
@@ -56,18 +61,19 @@ public abstract class AbstractSpringControllerTest {
     }
 
     protected void applyController(Object... controller){
+        StandaloneMockMvcBuilder mvcBuilder =  MockMvcBuilders.standaloneSetup(controller);
         ContentNegotiationManagerFactoryBean contentNegotiationManager = new ContentNegotiationManagerFactoryBean();
         contentNegotiationManager.setDefaultContentType(MediaType.APPLICATION_JSON);
         contentNegotiationManager.addMediaType("html", MediaType.TEXT_HTML);
         contentNegotiationManager.addMediaType("json", MediaType.APPLICATION_JSON);
         contentNegotiationManager.build();
-        StandaloneMockMvcBuilder mvcBuilder =  MockMvcBuilders.standaloneSetup(controller);
         ContentNegotiatingViewResolver viewResolver = new ContentNegotiatingViewResolver();
         viewResolver.setContentNegotiationManager(contentNegotiationManager.getObject());
         viewResolver.setDefaultViews(Arrays.asList(new MappingJackson2JsonView()));
+        viewResolver.setViewResolvers(viewResolvers);
         mvcBuilder.setViewResolvers(viewResolver);
         mvcBuilder.setContentNegotiationManager(contentNegotiationManager.getObject());
-        mvcBuilder.setMessageConverters(fastJsonMessageConverter());
+        mvcBuilder.setMessageConverters(fastJsonMessageConverter(), new StringHttpMessageConverter(),new FormHttpMessageConverter());
         this.mvc = mvcBuilder.build();
     }
 
@@ -114,5 +120,4 @@ public abstract class AbstractSpringControllerTest {
             throw new ControllerTestException(e);
         }
     }
-
 }

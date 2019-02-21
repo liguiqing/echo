@@ -30,11 +30,13 @@ public class SampleController {
 
     @RequestMapping(value = "/test",method = RequestMethod.POST)
     public ModelAndView onPost(@RequestBody TestBean bean){
+        log.debug("URL /test Method POST");
         return getModelAndView(bean);
     }
 
     @RequestMapping(value = "/test/{id}",method = RequestMethod.GET)
     public ModelAndView onGet(@PathVariable  String id, @RequestParam(required = false) String excludes){
+        log.debug("URL /test/{} Method GET",id);
         TestBean bean = serviceInterface.getSomething(id);
         Collection<TestBean> allBeans = serviceInterface.findSometingAll();
         List<TestBean> result =  allBeans.stream().filter(b -> b.getMaster().equals(excludes)).collect(Collectors.toList());
@@ -46,6 +48,7 @@ public class SampleController {
 
     @RequestMapping(value = "/test",method = RequestMethod.PUT)
     public ModelAndView onUpdate(@RequestBody TestBean bean){
+        log.debug("URL /test Method PUT");
         return getModelAndView(bean);
     }
 
@@ -59,6 +62,7 @@ public class SampleController {
 
     @RequestMapping(value = "/test",method = RequestMethod.DELETE)
     public ModelAndView onDelete(@RequestBody TestBean bean){
+        log.debug("URL /test Method DELETE");
         return getModelAndView(bean);
     }
 
