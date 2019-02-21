@@ -45,6 +45,8 @@ class ServletsTest extends AbstractSpringControllerTest {
         HashMap<String,String[]> pss = new HashMap<>();
         pss.put("a",new String[]{"1"});
         pss.put("b",new String[]{"b"});
+        pss.put("d",new String[]{});
+        pss.put("e",null);
         pss.put("c",new String[]{LocalDate.now().toString()});
         when(request.getParameterMap()).thenReturn(pss).thenReturn(new HashMap<>());
         Map<String,String> map =  Servlets.getParameterMap(request);
