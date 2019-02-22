@@ -3,6 +3,7 @@ package org.echo.test.web;
 import lombok.extern.slf4j.Slf4j;
 import org.echo.TestBean;
 import org.echo.test.SampleTestServiceInterface;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -22,11 +23,9 @@ public class SampleController {
 
     private String uuid = "uuid";
 
+    @Autowired(required = false)
     private SampleTestServiceInterface<TestBean,String> serviceInterface;
 
-    public SampleController(SampleTestServiceInterface serviceInterface) {
-        this.serviceInterface = serviceInterface;
-    }
 
     @RequestMapping(value = "/test",method = RequestMethod.POST)
     public ModelAndView onPost(@RequestBody TestBean bean){
