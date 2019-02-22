@@ -41,5 +41,6 @@ class LabelValueObjectTest {
         assertFalse(lvo5.equals(lvo1));
         lvo5 = new LabelValueObject(0,"a-1", "", null);
         assertFalse(lvo5.equals(lvo1));
+        assertTrue(lvo2.valueOf("2"));
     }
 }

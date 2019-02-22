@@ -2,7 +2,6 @@ package org.echo.util;
 
 import org.echo.test.PrivateConstructors;
 import org.echo.test.web.AbstractSpringControllerTest;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -16,7 +15,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Copyright (c) 2016,$today.year, 深圳市易考试乐学测评有限公司
@@ -25,11 +25,6 @@ import static org.mockito.Mockito.*;
 @WebAppConfiguration
 @EnableWebMvc
 class ServletsTest extends AbstractSpringControllerTest {
-
-    @BeforeEach
-    public void before(){
-        super.before();
-    }
 
     @Test
     void test(){

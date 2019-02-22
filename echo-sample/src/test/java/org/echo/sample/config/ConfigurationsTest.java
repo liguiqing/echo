@@ -30,7 +30,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 }))
 @WebAppConfiguration
 @EnableWebMvc
-//@TestPropertySource(properties = {"spring.config.location = classpath:/application-cache.yml,classpath:/application-redis.yml"})
 @DisplayName("Echo : Exam module Configurations")
 public class ConfigurationsTest extends AbstractConfigurationsTest {
 

@@ -1,9 +1,6 @@
 package org.echo.sample.domain.model.exam;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 import org.echo.ddd.domain.entity.PersistenceEntityObject;
 import org.echo.ddd.domain.events.EventHandlers;
 import org.echo.ddd.domain.id.AssociationId;
@@ -24,6 +21,7 @@ import java.time.LocalDateTime;
  * @since V1.0
  */
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @EqualsAndHashCode(of="examId",callSuper = false)
 @ToString(of={"examId","scope"})

@@ -39,7 +39,7 @@ public class SpringMvcConfiguration extends WebMvcConfigurationSupport {
     @Value("${app.commons.charset:UTF-8}")
     private String charset;
 
-    @Value("${app.commons.dateFormat:yyyy-MM-dd HH:mm:sss}")
+    @Value("${app.commons.dateFormat:yyyy-MM-dd HH:mm:ss}")
     private String dateFormat ;
 
     @Value("${spring.freemarker.cache:false}")

@@ -37,4 +37,8 @@ public class LabelDetail extends ValueObject {
         return this.category.equals(category);
     }
 
+    public boolean sameValueAs(String valueText){
+        return this.valueText.endsWith(valueText);
+    }
+
 }

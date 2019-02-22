@@ -45,4 +45,8 @@ public class LabelValueObject extends ValueObject {
         if(this.detail.sameCategoryAs(detail))
             this.detail = detail;
     }
+
+    protected boolean valueOf(String value) {
+        return this.detail.sameValueAs(value);
+    }
 }
