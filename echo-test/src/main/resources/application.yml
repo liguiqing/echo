@@ -24,22 +24,25 @@ spring:
       enabled: true
 
 jdbc:
-  driver: com.mysql.Driver
+  #driver: com.mysql.Driver
+  driver: org.postgresql.Driver
   password: newa_newc
   jndiName: testJndiDs
-  url: jdbc:mysql://192.168.1.230:3306/echo?useUnicode=true&amp;characterEncoding=utf-8&amp;autoReconnect=true&amp;rewriteBatchedStatements=true
-  username: root
+  #url: jdbc:mysql://192.168.1.230:3306/echo?useUnicode=true&amp;characterEncoding=utf-8&amp;autoReconnect=true&amp;rewriteBatchedStatements=true
+  url: jdbc:postgresql://192.168.1.251:5432/echo
+  username: postgres
 jpa:
    unit:
      name: hello
 
 hibernate:
   max_fetch_depth: 10
-  dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+  #dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+  dialect: org.hibernate.dialect.PostgreSQLDialect
   format_sql: true
   hbm2ddl:
     auto: none
   jdbc:
     batch_size: 100
     fetch_size: 50
-  show_sql: false
+  show_sql: true

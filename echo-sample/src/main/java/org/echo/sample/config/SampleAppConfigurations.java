@@ -25,7 +25,6 @@ public class SampleAppConfigurations {
 
     @Bean
     public FreemarkerStaticModels freemarkerStaticModels(){
-        Map<String,String> maps = FreemarkerStaticModels.defaultStaticModels();
-        return new FreemarkerStaticModels(maps);
+        return new FreemarkerStaticModels(FreemarkerStaticModels.defaultStaticModels());
     }
 }

@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.lookup.JndiDataSourceLookup;
+import org.springframework.orm.jpa.JpaDialect;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -89,7 +90,7 @@ public class DataSourceConfigurations {
             @Value("${jpa.unit.name:null}") String persistenceUnitName,
             @Value("${jpa.unit.xmlLocation:classpath:META-INF/persistence.xml}") String xmlLocation,
             DataSource dataSource,
-            HibernateJpaDialect jpaDialect,
+            JpaDialect jpaDialect,
             JpaVendorAdapter jpaVendorAdapter,
             Properties jpaProperties) {
         LocalContainerEntityManagerFactoryBean entityManagerFactoryBean = new LocalContainerEntityManagerFactoryBean();
