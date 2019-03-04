@@ -3,17 +3,14 @@ package org.echo.shiro.web.session.mgt;
 import com.google.common.base.Preconditions;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.session.Session;
-import org.apache.shiro.session.mgt.DefaultSessionManager;
 import org.apache.shiro.session.mgt.SessionContext;
 import org.apache.shiro.session.mgt.SessionKey;
 import org.apache.shiro.web.servlet.ShiroHttpServletRequest;
 import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 import org.apache.shiro.web.session.mgt.WebSessionManager;
 import org.apache.shiro.web.util.WebUtils;
-import org.echo.util.ClassUtils;
 import org.echo.util.UserAgentUtils;
 import org.springframework.util.StringUtils;
 
@@ -32,18 +29,11 @@ import java.util.Objects;
 @AllArgsConstructor
 @Slf4j
 @Getter
-public class StatelessWebSessionManager extends DefaultSessionManager implements WebSessionManager {
+public class StatelessWebSessionManager extends DefaultWebSessionManager implements WebSessionManager {
 
     private String sessionToken ;
 
     private String referencedSessionIdSource;
-
-    private interface Excludes {
-        Serializable getSessionId(SessionKey key);
-    }
-
-    @Delegate(excludes= Excludes.class)
-    private final DefaultWebSessionManager delegate = new DefaultWebSessionManager();
 
     public StatelessWebSessionManager() {
         this("x-auth-token","header");
@@ -58,7 +48,7 @@ public class StatelessWebSessionManager extends DefaultSessionManager implements
 
         HttpServletRequest request = WebUtils.getHttpRequest(key);
         if(UserAgentUtils.isBrowser(request)){
-            return this.delegate.getSessionId(key);
+            return super.getSessionId(key);
         }
 
         sessionId = this.getSessionId(request);
@@ -75,7 +65,7 @@ public class StatelessWebSessionManager extends DefaultSessionManager implements
     protected void onStart(Session session, SessionContext context){
         HttpServletRequest request = WebUtils.getHttpRequest(context);
         if(UserAgentUtils.isBrowser(request)){
-            ClassUtils.invoke(this.delegate,"onStart",session,context);
+            super.onStart(session,context);
             return;
         }
 
@@ -90,7 +80,7 @@ public class StatelessWebSessionManager extends DefaultSessionManager implements
     protected void onStop(Session session, SessionKey key) {
         HttpServletRequest request = WebUtils.getHttpRequest(key);
         if(UserAgentUtils.isBrowser(request)){
-            ClassUtils.invoke(this.delegate,"onStop",session,key);
+            super.onStop(session,key);
             return;
         }
 

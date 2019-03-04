@@ -69,10 +69,10 @@ class StatelessWebSessionManagerTest {
         when(sessionContext.getServletRequest()).thenReturn(request);
         when(sessionContext.getServletResponse()).thenReturn(response);
 
-        sessionManager.onStart(session,sessionContext);
-
         String sessionId = UUID.randomUUID().toString();
         when(session.getId()).thenReturn(sessionId);
+
+        sessionManager.onStart(session,sessionContext);
         sessionManager.onStart(session,sessionContext);
         sessionManager.onStart(session,sessionContext);
     }
