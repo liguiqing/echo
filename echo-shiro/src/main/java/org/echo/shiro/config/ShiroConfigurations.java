@@ -184,9 +184,9 @@ public class ShiroConfigurations {
     @Bean
     public CacheManager shiroCacheManager(Optional<org.springframework.cache.CacheManager> springCacheManager){
         HashMap<String,org.springframework.cache.CacheManager> map = Maps.newHashMap();
-        map.put("a", new CaffeineCacheManager());
-        springCacheManager.ifPresent(sc->map.put("a",sc));
-        return new SpringCacheManager(map.get("a"),this.getShiroProperties());
+        map.put("springCacheManager", new CaffeineCacheManager());
+        springCacheManager.ifPresent(sc->map.put("springCacheManager",sc));
+        return new SpringCacheManager(map.get("springCacheManager"),this.getShiroProperties());
     }
 
     @Bean

@@ -19,6 +19,8 @@ public class SpringCache<K, V> implements Cache<K, V> {
 
     @Override
     public V get(K k) throws CacheException {
+        if(proxyCache.get(k) == null)
+            return null;
         return (V) proxyCache.get(k).get();
     }
 

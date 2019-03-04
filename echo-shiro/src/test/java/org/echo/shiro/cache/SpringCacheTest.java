@@ -18,41 +18,31 @@
  *
  */
 
-package org.echo.shiro;
+package org.echo.shiro.cache;
 
-
-import org.echo.shiro.config.ShiroConfigurations;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.ContextHierarchy;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
-/**
- * <p>
- *
- * </P>
- *
- * @author liguiqing
- * @date 2019-03-04 13:55
- * @since V1.0.0
- **/
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
-@DisplayName("Simulation Test")
-@ExtendWith(SpringExtension.class)
-@WebAppConfiguration
-@EnableWebMvc
-@ContextHierarchy(@ContextConfiguration(
-        classes = {
-                ShiroConfigurations.class
-        }))
-public class SimulationTest {
+@DisplayName("SpringCache Test")
+class SpringCacheTest {
 
     @Test
     void test(){
-
+        assertTrue(true);
+        org.springframework.cache.Cache cache = mock(org.springframework.cache.Cache.class);
+        SpringCache cache1 = new SpringCache(cache);
+        when(cache.get(any())).thenReturn(null).thenReturn(()->"a");
+        assertNull(cache1.get("A"));
+        assertEquals("a",cache1.get("A"));
+        when(cache.putIfAbsent(any(),any())).thenReturn(()->"a");
+        assertEquals("a",cache1.put("a","A"));
+        assertEquals("a",cache1.remove("a"));
+        cache1.clear();
+        assertEquals(0,cache1.size());
+        assertEquals(0,cache1.keys().size());
+        assertEquals(0,cache1.values().size());
     }
 }
