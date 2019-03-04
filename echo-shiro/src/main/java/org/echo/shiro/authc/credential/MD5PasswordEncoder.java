@@ -19,5 +19,4 @@ public class MD5PasswordEncoder {
     public  String encode(String salt, String password) {
         return new SimpleHash(this.algorithmName, password, ByteSource.Util.bytes(salt), this.hashIterations).toHex();
     }
-
 }

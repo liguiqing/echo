@@ -67,13 +67,14 @@ public class PrimusRealm extends AuthorizingRealm {
     @AllArgsConstructor
     @Getter
     @ToString
-    public  class Decepticons {
+    public class Decepticons {
         String name ;
         String realName ;
         String password;
+        String salt;
 
-        private  Decepticons Megatron() {
-            return new Decepticons("Megatron", "威震天", "malilihong");
+        public Decepticons Megatron() {
+            return new Decepticons("Megatron", "威震天", "malilihong","Galvatron");
         }
 
         public String getPassword(){
@@ -81,7 +82,7 @@ public class PrimusRealm extends AuthorizingRealm {
         }
 
         public String getSalt(){
-            return "Galvatron";
+            return this.salt;
         }
     }
 }

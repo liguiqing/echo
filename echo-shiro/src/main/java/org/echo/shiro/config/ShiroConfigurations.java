@@ -21,8 +21,7 @@ import org.apache.shiro.web.filter.authc.FormAuthenticationFilter;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.servlet.Cookie;
 import org.apache.shiro.web.servlet.SimpleCookie;
-import org.echo.shiro.authc.credential.MD5PasswordEncoder;
-import org.echo.shiro.authc.credential.PasswordCredentialsMatcher;
+import org.echo.shiro.authc.credential.*;
 import org.echo.shiro.cache.SpringCacheManager;
 import org.echo.shiro.realm.PrimusRealm;
 import org.echo.shiro.session.mgt.eis.SessionIdGeneratorIterator;
@@ -36,6 +35,7 @@ import org.springframework.cache.caffeine.CaffeineCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.annotation.Order;
 import org.springframework.web.filter.DelegatingFilterProxy;
@@ -207,8 +207,13 @@ public class ShiroConfigurations {
     }
 
     @Bean
-    public PasswordCredentialsMatcher passwordCredentialsMatcher(MD5PasswordEncoder encoder){
-        return new PasswordCredentialsMatcher(encoder);
+    public PasswordCredentialsMatcher passwordCredentialsMatcher(
+            @Value("${shiro.credentials.salt.reader.field:salt}") String salt,
+            @Value("${shiro.credentials.salt.reader.method:getSalt}") String method,
+            Optional<SaltReader> saltReader,
+            MD5PasswordEncoder encoder){
+        FieldSaltReader fieldReader = new FieldSaltReader(salt,Optional.of(new MethodSaltReader(method, saltReader)));
+        return new PasswordCredentialsMatcher(encoder,fieldReader);
     }
 
     @Bean

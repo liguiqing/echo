@@ -21,6 +21,8 @@ import java.util.Arrays;
 public class PasswordCredentialsMatcher implements CredentialsMatcher {
     private MD5PasswordEncoder passwordEncoder;
 
+    private SaltReader saltReader;
+
     @Override
     public boolean doCredentialsMatch(AuthenticationToken token, AuthenticationInfo info) {
         String tokenHashedCredentials = tokenHashedCredentials(token, info);
@@ -31,16 +33,9 @@ public class PasswordCredentialsMatcher implements CredentialsMatcher {
 
     private String tokenHashedCredentials(AuthenticationToken token, AuthenticationInfo info) {
         PrincipalCollection pc = info.getPrincipals();
-        Object user = pc.getPrimaryPrincipal();
         UsernamePasswordToken upToken = (UsernamePasswordToken) token;
         String originalPassword = new String(upToken.getPassword());
-        String salt = "";
-        try {
-            Object o = FieldUtils.readField(user,"salt",true);
-            salt = o.toString();
-        } catch (Exception e) {
-            log.warn(ThrowableToString.toString(e));
-        }
+        String salt = saltReader.getSalt(pc.getPrimaryPrincipal());
         return this.passwordEncoder.encode(salt, originalPassword);
     }
 }

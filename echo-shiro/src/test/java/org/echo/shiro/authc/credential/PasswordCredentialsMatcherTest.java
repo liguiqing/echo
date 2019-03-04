@@ -7,6 +7,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -19,7 +20,9 @@ class PasswordCredentialsMatcherTest {
     @Test
     void doCredentialsMatch() {
         MD5PasswordEncoder encoder = new MD5PasswordEncoder();
-        PasswordCredentialsMatcher matcher = new PasswordCredentialsMatcher(encoder);
+        SaltReader saltReader = mock(SaltReader.class);
+        when(saltReader.getSalt(any())).thenReturn("").thenReturn("salt");
+        PasswordCredentialsMatcher matcher = new PasswordCredentialsMatcher(encoder,saltReader);
         UsernamePasswordToken token = mock(UsernamePasswordToken.class);
         AuthenticationInfo info = mock(AuthenticationInfo.class);
         PrincipalCollection pc = mock(PrincipalCollection.class);
@@ -27,7 +30,7 @@ class PasswordCredentialsMatcherTest {
         when(info.getPrincipals()).thenReturn(pc);
         when(info.getCredentials()).thenReturn(encoder.encode("salt","password"));
         when(token.getPassword()).thenReturn("password".toCharArray());
-        assertTrue(matcher.doCredentialsMatch(token, info));
         assertFalse(matcher.doCredentialsMatch(token, info));
+        assertTrue(matcher.doCredentialsMatch(token, info));
     }
 }
