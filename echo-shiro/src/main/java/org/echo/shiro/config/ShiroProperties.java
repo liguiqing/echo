@@ -26,6 +26,8 @@ public class ShiroProperties {
 
     private long maxIdleSecond = 12000;
 
+    private int cached = 1;
+
     private Map<String,Long> cachePropertiesMap;
 
     public String getCacheName(String cacheName){
@@ -44,7 +46,7 @@ public class ShiroProperties {
     }
 
     private String springCacheName(String cacheName,long maxIdleSecond){
-        return cacheName.concat("#"+maxIdleSecond).concat("#"+maxIdleSecond+"#2");
+        return cacheName.concat("#"+maxIdleSecond).concat("#"+maxIdleSecond+"#").concat(Integer.toString(cached));
     }
 
 }
