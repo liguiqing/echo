@@ -35,7 +35,6 @@ import org.springframework.cache.caffeine.CaffeineCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
-import org.springframework.context.annotation.Primary;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.annotation.Order;
 import org.springframework.web.filter.DelegatingFilterProxy;
@@ -183,10 +182,11 @@ public class ShiroConfigurations {
 
     @Bean
     public CacheManager shiroCacheManager(Optional<org.springframework.cache.CacheManager> springCacheManager){
+        String tempKey = "springCacheManager";
         HashMap<String,org.springframework.cache.CacheManager> map = Maps.newHashMap();
-        map.put("springCacheManager", new CaffeineCacheManager());
-        springCacheManager.ifPresent(sc->map.put("springCacheManager",sc));
-        return new SpringCacheManager(map.get("springCacheManager"),this.getShiroProperties());
+        map.put(tempKey, new CaffeineCacheManager());
+        springCacheManager.ifPresent(sc->map.put(tempKey,sc));
+        return new SpringCacheManager(map.get(tempKey),this.getShiroProperties());
     }
 
     @Bean
