@@ -312,6 +312,11 @@
                 <scope>compile</scope>
             </dependency>
 
+            <dependency>
+                <groupId>com.squareup.okhttp3</groupId>
+                <artifactId>okhttp</artifactId>
+                <version>3.13.1</version>
+            </dependency>
 
             <dependency>
                 <groupId>com.lmax</groupId>
@@ -507,7 +512,7 @@
         <module>echo-utils</module>
         <module>echo-core</module>
         <module>echo-share</module>
-        <module>echo-spring-cache</module>
+        <module>echo-xcache</module>
         <module>echo-shiro</module>
         <module>echo-ddd</module>
         <module>echo-ddd-support</module>
