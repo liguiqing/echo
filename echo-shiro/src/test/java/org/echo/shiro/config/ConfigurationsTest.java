@@ -18,9 +18,9 @@ import org.springframework.test.context.TestPropertySource;
                 ShiroConfigurations.class
         }))
 @TestPropertySource(properties = {"spring.config.location = classpath:/application-shiro.yml"})
-@DisplayName("Echo : Exam module Configurations exec")
-public class ConfigurationsTest extends AbstractConfigurationsTest {
+@DisplayName("Echo : Shiro Configurations Test")
+class ConfigurationsTest extends AbstractConfigurationsTest {
 
     @Test
-    public void test(){}
+    void test(){}
 }

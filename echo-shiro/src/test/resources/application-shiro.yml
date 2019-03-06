@@ -1,8 +1,37 @@
 shiro:
-  maxIdleSecond : 1800
-  cachePropertiesMap: {Test1:1800}
+  init:
+    maxIdleSecond : 1900
+    cached: 2
+    cacheDefaults:
+      - authorizationCache: 1800
+      - authenticationCache: 1800
+      - shiro-activeSessionCache: 1800
   filter:
     success:
       url: /home
+    login:
+      url: /index
+    unauthorized:
+      url: /unauthorized
   session:
-    globalSessionTimeout: 1800000
+    name: SHIROSESSION
+    globalSessionTimeout: 1900000
+  cookie:
+    maxAge: -1
+    domain:
+    path: /
+  credentials:
+    salt:
+      reader:
+        field: salt
+        method: getSalt
+  cache:
+    activeSessionCache: shiro-activeSessionCache
+  scheduler:
+    validationInterval: 1800000
+  authc:
+    form:
+      password:
+        param: password
+      username:
+        param: username

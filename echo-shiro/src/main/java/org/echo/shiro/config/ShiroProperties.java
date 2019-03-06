@@ -1,5 +1,6 @@
 package org.echo.shiro.config;
 
+import com.google.common.collect.Maps;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -21,20 +22,17 @@ import java.util.Objects;
 @Setter
 @Accessors(chain = true)
 @Component
-@ConfigurationProperties(prefix = "shiro")
+@ConfigurationProperties(prefix = "shiro.init")
 public class ShiroProperties {
 
     private long maxIdleSecond = 12000;
 
     private int cached = 1;
 
-    private Map<String,Long> cachePropertiesMap;
+    private Map<String,Long> cacheDefaults = Maps.newHashMap();
 
     public String getCacheName(String cacheName){
-        if(this.cachePropertiesMap == null){
-            return defaultCacheName(cacheName);
-        }
-        Long maxIdle = this.getCachePropertiesMap().get(cacheName);
+        Long maxIdle = this.cacheDefaults.get(cacheName);
         if(Objects.isNull(maxIdle)){
             return defaultCacheName(cacheName);
         }

@@ -33,6 +33,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.cache.caffeine.CaffeineCacheManager;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
@@ -58,9 +59,6 @@ import java.util.Optional;
                 ShiroProperties.class
         })
 public class ShiroConfigurations {
-
-    @Autowired
-    private ShiroProperties shiroProperties;
 
     @Bean("shiroPlaceholder")
     public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
@@ -139,7 +137,7 @@ public class ShiroConfigurations {
     }
 
     @Bean
-    public SessionDAO sessionDAO(@Value("${shiro.activeSessionCache:shiro-activeSessionCache}") String activeSessionCache,
+    public SessionDAO sessionDAO(@Value("${shiro.cache.activeSessionCache:shiro-activeSessionCache}") String activeSessionCache,
                                  SessionIdGeneratorIterator sessionIdGenerator,
                                  Optional<CacheManager> cacheManager){
         EnterpriseCacheSessionDAO sessionDAO = new EnterpriseCacheSessionDAO();
@@ -181,12 +179,13 @@ public class ShiroConfigurations {
     }
 
     @Bean
-    public CacheManager shiroCacheManager(Optional<org.springframework.cache.CacheManager> springCacheManager){
+    public CacheManager shiroCacheManager(Optional<org.springframework.cache.CacheManager> springCacheManager,
+                                          ShiroProperties shiroProperties){
         String tempKey = "springCacheManager";
         HashMap<String,org.springframework.cache.CacheManager> map = Maps.newHashMap();
         map.put(tempKey, new CaffeineCacheManager());
         springCacheManager.ifPresent(sc->map.put(tempKey,sc));
-        return new SpringCacheManager(map.get(tempKey),this.getShiroProperties());
+        return new SpringCacheManager(map.get(tempKey),shiroProperties);
     }
 
     @Bean
@@ -233,9 +232,4 @@ public class ShiroConfigurations {
         return formAuthenticationFilter;
     }
 
-    private ShiroProperties getShiroProperties(){
-        if(this.shiroProperties == null)
-            this.shiroProperties = new ShiroProperties();
-        return this.shiroProperties;
-    }
 }

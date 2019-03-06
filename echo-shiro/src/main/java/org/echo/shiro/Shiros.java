@@ -15,7 +15,6 @@ public class Shiros {
         throw new AssertionError("org.echo.shiro.Shiros instances for you!");
     }
 
-
     public static  Subject getSubject(){
         Subject subject = SecurityUtils.getSubject();
         log.debug(subject.toString());

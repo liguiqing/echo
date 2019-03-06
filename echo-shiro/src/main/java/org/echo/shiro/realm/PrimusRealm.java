@@ -14,10 +14,10 @@ import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.echo.shiro.authc.credential.MD5PasswordEncoder;
 
 /**
- * 超级用户Realm
+ * 测试用户Realm
  *
  * 元始天尊(Primus)代表的是“秩序”、“光”以及“创造”，也是塞伯坦星的创世神
- * 超级用户:Megatron(威震天)
+ * 测试用户名:Megatron(威震天)
  *
  * @author Liguiqing
  * @since V1.0
@@ -41,7 +41,6 @@ public class PrimusRealm extends AuthorizingRealm {
     public boolean supports(AuthenticationToken token) {
         return true;
     }
-
 
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
