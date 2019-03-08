@@ -9,6 +9,12 @@ import java.lang.reflect.InvocationTargetException;
 
 public class ClassUtilsTestBean {
 
+    public ClassUtilsTestBean() {
+    }
+
+    public ClassUtilsTestBean(String s) {
+    }
+
     private String m1(){
         return "m1";
     }
@@ -27,5 +33,13 @@ public class ClassUtilsTestBean {
 
     private void m45()throws InvocationTargetException {
         throw  new InvocationTargetException(new NullPointerException(""));
+    }
+
+    public String s1(){
+        return "s1";
+    }
+
+    public String s1(String s){
+        return s;
     }
 }

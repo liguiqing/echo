@@ -4,11 +4,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.echo.exception.ThrowableToString;
 import org.springframework.beans.BeanUtils;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
+import java.lang.reflect.*;
 import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * @author Liguiqing
@@ -62,6 +60,13 @@ public class ClassUtils {
         return false;
     }
 
+    /**
+     * 反射执行对象o {@link Object} 的methodName方法
+     * @param o any {@link Object}
+     * @param methodName of will be invoked
+     * @param args {@link Class} of method parameter types
+     * @return null if can'nt invoke else return method returns
+     */
     public static Object invoke(Object o,String methodName,Object... args){
         Class[] argsClasses = null;
         if(args != null){
@@ -78,6 +83,57 @@ public class ClassUtils {
         try {
             return method.invoke(o, args);
         } catch (IllegalAccessException | InvocationTargetException e) {
+            log.error(ThrowableToString.toString(e));
+        }
+        return null;
+    }
+
+    /**
+     * 查找o（{@link Object}）中满足 returnType 及 parameterTypes 的 Method
+     * @param o any {@link Object}
+     * @param returnType {@link Class} of method returns
+     * @param parameterTypes {@link Class} of method parameter types
+     * @return null if o is null or can't find any required method
+     */
+    public static Method findMethodOfReturns(Object o,Class<?> returnType,Class<?>... parameterTypes){
+        if(Objects.isNull(o))
+            return null;
+        Class<?> cls = o.getClass();
+
+        Method[] methods = cls.getDeclaredMethods();
+        for(Method method:methods){
+            if(method.getReturnType().equals(returnType)){
+                try {
+                    return cls.getMethod(method.getName(), parameterTypes);
+                } catch (NoSuchMethodException e) {
+                    log.error(ThrowableToString.toString(e));
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * 通过Class 及 constructor 参数 实例化一个对象
+     * @param cls of Constructor
+     * @param parameterTypes {@link Class} of method parameter types
+     * @param <T> return type
+     * @return null if can'nt instance
+     */
+    public static <T> T newInstanceOf(Class cls,Object... parameterTypes){
+        if(Objects.isNull(cls) || Objects.isNull(parameterTypes)){
+            return null;
+        }
+
+        try {
+            Class[] clses = new Class[parameterTypes.length];
+            int i = 0;
+            for(Object o:parameterTypes){
+                clses[i++] = o.getClass();
+            }
+            return (T)cls.getDeclaredConstructor(clses).newInstance(parameterTypes);
+        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
             log.error(ThrowableToString.toString(e));
         }
         return null;

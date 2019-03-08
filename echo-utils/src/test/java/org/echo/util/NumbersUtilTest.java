@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Copyright (c) 2016,$today.year, 深圳市易考试乐学测评有限公司
  **/
-@DisplayName("Echo : NumbersUtil exec")
+@DisplayName("Echo : NumbersUtil Test")
 class NumbersUtilTest {
 
 

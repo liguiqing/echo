@@ -17,9 +17,6 @@ import java.util.Map;
  */
 @Slf4j
 public class Springs implements ApplicationContextAware {
-    private Springs() {
-        throw new AssertionError("No org.echo.util.Springs instances for you!");
-    }
 
     private static ApplicationContext applicationContext;
 

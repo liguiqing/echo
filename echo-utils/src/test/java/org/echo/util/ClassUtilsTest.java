@@ -4,6 +4,8 @@ import org.echo.test.PrivateConstructors;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.Date;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -35,5 +37,27 @@ class ClassUtilsTest {
         assertNull(ClassUtils.invoke(bean1,"m2","a",1F));
         assertNull(ClassUtils.invoke(bean1,"m44"));
         assertNull(ClassUtils.invoke(bean1,"m45"));
+    }
+
+    @Test
+    void findMethodOfReturns(){
+        ClassUtilsTestBean bean1 = new ClassUtilsTestBean();
+        assertNull(ClassUtils.findMethodOfReturns(null,String.class));
+        assertNull(ClassUtils.findMethodOfReturns(bean1, String[].class,String.class));
+        assertTrue(ClassUtils.findMethodOfReturns(bean1,String.class).getName().contains("s1"));
+        assertTrue(ClassUtils.findMethodOfReturns(bean1,String.class,String.class).getName().contains("s1"));
+    }
+
+    @Test
+    void newInstanceOf(){
+        ClassUtilsTestBean ct = ClassUtils.newInstanceOf(ClassUtilsTestBean.class);
+        assertEquals("s1",ct.s1());
+        assertNull( ClassUtils.newInstanceOf(ClassUtilsTestBean2.class));
+        assertNull( ClassUtils.newInstanceOf(ClassUtilsTestBean2.class,null));
+        assertNull( ClassUtils.newInstanceOf(ClassUtilsTestBean2.class, Date.class));
+        assertNull( ClassUtils.newInstanceOf(null));
+        assertNotNull( ClassUtils.newInstanceOf(ClassUtilsTestBean2.class,"s"));
+        assertNotNull( ClassUtils.newInstanceOf(ClassUtilsTestBean2.class,"s",1l));
+        assertNull( ClassUtils.newInstanceOf(ClassUtilsTestBean2.class,String.class, Date.class));
     }
 }
