@@ -13,11 +13,13 @@ import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.echo.shiro.authc.credential.MD5PasswordEncoder;
 
+import java.io.Serializable;
+
 /**
  * 测试用户Realm
  *
  * 元始天尊(Primus)代表的是“秩序”、“光”以及“创造”，也是塞伯坦星的创世神
- * 测试用户名:Megatron(威震天)
+ *
  *
  * @author Liguiqing
  * @since V1.0
@@ -28,7 +30,7 @@ import org.echo.shiro.authc.credential.MD5PasswordEncoder;
 public class PrimusRealm extends AuthorizingRealm {
 
     @Getter
-    private final Decepticons megatron = new Decepticons().Megatron();
+    private final Decepticons megatron = new Decepticons().megatron();
 
     private MD5PasswordEncoder encoder;
 
@@ -52,7 +54,7 @@ public class PrimusRealm extends AuthorizingRealm {
 
         SimplePrincipalCollection principalCollection = new SimplePrincipalCollection(megatron, getName());
         SimpleAuthenticationInfo simpleAuthenticationInfo = new SimpleAuthenticationInfo();
-        simpleAuthenticationInfo.setCredentials(megatron.getPassword());
+        simpleAuthenticationInfo.setCredentials(encoder.encode(megatron.getSalt(), megatron.getPassword()));
         simpleAuthenticationInfo.setPrincipals(principalCollection);
         return simpleAuthenticationInfo;
     }
@@ -60,28 +62,5 @@ public class PrimusRealm extends AuthorizingRealm {
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
         return new SimpleAuthorizationInfo();
-    }
-
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Getter
-    @ToString
-    public class Decepticons {
-        String name ;
-        String realName ;
-        String password;
-        String salt;
-
-        public Decepticons Megatron() {
-            return new Decepticons("Megatron", "威震天", "malilihong","Galvatron");
-        }
-
-        public String getPassword(){
-            return encoder.encode(this.getSalt(), this.password);
-        }
-
-        public String getSalt(){
-            return this.salt;
-        }
     }
 }

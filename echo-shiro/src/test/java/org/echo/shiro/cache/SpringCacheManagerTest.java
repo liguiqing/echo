@@ -19,14 +19,14 @@ class SpringCacheManagerTest {
         org.springframework.cache.CacheManager cacheManager = mock(org.springframework.cache.CacheManager.class);
         org.springframework.cache.Cache cache = mock(org.springframework.cache.Cache.class);
         when(cacheManager.getCache(any(String.class))).thenReturn(cache);
-        when(cache.get(any(Object.class))).thenReturn(()->"a").thenReturn(()->"a").thenReturn(null).thenReturn(()->"a");
+        when(cache.get(any(Object.class))).thenReturn(()->"a").thenReturn(()->"a").thenReturn(()->"a").thenReturn(()->"a");
         when(cache.putIfAbsent(any(Object.class),any(Object.class))).thenReturn(()->"a");
         ShiroProperties sp = new ShiroProperties();
         SpringCacheManager springCacheManager = new SpringCacheManager(cacheManager, sp);
         Cache cache1 = springCacheManager.createCache("a");
         assertNotNull(cache1);
         assertEquals("a",cache1.get("a"));
-        assertNull(cache1.get("a"));
+        assertNotNull(cache1.get("a"));
         assertEquals("a",cache1.put("a","a"));
         assertEquals("a",cache1.remove("a"));
         cache1.clear();

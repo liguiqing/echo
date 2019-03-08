@@ -3,6 +3,10 @@ package org.echo.shiro.config;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.Authenticator;
+import org.apache.shiro.authc.pam.AuthenticationStrategy;
+import org.apache.shiro.authc.pam.FirstSuccessfulStrategy;
+import org.apache.shiro.authc.pam.ModularRealmAuthenticator;
 import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.realm.Realm;
@@ -189,15 +193,38 @@ public class ShiroConfigurations {
     }
 
     @Bean
+    public AuthenticationStrategy authenticationStrategy(){
+        return new FirstSuccessfulStrategy();
+    }
+
+    @Bean
+    public Authenticator authenticator(AuthenticationStrategy authenticationStrategy,
+                                       Optional<List<Realm>> realms){
+        ModularRealmAuthenticator authenticator = new ModularRealmAuthenticator();
+        authenticator.setAuthenticationStrategy(authenticationStrategy);
+        realms.ifPresent(authenticator::setRealms);
+        return authenticator;
+    }
+
+    @Bean
     public SecurityManager securityManager(SessionManager sessionManager,
                                            CacheManager cacheManager,
+                                           Authenticator authenticator,
                                            Optional<List<Realm>> realms){
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
         securityManager.setSessionManager(sessionManager);
         realms.ifPresent(securityManager::setRealms);
         securityManager.setCacheManager(cacheManager);
+        securityManager.setAuthenticator(authenticator);
         SecurityUtils.setSecurityManager(securityManager);
         return securityManager;
+    }
+
+    @Bean
+    public AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor(SecurityManager securityManager){
+        AuthorizationAttributeSourceAdvisor advisor = new AuthorizationAttributeSourceAdvisor();
+        advisor.setSecurityManager(securityManager);
+        return advisor;
     }
 
     @Bean

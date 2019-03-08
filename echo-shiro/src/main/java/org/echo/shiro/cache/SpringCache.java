@@ -3,7 +3,7 @@ package org.echo.shiro.cache;
 import lombok.AllArgsConstructor;
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheException;
-import org.echo.spring.cache.NativeCaches;
+import org.echo.xcache.NativeCaches;
 
 import java.util.Collection;
 import java.util.Set;
@@ -19,14 +19,14 @@ public class SpringCache<K, V> implements Cache<K, V> {
 
     @Override
     public V get(K k) throws CacheException {
-        if(proxyCache.get(k) == null)
-            return null;
-        return (V) proxyCache.get(k).get();
+        Object o = proxyCache.get(k);
+        return o == null?null:(V)((org.springframework.cache.Cache.ValueWrapper) o).get();
     }
 
     @Override
     public V put(K k, V v) throws CacheException {
-        return (V)this.proxyCache.putIfAbsent(k,v).get();
+        this.proxyCache.put(k,v);
+        return v;
     }
 
     @Override

@@ -38,7 +38,7 @@ class SpringCacheTest {
         assertNull(cache1.get("A"));
         assertEquals("a",cache1.get("A"));
         when(cache.putIfAbsent(any(),any())).thenReturn(()->"a");
-        assertEquals("a",cache1.put("a","A"));
+        assertEquals("A",cache1.put("a","A"));
         assertEquals("a",cache1.remove("a"));
         cache1.clear();
         assertEquals(0,cache1.size());
