@@ -3,7 +3,7 @@ package org.echo.sample.config;
 import org.echo.share.config.DataSourceConfigurations;
 import org.echo.share.config.SpringMvcConfiguration;
 import org.echo.shiro.config.ShiroConfigurations;
-import org.echo.spring.cache.config.AutoCacheConfigurations;
+import org.echo.xcache.config.AutoCacheConfigurations;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.*;
 import org.springframework.stereotype.Component;

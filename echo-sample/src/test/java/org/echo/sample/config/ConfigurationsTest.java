@@ -2,8 +2,8 @@ package org.echo.sample.config;
 
 import org.echo.sample.domain.model.exam.ExamRepository;
 import org.echo.share.config.DataSourceConfigurations;
-import org.echo.spring.cache.config.CacheConfigurations;
-import org.echo.spring.cache.config.RedisCacheConfigurations;
+import org.echo.xcache.config.CacheConfigurations;
+import org.echo.xcache.config.RedisCacheConfigurations;
 import org.echo.test.config.AbstractConfigurationsTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

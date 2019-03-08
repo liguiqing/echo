@@ -10,9 +10,6 @@ app:
   commons:
     dateFormat: yyyy-MM-dd HH:mm:ss
 
-cache:
-  name: echo
-
 server:
   port: 8080
   servlet:
@@ -35,13 +32,42 @@ redis:
     port: 9999
 
 shiro:
-  maxIdleSecond : 1800
-  cachePropertiesMap: {Test1:1800}
+  init:
+    maxIdleSecond : 1900
+    cached: 2
+    cacheDefaults:
+      - authorizationCache: 1800
+      - authenticationCache: 1800
+      - shiro-activeSessionCache: 1800
   filter:
     success:
       url: /home
+    login:
+      url: /index
+    unauthorized:
+      url: /unauthorized
   session:
-    globalSessionTimeout: 1800000
+    name: SHIROSESSION
+    globalSessionTimeout: 1900000
+  cookie:
+    maxAge: -1
+    domain:
+    path: /
+  credentials:
+    salt:
+      reader:
+        field: salt
+        method: getSalt
+  cache:
+    activeSessionCache: shiro-activeSessionCache
+  scheduler:
+    validationInterval: 1800000
+  authc:
+    form:
+      password:
+        param: password
+      username:
+        param: username
 
 spring:
   freemarker:
@@ -62,10 +88,11 @@ spring:
       enabled: true
   cache:
     # 配置两级缓存,所有缓存时间类参数单位均为毫秒
-    secondary:
+    xcache:
       dynamic: true
       level2Enabled: true
-      cacheMessageTopic: echo:redis:secondary:topic
+      cacheMessageTopic: echo:redis:sample:topic
+      cachePrefix: echo:sample
       # 采用caffeine实现第一级缓存
       caffeine:
         # 默认一级缓存配置

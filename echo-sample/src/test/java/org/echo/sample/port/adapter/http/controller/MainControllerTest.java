@@ -1,10 +1,13 @@
 package org.echo.sample.port.adapter.http.controller;
 
 import org.echo.share.config.SpringMvcConfiguration;
+import org.echo.shiro.SubjectPicker;
+import org.echo.shiro.SubjectsContext;
 import org.echo.test.web.AbstractSpringControllerTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
@@ -14,6 +17,7 @@ import java.util.UUID;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.*;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -35,8 +39,17 @@ public class MainControllerTest extends AbstractSpringControllerTest {
     @Autowired
     MainController controller;
 
+    @Mock
+    SubjectsContext subjectsContext;
+
+    @Mock
+    SubjectPicker subjectPicker;
+
     @Test
     void onIndex() throws Exception{
+        when(subjectPicker.getAlias()).thenReturn("Test");
+        when(subjectPicker.isAuthenticated()).thenReturn(true);
+        when(subjectsContext.lookup()).thenReturn(subjectPicker);
         this.mvc.perform(post("/index").contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())

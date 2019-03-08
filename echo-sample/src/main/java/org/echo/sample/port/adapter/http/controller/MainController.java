@@ -19,6 +19,6 @@ public class MainController extends AbstractHttpController {
     @RequestMapping(value={"", "/", "index","home"})
     public ModelAndView onIndex(HttpServletRequest request){
         log.debug("URL {}",request.getRequestURI());
-        return modelAndViewer("/index").create();
+        return modelAndViewer("/index").data("user",subjectsContext.lookup()).create();
     }
 }

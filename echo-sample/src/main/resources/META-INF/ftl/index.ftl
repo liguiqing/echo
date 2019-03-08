@@ -11,6 +11,9 @@
 
 <div class="container">
     <div class="body">
+        <#if user.isAuthenticated()>
+            Balala
+        </#if>
         <div class="panel">
             <div class="login-type">
                 <i class=""></i>
@@ -32,7 +35,7 @@
                     </div>
                 </div>
             </div>
-            <form id="passwd-type"  method="post" action="${request.contextPath}/login">
+            <form id="passwd-type"  method="post" action="${request.contextPath}/index">
                 <div class="from">
                     <div>
                         <label for="username"><i class="icon-user"></i></label><input type="text" name="username" id="username" name="username" placeholder="用户名">

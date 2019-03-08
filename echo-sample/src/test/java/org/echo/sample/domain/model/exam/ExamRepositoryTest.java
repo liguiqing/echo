@@ -7,7 +7,7 @@ import org.echo.ddd.support.domain.model.vo.LabelDetail;
 import org.echo.hibernate.converter.HibernateEnum;
 import org.echo.sample.config.SampleAppConfigurations;
 import org.echo.share.config.DataSourceConfigurations;
-import org.echo.spring.cache.config.AutoCacheConfigurations;
+import org.echo.xcache.config.AutoCacheConfigurations;
 import org.echo.test.repository.AbstractRepositoryTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
