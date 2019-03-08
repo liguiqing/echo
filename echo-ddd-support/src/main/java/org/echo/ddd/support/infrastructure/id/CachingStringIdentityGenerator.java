@@ -12,7 +12,7 @@ import org.echo.ddd.support.domain.model.id.IdLessThenWarned;
 import org.echo.ddd.support.domain.model.id.IdPrefixBean;
 import org.echo.ddd.support.domain.model.id.IdPrefixBeanRepository;
 import org.echo.lock.DistributedLock;
-import org.echo.spring.cache.CacheDequeFactory;
+import org.echo.xcache.CacheDequeFactory;
 
 import java.math.BigDecimal;
 import java.util.Deque;

@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 
 /**
  * @author Liguiqing
- * @since V3.0
+ * @since V1.0
  */
 @Repository
 public interface IdPrefixBeanRepository extends CrudRepository<IdPrefixBean, Long> {

@@ -8,7 +8,7 @@ import org.echo.ddd.support.infrastructure.id.IdPrefixGenerator;
 import org.echo.ddd.support.infrastructure.id.WordsToString;
 import org.echo.ddd.support.infrastructure.id.WordsToUpperCaseString;
 import org.echo.lock.DistributedLock;
-import org.echo.spring.cache.CacheDequeFactory;
+import org.echo.xcache.CacheDequeFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;

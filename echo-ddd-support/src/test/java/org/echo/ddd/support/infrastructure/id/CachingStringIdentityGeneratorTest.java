@@ -5,7 +5,7 @@ import org.echo.ddd.domain.id.Identity;
 import org.echo.ddd.support.domain.model.id.IdPrefixBean;
 import org.echo.ddd.support.domain.model.id.IdPrefixBeanRepository;
 import org.echo.lock.DistributedLock;
-import org.echo.spring.cache.CacheDequeFactory;
+import org.echo.xcache.CacheDequeFactory;
 import org.echo.util.NumbersUtil;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.RepeatedTest;

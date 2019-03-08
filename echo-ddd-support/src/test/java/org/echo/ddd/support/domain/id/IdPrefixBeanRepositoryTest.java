@@ -4,7 +4,7 @@ import org.echo.ddd.support.config.DddSupportConfigurations;
 import org.echo.ddd.support.domain.model.id.IdPrefixBean;
 import org.echo.ddd.support.domain.model.id.IdPrefixBeanRepository;
 import org.echo.share.config.DataSourceConfigurations;
-import org.echo.spring.cache.config.AutoCacheConfigurations;
+import org.echo.xcache.config.AutoCacheConfigurations;
 import org.echo.test.repository.AbstractRepositoryTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
