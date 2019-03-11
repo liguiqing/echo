@@ -18,7 +18,7 @@
  *
  */
 
-package org.echo.xcache.secondary;
+package org.echo.xcache.binary;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,7 +27,6 @@ import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
 /**
  * @author Liguiqing
@@ -40,7 +39,7 @@ import org.springframework.util.StringUtils;
 @Accessors(chain = true)
 @Component
 @ConfigurationProperties(prefix = "spring.cache.xcache")
-public class SecondaryCacheProperties {
+public class BinaryCacheProperties {
 
     /** 默认过期时间*/
     private long defaultTtl = -1;

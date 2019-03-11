@@ -18,7 +18,7 @@
  *
  */
 
-package org.echo.xcache.secondary;
+package org.echo.xcache.binary;
 
 import lombok.extern.slf4j.Slf4j;
 import org.echo.lock.DistributedLock;
@@ -55,7 +55,7 @@ import java.util.concurrent.ConcurrentMap;
  * @since V1.0
  */
 @Slf4j
-public class SecondaryCacheManager extends AbstractTransactionSupportingCacheManager {
+public class BinaryCacheManager extends AbstractTransactionSupportingCacheManager {
 
     /**
      * <pre>
@@ -79,11 +79,11 @@ public class SecondaryCacheManager extends AbstractTransactionSupportingCacheMan
      */
     private static final String MARK = "$";
 
-    private SecondaryCacheProperties cacheProperties;
+    private BinaryCacheProperties cacheProperties;
 
     private boolean dynamic;
 
-    private ConcurrentMap<String, SecondaryCache> cacheMap = new ConcurrentHashMap<>();
+    private ConcurrentMap<String, BinaryCache> cacheMap = new ConcurrentHashMap<>();
 
     private CacheFactory cacheL1Factory;
 
@@ -97,10 +97,10 @@ public class SecondaryCacheManager extends AbstractTransactionSupportingCacheMan
     @Autowired(required = false)
     private DistributedLock lock;
 
-    public SecondaryCacheManager(SecondaryCacheProperties cacheProperties,
-                                 CacheFactory cacheL1Factory,
-                                 CacheFactory cacheL2Factory,
-                                 CacheMessagePusher messagePusher) {
+    public BinaryCacheManager(BinaryCacheProperties cacheProperties,
+                              CacheFactory cacheL1Factory,
+                              CacheFactory cacheL2Factory,
+                              CacheMessagePusher messagePusher) {
         this.cacheProperties = cacheProperties;
         this.dynamic = cacheProperties.isDynamic();
         this.cacheL1Factory = cacheL1Factory;
@@ -190,7 +190,7 @@ public class SecondaryCacheManager extends AbstractTransactionSupportingCacheMan
             return null;
         }
 
-        SecondaryCache cache = cacheMap.get(cacheName);
+        BinaryCache cache = cacheMap.get(cacheName);
         if(cache != null) {
             log.debug("Return exist cache ->{}:{}",cacheName,cache);
             return cache;
@@ -212,7 +212,7 @@ public class SecondaryCacheManager extends AbstractTransactionSupportingCacheMan
         return cache;
     }
 
-    private Optional<SecondaryCache> getNativeCache(String cacheName){
+    private Optional<BinaryCache> getNativeCache(String cacheName){
         return Optional.ofNullable(cacheMap.get(cacheName));
     }
 
@@ -233,7 +233,7 @@ public class SecondaryCacheManager extends AbstractTransactionSupportingCacheMan
     }
 
     public void removeCache(String cacheName){
-        this.cacheMap.getOrDefault(cacheName,new SecondaryCache(false)).clear();
+        this.cacheMap.getOrDefault(cacheName,new BinaryCache(false)).clear();
         this.cacheMap.remove(cacheName);
     }
 
@@ -245,14 +245,14 @@ public class SecondaryCacheManager extends AbstractTransactionSupportingCacheMan
         return cacheL2Factory != null && cacheL2Factory != cacheL1Factory;
     }
 
-    private SecondaryCache createCache(String cacheName,long expirationSecondTime,long expireAfterAccessSecondTime,int level){
+    private BinaryCache createCache(String cacheName, long expirationSecondTime, long expireAfterAccessSecondTime, int level){
         if(level == 1)
-            return SecondaryCache.onlyCache1(cacheName,cacheL1Factory.newCache(cacheName,expirationSecondTime,expireAfterAccessSecondTime),cacheProperties,lock);
+            return BinaryCache.onlyCache1(cacheName,cacheL1Factory.newCache(cacheName,expirationSecondTime,expireAfterAccessSecondTime),cacheProperties,lock);
 
         if(level == 2)
-            return SecondaryCache.onlyCache2(cacheName,cacheL2Factory.newCache(cacheName,expirationSecondTime,expireAfterAccessSecondTime),cacheProperties,lock);
+            return BinaryCache.onlyCache2(cacheName,cacheL2Factory.newCache(cacheName,expirationSecondTime,expireAfterAccessSecondTime),cacheProperties,lock);
 
-        return new SecondaryCache(cacheName,
+        return new BinaryCache(cacheName,
                 cacheL1Factory.newCache(cacheName,expirationSecondTime,expireAfterAccessSecondTime),
                 cacheL2Factory.newCache(cacheName,expirationSecondTime,expireAfterAccessSecondTime),
                 cacheProperties,messagePusher,lock);
@@ -315,9 +315,9 @@ public class SecondaryCacheManager extends AbstractTransactionSupportingCacheMan
      * 关闭或者打开某级缓存
      *
      * @param message　CacheMessage　
-     * @param cache　SecondaryCache
+     * @param cache　BinaryCache
      */
-    private void closeOrOpen(CacheMessage message,SecondaryCache cache){
+    private void closeOrOpen(CacheMessage message, BinaryCache cache){
         if(!message.sameOfIdentifier(cache.getIdentifier())){
             if(message.isClosed()){
                 cache.close(message.getClosedLevel());

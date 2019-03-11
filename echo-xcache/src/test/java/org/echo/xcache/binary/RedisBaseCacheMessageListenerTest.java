@@ -18,7 +18,7 @@
  *
  */
 
-package org.echo.xcache.secondary;
+package org.echo.xcache.binary;
 
 import org.echo.xcache.CacheFactory;
 import org.echo.xcache.message.CacheMessage;
@@ -40,7 +40,7 @@ class RedisBaseCacheMessageListenerTest {
     @Test
     void onMessage() {
         RedisTemplate redisTemplate = spy(new RedisTemplate());
-        SecondaryCacheProperties cacheProperties = new SecondaryCacheProperties();
+        BinaryCacheProperties cacheProperties = new BinaryCacheProperties();
         CacheFactory cacheL1Factory = mock(CacheFactory.class);
         CacheFactory cacheL2Factory = mock(CacheFactory.class);
         CacheMessagePusher messagePusher = mock(CacheMessagePusher.class);
@@ -49,7 +49,7 @@ class RedisBaseCacheMessageListenerTest {
         when(redisTemplate.getValueSerializer()).thenReturn(redisSerializer);
         when(redisSerializer.deserialize(any(byte[].class))).thenReturn(cacheMessage);
         when(cacheMessage.isClosed()).thenReturn(true).thenReturn(false);
-        SecondaryCacheManager cacheManager = Mockito.spy(new SecondaryCacheManager(cacheProperties, cacheL1Factory, cacheL2Factory, messagePusher));
+        BinaryCacheManager cacheManager = Mockito.spy(new BinaryCacheManager(cacheProperties, cacheL1Factory, cacheL2Factory, messagePusher));
         doNothing().when(cacheManager).autoCloseOrOpen(any(CacheMessage.class));
         doNothing().when(cacheManager).clearLocal(any(CacheMessage.class));
 

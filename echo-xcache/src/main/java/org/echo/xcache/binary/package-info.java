@@ -17,4 +17,7 @@
  *  under the License.
  *
  */
-package org.echo.xcache.secondary;
+/**
+ * 二元缓存
+ */
+package org.echo.xcache.binary;

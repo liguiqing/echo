@@ -18,7 +18,7 @@
  *
  */
 
-package org.echo.xcache.secondary;
+package org.echo.xcache.binary;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -40,7 +40,7 @@ import java.util.concurrent.Callable;
  * @since V1.0
  */
 @Slf4j
-public class SecondaryCache extends AbstractValueAdaptingCache {
+public class BinaryCache extends AbstractValueAdaptingCache {
 
     @Getter
     private String identifier = UUID.randomUUID().toString();
@@ -62,19 +62,19 @@ public class SecondaryCache extends AbstractValueAdaptingCache {
 
     private Cache cacheL2Bak;
 
-    public SecondaryCache(boolean allowNullValues) {
+    public BinaryCache(boolean allowNullValues) {
         super(allowNullValues);
     }
 
-    public SecondaryCache(String name, Cache cacheL1, Cache cacheL2,
-                          SecondaryCacheProperties cacheProperties,
-                          CacheMessagePusher messagePusher) {
+    public BinaryCache(String name, Cache cacheL1, Cache cacheL2,
+                       BinaryCacheProperties cacheProperties,
+                       CacheMessagePusher messagePusher) {
         this(name, cacheL1, cacheL2, cacheProperties, messagePusher, new DistributedLock() {});
     }
 
-    public SecondaryCache(String name, Cache cacheL1, Cache cacheL2,
-                          SecondaryCacheProperties cacheProperties,
-                          CacheMessagePusher messagePusher, DistributedLock lock) {
+    public BinaryCache(String name, Cache cacheL1, Cache cacheL2,
+                       BinaryCacheProperties cacheProperties,
+                       CacheMessagePusher messagePusher, DistributedLock lock) {
 
         this(cacheProperties.isCacheNullValues());
         this.name = name;
@@ -87,20 +87,20 @@ public class SecondaryCache extends AbstractValueAdaptingCache {
         this.lock = lock;
     }
 
-    public static SecondaryCache onlyCache1(String name, Cache cacheL1, SecondaryCacheProperties cacheProperties, DistributedLock<Object, Object> lock) {
-        SecondaryCache cache = cacheOf(name, cacheProperties, lock);
+    public static BinaryCache onlyCache1(String name, Cache cacheL1, BinaryCacheProperties cacheProperties, DistributedLock<Object, Object> lock) {
+        BinaryCache cache = cacheOf(name, cacheProperties, lock);
         cache.cacheL1 = cacheL1;
         return cache;
     }
 
-    public static SecondaryCache onlyCache2(String name, Cache cacheL2, SecondaryCacheProperties cacheProperties, DistributedLock<Object, Object> lock) {
-        SecondaryCache cache = cacheOf(name, cacheProperties, lock);
+    public static BinaryCache onlyCache2(String name, Cache cacheL2, BinaryCacheProperties cacheProperties, DistributedLock<Object, Object> lock) {
+        BinaryCache cache = cacheOf(name, cacheProperties, lock);
         cache.cacheL2 = cacheL2;
         return cache;
     }
 
-    private static SecondaryCache cacheOf(String name, SecondaryCacheProperties cacheProperties, DistributedLock<Object, Object> lock) {
-        SecondaryCache cache = new SecondaryCache(cacheProperties.isCacheNullValues());
+    private static BinaryCache cacheOf(String name, BinaryCacheProperties cacheProperties, DistributedLock<Object, Object> lock) {
+        BinaryCache cache = new BinaryCache(cacheProperties.isCacheNullValues());
         cache.name = name;
         cache.lock = lock == null ? new DistributedLock<Object, Object>() {} : lock;
         return cache;

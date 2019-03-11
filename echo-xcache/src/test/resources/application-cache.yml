@@ -7,7 +7,7 @@ spring:
       dynamic: true
       cachePrefix: echo
       level2Enabled: true
-      cacheMessageTopic: echo:redis:secondary:topic
+      cacheMessageTopic: echo:redis:binary:topic
       # 采用caffeine实现第一级缓存
       caffeine:
         # 默认一级缓存配置

@@ -21,9 +21,9 @@
 package org.echo.xcache;
 
 import lombok.extern.slf4j.Slf4j;
+import org.echo.xcache.binary.BinaryCache;
 import org.echo.xcache.caffeine.CaffeineCaches;
 import org.echo.xcache.redis.XRedisCache;
-import org.echo.xcache.secondary.SecondaryCache;
 import org.springframework.cache.Cache;
 import org.springframework.cache.caffeine.CaffeineCache;
 
@@ -100,7 +100,7 @@ public class NativeCaches {
     private static Cache toNativeCache(Cache cache){
         if(cache == null)
             return null;
-        if(cache instanceof SecondaryCache)
+        if(cache instanceof BinaryCache)
             return (Cache)cache.getNativeCache();
         return cache;
     }

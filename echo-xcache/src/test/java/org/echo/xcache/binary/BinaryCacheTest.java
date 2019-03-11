@@ -18,7 +18,7 @@
  *
  */
 
-package org.echo.xcache.secondary;
+package org.echo.xcache.binary;
 
 import org.echo.lock.DistributedLock;
 import org.echo.xcache.NativeCaches;
@@ -32,8 +32,8 @@ import java.util.concurrent.Callable;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@DisplayName("SecondaryCache Test")
-class SecondaryCacheTest {
+@DisplayName("BinaryCache Test")
+class BinaryCacheTest {
 
     @Test
     void test(){
@@ -45,10 +45,10 @@ class SecondaryCacheTest {
         when(l1.get("Test")).thenReturn(null).thenReturn(value);
 
         CacheMessagePusher pusher = mock(CacheMessagePusher.class);
-        SecondaryCacheProperties secondaryCacheProperties = new SecondaryCacheProperties();
-        secondaryCacheProperties.setCacheNullValues(true);
-        secondaryCacheProperties.setLevel2Enabled(true);
-        SecondaryCache cache = new SecondaryCache("Test",l1,l2,secondaryCacheProperties,pusher);
+        BinaryCacheProperties binaryCacheProperties = new BinaryCacheProperties();
+        binaryCacheProperties.setCacheNullValues(true);
+        binaryCacheProperties.setLevel2Enabled(true);
+        BinaryCache cache = new BinaryCache("Test",l1,l2, binaryCacheProperties,pusher);
         assertTrue(cache.isAllowNullValues());
         assertEquals("Test",cache.getName());
         assertNotNull(cache.getIdentifier());
@@ -72,8 +72,8 @@ class SecondaryCacheTest {
         cache.putIfAbsent("Test","Test");
         cache.putIfAbsent("Test",null);
 
-        secondaryCacheProperties.setCacheNullValues(false);
-        SecondaryCache cache1 = new SecondaryCache("Test",l1,l2,secondaryCacheProperties,pusher);
+        binaryCacheProperties.setCacheNullValues(false);
+        BinaryCache cache1 = new BinaryCache("Test",l1,l2, binaryCacheProperties,pusher);
         assertNull(cache1.putIfAbsent("Test",null));
         cache1.put("Test",null);
 
@@ -81,7 +81,7 @@ class SecondaryCacheTest {
         Cache l22 = mock(Cache.class);
         when(l22.get("Test")).thenReturn(value);
         when(l11.get("Test")).thenReturn(value);
-        SecondaryCache cache2 = new SecondaryCache("Cache2",l11,l22,secondaryCacheProperties,pusher);
+        BinaryCache cache2 = new BinaryCache("Cache2",l11,l22, binaryCacheProperties,pusher);
         cache2.close(0);
         assertEquals(value.get(),cache2.get("Test").get());
         cache2.close(1);
@@ -108,17 +108,17 @@ class SecondaryCacheTest {
         assertNull(cache2.get("Test"));
 
         Cache only = mock(Cache.class);
-        SecondaryCache cache3 = SecondaryCache.onlyCache1("Cache3", only,secondaryCacheProperties, null);
+        BinaryCache cache3 = BinaryCache.onlyCache1("Cache3", only, binaryCacheProperties, null);
         cache3.evict("Test");
         cache3.clear();
 
-        cache3 = SecondaryCache.onlyCache2("Cache3", only,secondaryCacheProperties, null);
+        cache3 = BinaryCache.onlyCache2("Cache3", only, binaryCacheProperties, null);
         cache3.evict("Test");
         cache3.clear();
 
         DistributedLock lock = mock(DistributedLock.class);
         when(lock.lock(any(Object.class), any(Callable.class))).thenThrow(new RuntimeException());
-        Cache lockThrow = SecondaryCache.onlyCache2("Cache3", only,secondaryCacheProperties, lock);
+        Cache lockThrow = BinaryCache.onlyCache2("Cache3", only, binaryCacheProperties, lock);
         lockThrow.putIfAbsent("", "");
     }
 }

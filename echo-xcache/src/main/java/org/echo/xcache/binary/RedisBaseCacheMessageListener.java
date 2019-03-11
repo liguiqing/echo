@@ -18,7 +18,7 @@
  *
  */
 
-package org.echo.xcache.secondary;
+package org.echo.xcache.binary;
 
 import lombok.extern.slf4j.Slf4j;
 import org.echo.xcache.message.CacheMessage;
@@ -39,10 +39,10 @@ public class RedisBaseCacheMessageListener implements MessageListener {
 
     private RedisTemplate<Object, Object> redisTemplate;
 
-    private SecondaryCacheManager cacheManager;
+    private BinaryCacheManager cacheManager;
 
     public RedisBaseCacheMessageListener(Optional<RedisTemplate<Object, Object>> redisTemplate,
-                                         SecondaryCacheManager cacheManager) {
+                                         BinaryCacheManager cacheManager) {
         super();
         redisTemplate.ifPresent(this::setRedisTemplate);
         this.cacheManager = cacheManager;

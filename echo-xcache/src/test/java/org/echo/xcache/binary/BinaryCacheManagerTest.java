@@ -18,7 +18,7 @@
  *
  */
 
-package org.echo.xcache.secondary;
+package org.echo.xcache.binary;
 
 import org.echo.xcache.CacheFactory;
 import org.echo.xcache.config.CacheConfigurations;
@@ -63,11 +63,11 @@ import static org.mockito.Mockito.*;
         })
 )
 @TestPropertySource(properties = {"spring.config.location = classpath:/application-cache.yml,classpath:/application-redis.yml"})
-@DisplayName("Echo : SecondaryCacheManager Test")
-public class SecondaryCacheManagerTest extends AbstractConfigurationsTest{
+@DisplayName("Echo : BinaryCacheManager Test")
+public class BinaryCacheManagerTest extends AbstractConfigurationsTest{
 
     @Autowired
-    private SecondaryCacheManager secondaryCacheManager;
+    private BinaryCacheManager binaryCacheManager;
 
     @Autowired
     private RedisTemplate redisTemplate;
@@ -81,20 +81,20 @@ public class SecondaryCacheManagerTest extends AbstractConfigurationsTest{
     @Test
     public void test(){
         assertNotNull(driver);
-        secondaryCacheManager.removeAllCache();
+        binaryCacheManager.removeAllCache();
         String identifier = UUID.randomUUID().toString();
         redisTemplate.convertAndSend("Test",new CacheMessage(identifier,"cache1","c1"));
-        assertNotNull(secondaryCacheManager);
-        Collection<String> cacheNames = secondaryCacheManager.getCacheNames();
+        assertNotNull(binaryCacheManager);
+        Collection<String> cacheNames = binaryCacheManager.getCacheNames();
         assertEquals(0,cacheNames.size());
 
-        assertNull(secondaryCacheManager.getCache(null));
-        assertNull(secondaryCacheManager.getCache(""));
-        assertNull(secondaryCacheManager.getCache("#100#100"));
+        assertNull(binaryCacheManager.getCache(null));
+        assertNull(binaryCacheManager.getCache(""));
+        assertNull(binaryCacheManager.getCache("#100#100"));
 
-        Cache aCache = secondaryCacheManager.getCache("aCache#100#100");
+        Cache aCache = binaryCacheManager.getCache("aCache#100#100");
         assertNotNull(aCache);
-        Cache bCache = secondaryCacheManager.getCache("bCache");
+        Cache bCache = binaryCacheManager.getCache("bCache");
         assertNotNull(bCache);
         String a = aCache.get("a", () -> "a");
         assertNotNull(a);
@@ -107,13 +107,13 @@ public class SecondaryCacheManagerTest extends AbstractConfigurationsTest{
         assertNull(aCache.get("a"));
 
         a = aCache.get("a", () -> "a");
-        redisTemplate.convertAndSend("echo:redis:secondary:topic",new CacheMessage(identifier,"aCache","a"));
+        redisTemplate.convertAndSend("echo:redis:binary:topic",new CacheMessage(identifier,"aCache","a"));
         a = aCache.get("a").get()+"";
         assertNotNull(a);
         assertEquals("a",a);
         aCache.clear();
 
-        aCache = secondaryCacheManager.getCache("aCache#100#100#1");
+        aCache = binaryCacheManager.getCache("aCache#100#100#1");
         aCache.get("a", () -> "a");
         assertNotNull(aCache.get("a"));
         assertEquals(aCache.get("a").get(),"a");
@@ -145,7 +145,7 @@ public class SecondaryCacheManagerTest extends AbstractConfigurationsTest{
         aCache.clear();
         assertNull(aCache.get(tb));
 
-        Cache cache1 = secondaryCacheManager.getCache("cache1");
+        Cache cache1 = binaryCacheManager.getCache("cache1");
         assertNotNull(cache1);
         assertEquals("cache1",cache1.getName());
         String k1 = cache1.get("k1", () -> "v1");
@@ -153,8 +153,8 @@ public class SecondaryCacheManagerTest extends AbstractConfigurationsTest{
         cache1.clear();
         assertNull(cache1.get("k1"));
 
-        secondaryCacheManager.getCache("cache2");
-        cacheNames = secondaryCacheManager.getCacheNames();
+        binaryCacheManager.getCache("cache2");
+        cacheNames = binaryCacheManager.getCacheNames();
         assertEquals(4,cacheNames.size());
         assertTrue(cacheNames.contains("cache1"));
 
@@ -165,69 +165,69 @@ public class SecondaryCacheManagerTest extends AbstractConfigurationsTest{
         assertEquals(kb1,bCache.get("k1").get());
 
         bCache.get("bc1", () -> "bc1");
-        redisTemplate.convertAndSend("echo:redis:secondary:topic",new CacheMessage(identifier,"bCache","bc1"));
+        redisTemplate.convertAndSend("echo:redis:binary:topic",new CacheMessage(identifier,"bCache","bc1"));
         assertEquals(kb1,bCache.get("k1").get());
         assertEquals(kb1,bCache.get("k1").get());
         assertEquals(kb1,bCache.get("k1").get());
 
         bCache.clear();
 
-        Cache coCache = secondaryCacheManager.getCache("coCache");
+        Cache coCache = binaryCacheManager.getCache("coCache");
         Object o = coCache.get("co1", () -> "co1");
         assertEquals("co1",o);
-        secondaryCacheManager.closeAll(1);
+        binaryCacheManager.closeAll(1);
         assertEquals(o,coCache.get("co1").get());
-        secondaryCacheManager.closeAll(2);
+        binaryCacheManager.closeAll(2);
         assertNull(coCache.get("co1"));
-        secondaryCacheManager.open("coCache",1);
+        binaryCacheManager.open("coCache",1);
         assertEquals(o,coCache.get("co1",() -> "co1"));
-        secondaryCacheManager.closeAll(1);
+        binaryCacheManager.closeAll(1);
         assertNull(coCache.get("co1"));
-        secondaryCacheManager.open("coCache",2);
+        binaryCacheManager.open("coCache",2);
         assertEquals(o,coCache.get("co1",() -> "co1"));
-        secondaryCacheManager.open("coCache",1);
+        binaryCacheManager.open("coCache",1);
         assertEquals(o,coCache.get("co1").get());
         assertEquals(o,coCache.get("co1").get());
-        secondaryCacheManager.closeAll(9);
+        binaryCacheManager.closeAll(9);
         assertNull(coCache.get("co1"));
-        secondaryCacheManager.openAll(9);
+        binaryCacheManager.openAll(9);
         assertEquals(o,coCache.get("co1",() -> "co1"));
         assertEquals(o,coCache.get("co1").get());
         coCache.clear();
 
-        secondaryCacheManager.openAll(-1);
-        secondaryCacheManager.closeAll(-1);
+        binaryCacheManager.openAll(-1);
+        binaryCacheManager.closeAll(-1);
 
-        secondaryCacheManager.autoCloseOrOpen(new CacheMessage("id","coCache","a",1));
-        secondaryCacheManager.autoCloseOrOpen(new CacheMessage("id","coCache","a",-1));
-        secondaryCacheManager.autoCloseOrOpen(new CacheMessage("id","coCache","a",0));
+        binaryCacheManager.autoCloseOrOpen(new CacheMessage("id","coCache","a",1));
+        binaryCacheManager.autoCloseOrOpen(new CacheMessage("id","coCache","a",-1));
+        binaryCacheManager.autoCloseOrOpen(new CacheMessage("id","coCache","a",0));
 
-        assertTrue(secondaryCacheManager.hasTwoLevel());
+        assertTrue(binaryCacheManager.hasTwoLevel());
 
-        assertNotNull(secondaryCacheManager.getCache("cN1#1#1#1"));
-        assertNotNull(secondaryCacheManager.getCache("cN2#1#1#2"));
-        assertNotNull(secondaryCacheManager.getCache("cN3#1#1#-1"));
-        assertNotNull(secondaryCacheManager.getCache("cN4#${exec.ttl:1}#1#2"));
-        assertNotNull(secondaryCacheManager.getCache("cN5##1#2"));
-        assertNotNull(secondaryCacheManager.getCache("cN6#${exec.ttl:-1}#1#2"));
-        String id = ((SecondaryCache)coCache).getIdentifier();
-        secondaryCacheManager.clearLocal(new CacheMessage(id,"coCache","k"));
-        secondaryCacheManager.clearLocal(new CacheMessage("id1","coCache","k"));
-        secondaryCacheManager.clearLocal(new CacheMessage("id2","coCache","k"));
-        secondaryCacheManager.clearLocal(new CacheMessage("id3","coCache",null));
+        assertNotNull(binaryCacheManager.getCache("cN1#1#1#1"));
+        assertNotNull(binaryCacheManager.getCache("cN2#1#1#2"));
+        assertNotNull(binaryCacheManager.getCache("cN3#1#1#-1"));
+        assertNotNull(binaryCacheManager.getCache("cN4#${exec.ttl:1}#1#2"));
+        assertNotNull(binaryCacheManager.getCache("cN5##1#2"));
+        assertNotNull(binaryCacheManager.getCache("cN6#${exec.ttl:-1}#1#2"));
+        String id = ((BinaryCache)coCache).getIdentifier();
+        binaryCacheManager.clearLocal(new CacheMessage(id,"coCache","k"));
+        binaryCacheManager.clearLocal(new CacheMessage("id1","coCache","k"));
+        binaryCacheManager.clearLocal(new CacheMessage("id2","coCache","k"));
+        binaryCacheManager.clearLocal(new CacheMessage("id3","coCache",null));
 
-        SecondaryCacheProperties cacheProperties = Mockito.spy(new SecondaryCacheProperties());
+        BinaryCacheProperties cacheProperties = Mockito.spy(new BinaryCacheProperties());
         when(cacheProperties.isDynamic()).thenReturn(false).thenReturn(true);
         CacheFactory cacheL1Factory = mock(CacheFactory.class);
         CacheFactory cacheL2Factory = mock(CacheFactory.class);
         CacheMessagePusher messagePusher = mock(CacheMessagePusher.class);
-        SecondaryCacheManager cacheManager = new SecondaryCacheManager(cacheProperties,cacheL1Factory,cacheL2Factory,messagePusher);
+        BinaryCacheManager cacheManager = new BinaryCacheManager(cacheProperties,cacheL1Factory,cacheL2Factory,messagePusher);
 
         Cache tCache = cacheManager.getCache("Test");
         assertNull(tCache);
         assertTrue(cacheManager.hasTwoLevel());
 
-        secondaryCacheManager.removeCache("Test");
+        binaryCacheManager.removeCache("Test");
     }
 
     @Test

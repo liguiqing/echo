@@ -21,7 +21,7 @@
 package org.echo.xcache.config;
 
 import lombok.extern.slf4j.Slf4j;
-import org.echo.xcache.secondary.SecondaryCacheManager;
+import org.echo.xcache.binary.BinaryCacheManager;
 import org.echo.test.config.AbstractConfigurationsTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -49,11 +49,11 @@ class AutoConfigurationsTest  extends AbstractConfigurationsTest {
     private CacheManager cacheManager;
 
     @Autowired
-    private SecondaryCacheManager secondaryCacheManager;
+    private BinaryCacheManager binaryCacheManager;
 
     @Test
     public void test(){
         assertTrue(cacheManager instanceof CompositeCacheManager);
-        assertTrue(secondaryCacheManager.hasTwoLevel());
+        assertTrue(binaryCacheManager.hasTwoLevel());
     }
 }

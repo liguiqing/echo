@@ -22,12 +22,12 @@ package org.echo.xcache.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.echo.xcache.CacheFactory;
+import org.echo.xcache.binary.BinaryCacheManager;
 import org.echo.xcache.caffeine.CaffeineCacheFactory;
 import org.echo.xcache.caffeine.CaffeineCacheProperties;
 import org.echo.xcache.message.CacheMessagePusher;
-import org.echo.xcache.secondary.RedisBaseCacheMessageListener;
-import org.echo.xcache.secondary.SecondaryCacheManager;
-import org.echo.xcache.secondary.SecondaryCacheProperties;
+import org.echo.xcache.binary.RedisBaseCacheMessageListener;
+import org.echo.xcache.binary.BinaryCacheProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -47,28 +47,28 @@ import java.util.Optional;
 @Configuration
 @EnableConfigurationProperties(
         value = {
-                SecondaryCacheProperties.class,
+                BinaryCacheProperties.class,
                 CaffeineCacheProperties.class
         })
 public class SecondaryCacheConfigurations {
 
     @Autowired
-    private SecondaryCacheProperties cacheProperties;
+    private BinaryCacheProperties cacheProperties;
 
     private CacheFactory secondaryCacheFactory;
 
     private CacheMessagePusher messagePusher;
 
     @Bean("SecondaryCacheManager")
-    public SecondaryCacheManager cacheManager(Optional<CacheFactory> secondaryCacheFactory,
-                                              Optional<CacheMessagePusher> messagePusher,
-                                              CaffeineCacheProperties caffeineCacheProperties) {
+    public BinaryCacheManager cacheManager(Optional<CacheFactory> secondaryCacheFactory,
+                                           Optional<CacheMessagePusher> messagePusher,
+                                           CaffeineCacheProperties caffeineCacheProperties) {
         CaffeineCacheFactory caffeineCacheFactory = new CaffeineCacheFactory(caffeineCacheProperties);
         setSecondaryCacheFactory(caffeineCacheFactory);
         setMessagePusher((topic,message)->log.debug("Publish nothing of {}",topic));
         secondaryCacheFactory.ifPresent(this::setSecondaryCacheFactory);
         messagePusher.ifPresent(this::setMessagePusher);
-        return new SecondaryCacheManager(this.cacheProperties, caffeineCacheFactory,
+        return new BinaryCacheManager(this.cacheProperties, caffeineCacheFactory,
                 this.secondaryCacheFactory,this.messagePusher);
     }
 
@@ -81,9 +81,9 @@ public class SecondaryCacheConfigurations {
      * @return RedisMessageListenerContainer
      */
     @Bean
-    @ConditionalOnBean(SecondaryCacheManager.class)
+    @ConditionalOnBean(BinaryCacheManager.class)
     public RedisMessageListenerContainer redisMessageListenerContainer(Optional<RedisTemplate<Object, Object>> redisTemplate,
-                                                                       SecondaryCacheManager cacheManager) {
+                                                                       BinaryCacheManager cacheManager) {
         RedisMessageListenerContainer redisMessageListenerContainer = new RedisMessageListenerContainer();
         redisTemplate.ifPresent(t->redisMessageListenerContainer.setConnectionFactory(t.getConnectionFactory()));
         RedisBaseCacheMessageListener cacheMessageListener = new RedisBaseCacheMessageListener(redisTemplate, cacheManager);

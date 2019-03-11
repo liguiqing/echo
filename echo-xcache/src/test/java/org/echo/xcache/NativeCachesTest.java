@@ -21,6 +21,7 @@
 package org.echo.xcache;
 
 import org.echo.lock.DistributedLock;
+import org.echo.xcache.binary.BinaryCache;
 import org.echo.xcache.caffeine.CaffeineCaches;
 import org.echo.xcache.caffeine.CaffeineProperties;
 import org.echo.xcache.config.CacheConfigurations;
@@ -30,8 +31,7 @@ import org.echo.xcache.message.CacheMessagePusher;
 import org.echo.xcache.redis.RedisCacheProperties;
 import org.echo.xcache.redis.RedisNoneCache;
 import org.echo.xcache.redis.XRedisCache;
-import org.echo.xcache.secondary.SecondaryCache;
-import org.echo.xcache.secondary.SecondaryCacheProperties;
+import org.echo.xcache.binary.BinaryCacheProperties;
 import org.echo.test.PrivateConstructors;
 import org.echo.test.config.AbstractConfigurationsTest;
 import org.junit.jupiter.api.DisplayName;
@@ -72,7 +72,7 @@ class NativeCachesTest extends AbstractConfigurationsTest {
     private RedisCacheProperties redisCacheProperties;
 
     @Autowired
-    private SecondaryCacheProperties secondaryCacheProperties;
+    private BinaryCacheProperties binaryCacheProperties;
 
     @Autowired
     private RedisTemplate<Object,Object> template;
@@ -114,14 +114,14 @@ class NativeCachesTest extends AbstractConfigurationsTest {
         template.delete("echo:Test:" + k1);
         DistributedLock lock = mock(DistributedLock.class);
 
-        SecondaryCache sCache = SecondaryCache.onlyCache1("exec", caffeineCache, secondaryCacheProperties, lock);
+        BinaryCache sCache = BinaryCache.onlyCache1("exec", caffeineCache, binaryCacheProperties, lock);
         assertEquals(1,NativeCaches.size(sCache));
         assertTrue(NativeCaches.keys(sCache).contains(k1));
         assertFalse(NativeCaches.keys(sCache).contains(k2));
         assertTrue(NativeCaches.values(sCache).contains(v1));
         assertFalse(NativeCaches.values(sCache).contains(v2));
 
-        sCache = SecondaryCache.onlyCache2("exec", caffeineCache, secondaryCacheProperties, lock);
+        sCache = BinaryCache.onlyCache2("exec", caffeineCache, binaryCacheProperties, lock);
         assertEquals(1,NativeCaches.size(sCache));
         assertTrue(NativeCaches.keys(sCache).contains(k1));
         assertFalse(NativeCaches.keys(sCache).contains(k2));
@@ -129,7 +129,7 @@ class NativeCachesTest extends AbstractConfigurationsTest {
         assertFalse(NativeCaches.values(sCache).contains(v2));
 
         CacheMessagePusher pusher = mock(CacheMessagePusher.class);
-        sCache = new SecondaryCache("exec", caffeineCache,xcache, secondaryCacheProperties,pusher);
+        sCache = new BinaryCache("exec", caffeineCache,xcache, binaryCacheProperties,pusher);
         assertEquals(1,NativeCaches.size(sCache));
         assertTrue(NativeCaches.keys(sCache).contains(k1));
         assertFalse(NativeCaches.keys(sCache).contains(k2));
