@@ -49,6 +49,11 @@ public class PrimusSubjectPicker implements SubjectPicker {
         return SecurityUtils.getSubject().isAuthenticated();
     }
 
+    @Override
+    public boolean supports(Object subject) {
+        return subject instanceof Decepticons;
+    }
+
     private Decepticons getDecepticons(){
         Subject subject = SecurityUtils.getSubject();
         return (Decepticons)subject.getPrincipal();

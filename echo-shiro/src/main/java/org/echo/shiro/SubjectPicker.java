@@ -38,4 +38,6 @@ public interface SubjectPicker extends Serializable {
     default String getAlias(){return "";}
 
     default boolean isAuthenticated(){return Boolean.FALSE;}
+
+    default boolean supports(Object subject){return Boolean.FALSE;}
 }

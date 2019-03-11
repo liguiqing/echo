@@ -25,20 +25,21 @@ import org.apache.shiro.web.filter.authc.FormAuthenticationFilter;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.servlet.Cookie;
 import org.apache.shiro.web.servlet.SimpleCookie;
+import org.echo.shiro.SubjectPicker;
 import org.echo.shiro.SubjectsContext;
 import org.echo.shiro.authc.credential.*;
 import org.echo.shiro.cache.SpringCacheManager;
+import org.echo.shiro.realm.Decepticons;
 import org.echo.shiro.realm.PrimusRealm;
+import org.echo.shiro.realm.PrimusSubjectPicker;
 import org.echo.shiro.session.mgt.eis.SessionIdGeneratorIterator;
 import org.echo.shiro.web.session.mgt.StatelessWebSessionManager;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.cache.caffeine.CaffeineCacheManager;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
@@ -47,10 +48,7 @@ import org.springframework.web.filter.DelegatingFilterProxy;
 
 import javax.servlet.DispatcherType;
 import javax.servlet.Filter;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /**
  *
@@ -71,8 +69,13 @@ public class ShiroConfigurations {
     }
 
     @Bean
-    public SubjectsContext subjectsContext(){
-        return new SubjectsContext();
+    public PrimusSubjectPicker decepticonsPicker(){
+        return new PrimusSubjectPicker();
+    }
+
+    @Bean
+    public SubjectsContext subjectsContext(Optional<Collection<SubjectPicker>> pickers){
+        return new SubjectsContext(pickers);
     }
 
     @Bean

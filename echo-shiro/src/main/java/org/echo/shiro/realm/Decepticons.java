@@ -52,8 +52,4 @@ public class Decepticons implements Serializable {
     public Decepticons megatron() {
         return new Decepticons("Megatron", "威震天", "malilihong","Galvatron");
     }
-
-    public Class<? extends SubjectPicker> getPicker(){
-        return PrimusSubjectPicker.class;
-    }
 }
