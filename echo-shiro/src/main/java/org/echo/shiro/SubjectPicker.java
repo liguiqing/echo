@@ -18,42 +18,24 @@
  *
  */
 
-package org.echo.shiro.realm;
+package org.echo.shiro;
 
-
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
-import org.echo.shiro.SubjectPicker;
-import org.echo.shiro.authc.credential.MD5PasswordEncoder;
 
 import java.io.Serializable;
 
 /**
  * <p>
- * 测试用户名:Megatron(威震天),用于系统登录测试，无权限
+ * Subject 信息提取
  * </P>
  *
  * @author liguiqing
- * @date 2019-03-08 14:32
+ * @date 2019-03-08 15:58
  * @since V1.0.0
  **/
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@ToString(exclude = {"password","salt"})
-public class Decepticons implements Serializable {
-    private String name ;
-    private String realName ;
-    private String password;
-    private String salt;
+public interface SubjectPicker extends Serializable {
+    default String getName(){return "";}
 
-    public Decepticons megatron() {
-        return new Decepticons("Megatron", "威震天", "malilihong","Galvatron");
-    }
+    default String getAlias(){return "";}
 
-    public Class<? extends SubjectPicker> getPicker(){
-        return PrimusSubjectPicker.class;
-    }
+    default boolean isAuthenticated(){return Boolean.FALSE;}
 }

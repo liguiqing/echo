@@ -25,6 +25,7 @@ import org.apache.shiro.web.filter.authc.FormAuthenticationFilter;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.servlet.Cookie;
 import org.apache.shiro.web.servlet.SimpleCookie;
+import org.echo.shiro.SubjectsContext;
 import org.echo.shiro.authc.credential.*;
 import org.echo.shiro.cache.SpringCacheManager;
 import org.echo.shiro.realm.PrimusRealm;
@@ -67,6 +68,11 @@ public class ShiroConfigurations {
     @Bean("shiroPlaceholder")
     public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
         return new PropertySourcesPlaceholderConfigurer();
+    }
+
+    @Bean
+    public SubjectsContext subjectsContext(){
+        return new SubjectsContext();
     }
 
     @Bean

@@ -20,40 +20,37 @@
 
 package org.echo.shiro.realm;
 
-
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.echo.shiro.SubjectPicker;
-import org.echo.shiro.authc.credential.MD5PasswordEncoder;
-
-import java.io.Serializable;
 
 /**
  * <p>
- * 测试用户名:Megatron(威震天),用于系统登录测试，无权限
+ * 测试用户名信息提取
  * </P>
  *
  * @author liguiqing
- * @date 2019-03-08 14:32
+ * @date 2019-03-08 16:09
  * @since V1.0.0
  **/
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@ToString(exclude = {"password","salt"})
-public class Decepticons implements Serializable {
-    private String name ;
-    private String realName ;
-    private String password;
-    private String salt;
-
-    public Decepticons megatron() {
-        return new Decepticons("Megatron", "威震天", "malilihong","Galvatron");
+public class PrimusSubjectPicker implements SubjectPicker {
+    @Override
+    public String getName() {
+        return getDecepticons().getName();
     }
 
-    public Class<? extends SubjectPicker> getPicker(){
-        return PrimusSubjectPicker.class;
+    @Override
+    public String getAlias() {
+        return getDecepticons().getRealName();
+    }
+
+    @Override
+    public boolean isAuthenticated() {
+        return SecurityUtils.getSubject().isAuthenticated();
+    }
+
+    private Decepticons getDecepticons(){
+        Subject subject = SecurityUtils.getSubject();
+        return (Decepticons)subject.getPrincipal();
     }
 }
