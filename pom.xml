@@ -510,13 +510,11 @@
     <modules>
         <module>echo-test</module>
         <module>echo-utils</module>
-        <module>echo-core</module>
         <module>echo-share</module>
         <module>echo-xcache</module>
         <module>echo-shiro</module>
         <module>echo-ddd</module>
         <module>echo-ddd-support</module>
-        <module>echo-commons</module>
         <module>echo-sample</module>
     </modules>
 </project>
