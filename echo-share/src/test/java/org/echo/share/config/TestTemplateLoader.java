@@ -18,24 +18,41 @@
  *
  */
 
-package org.echo.taglib.freemaker;
+package org.echo.share.config;
 
-import freemarker.cache.ClassTemplateLoader;
+
 import freemarker.cache.TemplateLoader;
-import lombok.experimental.Delegate;
+
+import java.io.IOException;
+import java.io.Reader;
 
 /**
  * <p>
- * Bootstrap4 标签库加载器
+ * TODO
  * </P>
  *
  * @author liguiqing
- * @date 2019-03-11 10:38
+ * @date 2019-03-13 08:29
  * @since V1.0.0
  **/
-public class BootstrapTemplateLoader implements TemplateLoader {
+public class TestTemplateLoader implements TemplateLoader {
+    @Override
+    public Object findTemplateSource(String s) throws IOException {
+        return null;
+    }
 
-    @Delegate
-    private final TemplateLoader templateLoader = new ClassTemplateLoader(this.getClass(),"/bootstrap");
+    @Override
+    public long getLastModified(Object o) {
+        return 0;
+    }
 
+    @Override
+    public Reader getReader(Object o, String s) throws IOException {
+        return null;
+    }
+
+    @Override
+    public void closeTemplateSource(Object o) throws IOException {
+
+    }
 }

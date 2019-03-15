@@ -15,11 +15,7 @@ import java.util.UUID;
 @Slf4j
 public class Identities {
 
-    private Identities(){
-        throw new AssertionError("No org.echo.ddd.domain.id.Identities instances for you!");
-    }
-
-    private static IdPrefix<Class<? extends Identity>> idPrefix =(c)->c.getSimpleName().substring(0,3).toUpperCase();
+    private static IdPrefix<Class<? extends Identity>> idPrefix =c->c.getSimpleName().substring(0,3).toUpperCase();
 
     private static IdentityGenerator generator = new IdentityGenerator<String,Class<Identity>>(){
 
@@ -36,6 +32,10 @@ public class Identities {
             return prefix.concat(this.genId());
         }
     };
+
+    private Identities(){
+        throw new AssertionError("No org.echo.ddd.domain.id.Identities instances for you!");
+    }
 
     public static void setGenerator(IdentityGenerator generator){
         Identities.generator = generator;

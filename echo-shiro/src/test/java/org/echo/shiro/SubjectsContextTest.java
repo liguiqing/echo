@@ -49,7 +49,7 @@ class SubjectsContextTest {
         SecurityManager securityManager = mock(SecurityManager.class);
         ThreadContext.put(ThreadContext.SECURITY_MANAGER_KEY,securityManager);
         Subject subject = mock(Subject.class);
-        when(subject.isAuthenticated()).thenReturn(true);
+        when(subject.isAuthenticated()).thenReturn(false).thenReturn(true);
         when(subject.toString()).thenReturn("Mock Subject");
         PrincipalCollection principalCollection = mock(PrincipalCollection.class);
         when(subject.getPrincipals()).thenReturn(principalCollection);
@@ -67,6 +67,11 @@ class SubjectsContextTest {
         assertEquals("",picker.getAlias());
         assertEquals("",picker.getName());
         assertFalse(picker.isAuthenticated());
+        picker = subjectsContext.lookup();
+        assertEquals("Mock Subject",picker.getAlias());
+        assertEquals("Mock Subject",picker.getName());
+        assertTrue(picker.isAuthenticated());
+
         Set<SubjectPicker> pickers = Sets.newHashSet();
         pickers.add(new PrimusSubjectPicker());
         subjectsContext = new SubjectsContext(Optional.of(pickers));

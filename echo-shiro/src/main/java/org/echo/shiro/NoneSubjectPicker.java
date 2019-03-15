@@ -18,24 +18,47 @@
  *
  */
 
-package org.echo.taglib.freemaker;
+package org.echo.shiro;
 
-import freemarker.cache.ClassTemplateLoader;
-import freemarker.cache.TemplateLoader;
-import lombok.experimental.Delegate;
+
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.subject.Subject;
 
 /**
  * <p>
- * Bootstrap4 标签库加载器
+ * 无定义的SubjectPicker
  * </P>
  *
  * @author liguiqing
- * @date 2019-03-11 10:38
+ * @date 2019-03-15 08:14
  * @since V1.0.0
  **/
-public class BootstrapTemplateLoader implements TemplateLoader {
+@Slf4j
+@AllArgsConstructor
+public class NoneSubjectPicker implements SubjectPicker {
 
-    @Delegate
-    private final TemplateLoader templateLoader = new ClassTemplateLoader(this.getClass(),"/bootstrap");
+    private Object o;
 
+    private Subject subject;
+
+    @Override
+    public String getName() {
+        return subjectToString(o);
+    }
+
+    @Override
+    public String getAlias() {
+        return subjectToString(o);
+    }
+
+    @Override
+    public boolean isAuthenticated() {
+        return subject.isAuthenticated();
+    }
+
+    private String subjectToString(Object o){
+        log.warn("Can't find any Piker of {},return toString as default",o==null?"Null":o.getClass().getName());
+        return subject.toString();
+    }
 }

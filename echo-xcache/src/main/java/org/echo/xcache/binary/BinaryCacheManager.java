@@ -22,10 +22,10 @@ package org.echo.xcache.binary;
 
 import lombok.extern.slf4j.Slf4j;
 import org.echo.lock.DistributedLock;
+import org.echo.util.NumbersUtil;
 import org.echo.xcache.CacheFactory;
 import org.echo.xcache.message.CacheMessage;
 import org.echo.xcache.message.CacheMessagePusher;
-import org.echo.util.NumbersUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.cache.Cache;

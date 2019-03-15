@@ -29,7 +29,7 @@
         </dependency>
         <dependency>
             <groupId>echo</groupId>
-            <artifactId>spring-cache</artifactId>
+            <artifactId>echo-xcache</artifactId>
             <version>${echo.version}</version>
         </dependency>
         <dependency>

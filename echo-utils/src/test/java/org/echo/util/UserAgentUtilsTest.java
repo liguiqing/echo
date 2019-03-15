@@ -12,7 +12,8 @@ import org.junit.jupiter.api.Test;
 import javax.servlet.http.HttpServletRequest;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Copyright (c) 2016,$today.year, 深圳市易考试乐学测评有限公司

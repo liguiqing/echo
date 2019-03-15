@@ -25,8 +25,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.echo.shiro.SubjectPicker;
-import org.echo.shiro.authc.credential.MD5PasswordEncoder;
 
 import java.io.Serializable;
 

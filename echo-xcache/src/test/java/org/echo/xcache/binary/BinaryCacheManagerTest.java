@@ -20,13 +20,13 @@
 
 package org.echo.xcache.binary;
 
+import org.echo.test.config.AbstractConfigurationsTest;
 import org.echo.xcache.CacheFactory;
 import org.echo.xcache.config.CacheConfigurations;
 import org.echo.xcache.config.RedisCacheConfigurations;
 import org.echo.xcache.config.SecondaryCacheConfigurations;
 import org.echo.xcache.message.CacheMessage;
 import org.echo.xcache.message.CacheMessagePusher;
-import org.echo.test.config.AbstractConfigurationsTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -49,7 +49,8 @@ import java.util.Collection;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * @author Liguiqing

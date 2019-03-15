@@ -35,7 +35,7 @@ import redis.clients.jedis.JedisPool;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 @Slf4j
 @DisplayName("Echo : xCache RedisCacheFactory Test")

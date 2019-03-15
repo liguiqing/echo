@@ -1,6 +1,9 @@
 package org.echo.ddd.support.domain.model.vo;
 
-import lombok.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.echo.ddd.domain.vo.ValueObject;
 
 import javax.persistence.*;

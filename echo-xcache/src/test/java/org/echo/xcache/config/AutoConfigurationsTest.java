@@ -21,8 +21,8 @@
 package org.echo.xcache.config;
 
 import lombok.extern.slf4j.Slf4j;
-import org.echo.xcache.binary.BinaryCacheManager;
 import org.echo.test.config.AbstractConfigurationsTest;
+import org.echo.xcache.binary.BinaryCacheManager;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

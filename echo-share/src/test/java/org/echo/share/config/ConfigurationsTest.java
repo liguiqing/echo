@@ -30,6 +30,7 @@ import static org.mockito.Mockito.spy;
  */
 
 @ContextHierarchy(@ContextConfiguration(classes = {
+        TestTemplateLoader.class,
         DataSourceConfigurations.class,
         SpringMvcConfiguration.class
 }))

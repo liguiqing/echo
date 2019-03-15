@@ -45,11 +45,11 @@ public class NativeCaches {
     }
 
     private static boolean isCaffeineCache(Cache cache){
-        return (cache instanceof CaffeineCache);
+        return cache instanceof CaffeineCache;
     }
 
     private static boolean isXRedisCache(Cache cache){
-        return (cache instanceof XRedisCache);
+        return cache instanceof XRedisCache;
     }
 
     public static int size(Cache cache) {
@@ -71,6 +71,9 @@ public class NativeCaches {
     }
 
     public static Set keys (Cache cache){
+        if(cache == null)
+            return Collections.emptySet();
+
         Cache nativeCache = toNativeCache(cache);
         if(isCaffeineCache(nativeCache)){
             return CaffeineCaches.keys((CaffeineCache)nativeCache);
@@ -84,6 +87,9 @@ public class NativeCaches {
     }
 
     public static Collection values(Cache cache){
+        if(cache == null)
+            return Collections.emptySet();
+
         Cache nativeCache = toNativeCache(cache);
         if(isCaffeineCache(nativeCache)){
             return CaffeineCaches.values((CaffeineCache)nativeCache);

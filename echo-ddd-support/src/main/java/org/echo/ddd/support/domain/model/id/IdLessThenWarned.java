@@ -1,11 +1,9 @@
 package org.echo.ddd.support.domain.model.id;
 
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.echo.ddd.domain.events.DomainEvent;
-import org.echo.ddd.support.infrastructure.id.CachingStringIdentityGenerator;
-
-import java.util.Deque;
 
 /**
  * @author Liguiqing
@@ -13,11 +11,7 @@ import java.util.Deque;
  */
 @AllArgsConstructor
 @Getter
+@EqualsAndHashCode(exclude = "prefixBean",callSuper = true)
 public class IdLessThenWarned extends DomainEvent {
-
-    private  CachingStringIdentityGenerator identityGenerator;
-
     private IdPrefixBean prefixBean;
-
-    private Deque<Long> deque;
 }

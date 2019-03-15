@@ -3,7 +3,7 @@ package org.echo.shiro.authc.credential;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Copyright (c) 2016,$today.year, 深圳市易考试乐学测评有限公司

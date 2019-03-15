@@ -2,13 +2,11 @@ package org.echo.shiro.authc.credential;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authc.credential.CredentialsMatcher;
 import org.apache.shiro.subject.PrincipalCollection;
-import org.echo.exception.ThrowableToString;
 
 import java.util.Arrays;
 

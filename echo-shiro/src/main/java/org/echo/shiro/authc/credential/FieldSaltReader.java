@@ -25,7 +25,6 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.reflect.FieldUtils;
-import org.echo.exception.ThrowableToString;
 
 import java.util.Optional;
 
@@ -40,6 +39,7 @@ import java.util.Optional;
  **/
 @NoArgsConstructor
 @AllArgsConstructor
+@Slf4j
 public class FieldSaltReader extends AbstractSaltReader{
 
     private String field = "salt";
@@ -50,7 +50,11 @@ public class FieldSaltReader extends AbstractSaltReader{
     }
 
     @Override
-    protected String doRead(Object o)throws Exception {
-        return FieldUtils.readField(o,field,true).toString();
+    protected String doRead(Object o) throws IllegalArgumentException{
+        try {
+            return FieldUtils.readField(o,field,true).toString();
+        } catch (IllegalAccessException e) {
+            throw new IllegalArgumentException(e.getMessage());
+        }
     }
 }

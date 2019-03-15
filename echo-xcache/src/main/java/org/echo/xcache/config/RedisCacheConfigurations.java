@@ -22,12 +22,12 @@ package org.echo.xcache.config;
 
 import org.echo.lock.DistributedLock;
 import org.echo.lock.RedisBaseDistributedLock;
+import org.echo.util.RedisClientUtils;
 import org.echo.xcache.CacheDequeFactory;
 import org.echo.xcache.message.RedisCacheMessagePusher;
 import org.echo.xcache.redis.RedisCacheFactory;
 import org.echo.xcache.redis.RedisCacheProperties;
 import org.echo.xcache.redis.RedissonCacheDequeFactory;
-import org.echo.util.RedisClientUtils;
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;

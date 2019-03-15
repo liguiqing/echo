@@ -23,7 +23,7 @@ package org.echo.xcache.redis;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 @DisplayName("RedisNoneCache Test")
 class RedisNoneCacheTest {

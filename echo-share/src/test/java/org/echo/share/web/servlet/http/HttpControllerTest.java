@@ -28,7 +28,7 @@ import static org.mockito.Mockito.*;
 @WebAppConfiguration
 @EnableWebMvc
 @DisplayName("Echo : AbstractHttpController Test")
-class AbstractHttpControllerTest {
+class HttpControllerTest {
 
     @BeforeEach
     public void beforeEach()throws Exception{

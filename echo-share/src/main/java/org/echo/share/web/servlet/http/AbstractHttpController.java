@@ -38,10 +38,6 @@ public abstract class AbstractHttpController {
     }
 
     protected ModelAndViewer modelAndViewer(String viewName){
-        return modelAndViewer(viewName,"000000");
-    }
-
-    protected ModelAndViewer modelAndViewer(String viewName,String code){
         String local = Servlets.getRequest().getParameter("local");
         return new ModelAndViewer(viewName,responseTextFactory.lookup(local));
     }

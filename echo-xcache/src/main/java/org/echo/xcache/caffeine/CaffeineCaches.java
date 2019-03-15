@@ -24,6 +24,7 @@ import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import org.springframework.cache.caffeine.CaffeineCache;
 
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -61,7 +62,7 @@ public class CaffeineCaches {
 
     public static int size(CaffeineCache cache){
         Cache nativeCache = cache.getNativeCache();
-        return Long.valueOf(nativeCache.estimatedSize()).intValue();
+        return new BigDecimal(nativeCache.estimatedSize()).intValue();
     }
 
     public static Set keys (CaffeineCache cache){

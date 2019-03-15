@@ -4,6 +4,8 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
 import com.alibaba.fastjson.support.spring.FastJsonJsonView;
+import freemarker.cache.MultiTemplateLoader;
+import freemarker.cache.TemplateLoader;
 import freemarker.template.TemplateException;
 import lombok.extern.slf4j.Slf4j;
 import org.echo.exception.ThrowableToString;
@@ -168,7 +170,7 @@ public class SpringMvcConfiguration extends WebMvcConfigurationSupport {
 
 
     @Bean
-    public FreeMarkerConfigurer freeMarkerConfigurer() {
+    public FreeMarkerConfigurer freeMarkerConfigurer(Optional<List<TemplateLoader>> templateLoaders) {
         FreeMarkerConfigurationFactory factory = new FreeMarkerConfigurationFactory();
         factory.setTemplateLoaderPath("classpath:META-INF/ftl");
         factory.setDefaultEncoding("UTF-8");
@@ -177,6 +179,7 @@ public class SpringMvcConfiguration extends WebMvcConfigurationSupport {
         try {
             freemarker.template.Configuration configuration = factory.createConfiguration();
             configuration.setClassicCompatible(true);
+            templateLoaders.ifPresent(loaders->setTemplateLoaders(configuration,loaders));
             result.setConfiguration(configuration);
         } catch (IOException | TemplateException e) {
             log.error(ThrowableToString.toString(e));
@@ -190,5 +193,11 @@ public class SpringMvcConfiguration extends WebMvcConfigurationSupport {
         settings.put("template_exception_handler", "ignore");
         result.setFreemarkerSettings(settings);
         return result;
+    }
+
+    private void setTemplateLoaders(freemarker.template.Configuration configuration,List<TemplateLoader> templateLoaders){
+        TemplateLoader loader = configuration.getTemplateLoader();
+        templateLoaders.add(loader);
+        configuration.setTemplateLoader(new MultiTemplateLoader(templateLoaders.toArray(new TemplateLoader[]{})));
     }
 }

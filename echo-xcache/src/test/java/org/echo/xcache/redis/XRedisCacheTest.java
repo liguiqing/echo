@@ -21,8 +21,8 @@
 package org.echo.xcache.redis;
 
 import lombok.extern.slf4j.Slf4j;
-import org.echo.xcache.config.RedisCacheConfigurations;
 import org.echo.test.config.AbstractConfigurationsTest;
+import org.echo.xcache.config.RedisCacheConfigurations;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

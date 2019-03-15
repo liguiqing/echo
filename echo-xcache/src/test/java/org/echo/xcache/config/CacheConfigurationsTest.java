@@ -21,9 +21,9 @@
 package org.echo.xcache.config;
 
 import lombok.extern.slf4j.Slf4j;
+import org.echo.test.config.AbstractConfigurationsTest;
 import org.echo.xcache.CacheDequeFactory;
 import org.echo.xcache.CacheTestValue;
-import org.echo.test.config.AbstractConfigurationsTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.redisson.api.RAtomicLong;

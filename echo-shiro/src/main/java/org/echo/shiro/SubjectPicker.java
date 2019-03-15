@@ -21,8 +21,6 @@
 package org.echo.shiro;
 
 
-import java.io.Serializable;
-
 /**
  * <p>
  * Subject 信息提取
@@ -32,7 +30,7 @@ import java.io.Serializable;
  * @date 2019-03-08 15:58
  * @since V1.0.0
  **/
-public interface SubjectPicker extends Serializable {
+public interface SubjectPicker {
     default String getName(){return "";}
 
     default String getAlias(){return "";}

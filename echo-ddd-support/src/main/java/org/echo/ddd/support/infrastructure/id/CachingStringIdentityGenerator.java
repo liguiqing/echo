@@ -31,13 +31,14 @@ public class CachingStringIdentityGenerator implements IdentityGenerator<String,
     private static final Object locker = new Object();
 
 
-    private static final GuavaEventHandler<IdLessThenWarned> handler = new GuavaEventHandler<IdLessThenWarned>() {
+    private  GuavaEventHandler<IdLessThenWarned> handler = new GuavaEventHandler<IdLessThenWarned>() {
         @Override
         protected void when(IdLessThenWarned event) {
             log.debug("Auto load more id");
-            CachingStringIdentityGenerator identityGenerator = event.getIdentityGenerator();
-            Deque<Long> idQueue = event.getDeque();
-            identityGenerator.loadMore(idQueue, event.getPrefixBean());
+            IdPrefixBean prefixBean = event.getPrefixBean();
+            String myPrefix = prefixBean.getIdPrefix();
+            Deque<Long> idQueue = getIdQueue(myPrefix);
+            loadMore(idQueue, prefixBean);
         }
     };
 
@@ -52,8 +53,9 @@ public class CachingStringIdentityGenerator implements IdentityGenerator<String,
     @Setter
     private boolean withPrefix = true;
 
-    @Setter
-    private int step = 100;
+    private int step;
+
+    private int threshold = 30;
 
     public CachingStringIdentityGenerator(IdPrefixBeanRepository repository, IdPrefix<Class<? extends Identity>> idPrefix,
                                           CacheDequeFactory cacheDequeFactory, DistributedLock lock) {
@@ -61,7 +63,15 @@ public class CachingStringIdentityGenerator implements IdentityGenerator<String,
         this.idPrefix = idPrefix;
         this.cacheDequeFactory = cacheDequeFactory;
         this.lock = lock;
+        setStep(100);
         EventHandlers.getInstance().register(handler);
+    }
+
+    public void setStep(int step){
+        this.step = step;
+        //最优实现函数为：f(x)=k/(x-h)^n
+        //f(1) 去尝试ｋ，ｈ，ｎ
+        this.threshold = BigDecimal.valueOf(Math.pow(step, -0.09)).multiply(BigDecimal.valueOf(this.step)).intValue();
     }
 
     @Override
@@ -78,9 +88,10 @@ public class CachingStringIdentityGenerator implements IdentityGenerator<String,
 
         String myPrefix = prefixBean.getIdPrefix();
         Deque<Long> idQueue = getIdQueue(myPrefix);
-        Long nextId = idQueue.pop();
-        log.debug("Gen Id for {} -> {}", aClass, nextId);
         tryToLoad(prefixBean, idQueue);
+        Long nextId = idQueue.pop();
+        tryToLoad(prefixBean, idQueue);
+        log.debug("Gen Id for {} -> {}", aClass, nextId);
         if (withPrefix) {
             return prefixBean.getIdPrefix().concat(nextId + "");
         }
@@ -117,14 +128,14 @@ public class CachingStringIdentityGenerator implements IdentityGenerator<String,
     private void tryToLoad(IdPrefixBean prefixBean, Deque<Long> idQueue) {
         if (needMore(idQueue)) {
             this.lock.lock(locker, () -> {
-                EventHandlers.getInstance().post(new IdLessThenWarned(this, prefixBean, idQueue));
+                EventHandlers.getInstance().post(new IdLessThenWarned(prefixBean));
                 return true;
             });
         }
     }
 
     private boolean needMore(Deque<Long> idQueue) {
-        return idQueue.size() < this.getThreshold();
+        return idQueue.size() < this.threshold;
     }
 
     private void loadMore(Deque<Long> idQueue, IdPrefixBean prefixBean) {
@@ -135,11 +146,5 @@ public class CachingStringIdentityGenerator implements IdentityGenerator<String,
             idQueue.addLast(nextId++);
         }
         prefixBean.add(times);
-    }
-
-    private int getThreshold() {
-        //最优实现函数为：f(x)=k/(x-h)^n
-        //f(1) 去尝试ｋ，ｈ，ｎ
-        return BigDecimal.valueOf(Math.pow(step, -0.09)).multiply(BigDecimal.valueOf(this.step)).intValue();
     }
 }

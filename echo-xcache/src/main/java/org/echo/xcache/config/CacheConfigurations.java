@@ -45,7 +45,7 @@ import java.util.stream.Stream;
 @EnableCaching
 public class CacheConfigurations extends CachingConfigurerSupport {
 
-    private static Object generate(Object o, Method method, Object... objects) {
+    private Object generate(Object o, Method method, Object... objects) {
         StringBuilder sb = new StringBuilder();
         sb.append(o.getClass().getName());
         sb.append(method.getName());
@@ -65,6 +65,6 @@ public class CacheConfigurations extends CachingConfigurerSupport {
     @Bean
     @Override
     public KeyGenerator keyGenerator() {
-        return CacheConfigurations::generate;
+        return this::generate;
     }
 }

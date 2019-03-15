@@ -29,7 +29,6 @@ import org.echo.shiro.SubjectPicker;
 import org.echo.shiro.SubjectsContext;
 import org.echo.shiro.authc.credential.*;
 import org.echo.shiro.cache.SpringCacheManager;
-import org.echo.shiro.realm.Decepticons;
 import org.echo.shiro.realm.PrimusRealm;
 import org.echo.shiro.realm.PrimusSubjectPicker;
 import org.echo.shiro.session.mgt.eis.SessionIdGeneratorIterator;

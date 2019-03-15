@@ -21,7 +21,10 @@
 package org.echo.xcache;
 
 import org.echo.lock.DistributedLock;
+import org.echo.test.PrivateConstructors;
+import org.echo.test.config.AbstractConfigurationsTest;
 import org.echo.xcache.binary.BinaryCache;
+import org.echo.xcache.binary.BinaryCacheProperties;
 import org.echo.xcache.caffeine.CaffeineCaches;
 import org.echo.xcache.caffeine.CaffeineProperties;
 import org.echo.xcache.config.CacheConfigurations;
@@ -31,9 +34,6 @@ import org.echo.xcache.message.CacheMessagePusher;
 import org.echo.xcache.redis.RedisCacheProperties;
 import org.echo.xcache.redis.RedisNoneCache;
 import org.echo.xcache.redis.XRedisCache;
-import org.echo.xcache.binary.BinaryCacheProperties;
-import org.echo.test.PrivateConstructors;
-import org.echo.test.config.AbstractConfigurationsTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -143,6 +143,8 @@ class NativeCachesTest extends AbstractConfigurationsTest {
         assertFalse(NativeCaches.values(noneCache).contains(v1));
         assertFalse(NativeCaches.values(noneCache).contains(v2));
 
+        assertEquals(0,NativeCaches.keys(null).size());
+        assertEquals(0,NativeCaches.values(null).size());
         assertThrows(Exception.class,()->new PrivateConstructors().exec(NativeCaches.class));
     }
 }

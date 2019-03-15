@@ -46,7 +46,7 @@ public class SubjectsContext {
     private List<SubjectPicker> subjectPickers = Lists.newArrayList();
 
     public SubjectsContext(Optional<Collection<SubjectPicker>> pickers) {
-        pickers.ifPresent(sps->subjectPickers.addAll(sps));
+        pickers.ifPresent(subjectPickers::addAll);
     }
 
     /**
@@ -56,46 +56,26 @@ public class SubjectsContext {
      */
     public SubjectPicker lookup(){
         Subject subject = SecurityUtils.getSubject();
-        Object po = subject.getPrincipals().getPrimaryPrincipal();
-        Object o = subject.getPrincipal();
+        if(!subject.isAuthenticated()){
+            return new SubjectPicker() {};
+        }
+
+        Object o = getSubjectAuthenticated(subject);
+
         for(SubjectPicker picker:subjectPickers){
-            if (picker.supports(po) || picker.supports(o)){
+            if (picker.supports(o)){
                 return picker;
             }
         }
 
-        if(!Objects.isNull(po)){
-            return fromSubject(po, subject);
-        }
-
-        if(!Objects.isNull(o)){
-            return fromSubject(o, subject);
-        }
-
-        return new SubjectPicker() {};
+        return  new NoneSubjectPicker(o, subject);
     }
 
-    private SubjectPicker fromSubject(final Object o,final Subject subject){
-        return new SubjectPicker() {
-            @Override
-            public String getName() {
-                return subjectToString(o);
-            }
-
-            @Override
-            public String getAlias() {
-               return subjectToString(o);
-            }
-
-            @Override
-            public boolean isAuthenticated() {
-                return subject.isAuthenticated();
-            }
-
-            private String subjectToString(Object o){
-                log.warn("Can't find any Piker of {},return toString as default",o.getClass().getName());
-                return subject.toString();
-            }
-        };
+    private Object getSubjectAuthenticated(Subject subject){
+        Object o = subject.getPrincipals().getPrimaryPrincipal();
+        if(Objects.isNull(o)) {
+            o = subject.getPrincipal();
+        }
+        return o;
     }
 }

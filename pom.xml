@@ -436,6 +436,30 @@
                                 <rule>
                                     <element>BUNDLE</element>
                                     <limits>
+                                        <!-- 指定方法覆盖到 -->
+                                        <limit implementation="org.jacoco.report.check.Limit">
+                                            <counter>METHOD</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <minimum>0</minimum>
+                                        </limit>
+                                        <!-- 指定指令覆盖到 -->
+                                        <limit implementation="org.jacoco.report.check.Limit">
+                                            <counter>INSTRUCTION</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <minimum>0.80</minimum>
+                                        </limit>
+                                        <!-- 指定行覆盖到 -->
+                                        <limit implementation="org.jacoco.report.check.Limit">
+                                            <counter>LINE</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <minimum>0.90</minimum>
+                                        </limit>
+                                        <!-- 指定类覆盖 -->
+                                        <limit implementation="org.jacoco.report.check.Limit">
+                                            <counter>CLASS</counter>
+                                            <value>MISSEDCOUNT</value>
+                                            <maximum>0</maximum>
+                                        </limit>
                                         <limit>
                                             <counter>COMPLEXITY</counter>
                                             <value>COVEREDRATIO</value>
@@ -451,6 +475,11 @@
                     <excludes>
                         <exclude>**/Abstract*.class</exclude>
                         <exclude>**/package-info.class</exclude>
+                        <exclude>**/*.toString</exclude>
+                        <exclude>**/*.hashCode</exclude>
+                        <exclude>**/*.equals</exclude>
+                        <exclude>**/@EqualsAndHashCode</exclude>
+                        <exclude>**/@ToString</exclude>
                     </excludes>
                 </configuration>
             </plugin>
@@ -515,6 +544,6 @@
         <module>echo-shiro</module>
         <module>echo-ddd</module>
         <module>echo-ddd-support</module>
-        <module>echo-sample</module>
+        <module>echo-taglib-freemarker</module>
     </modules>
 </project>

@@ -23,7 +23,6 @@ package org.echo.shiro.authc.credential;
 
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.echo.util.ClassUtils;
 
 import java.util.Optional;
