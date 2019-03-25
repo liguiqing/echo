@@ -33,6 +33,10 @@ import org.springframework.test.context.ContextHierarchy;
 import org.springframework.test.context.TestPropertySource;
 import redis.clients.jedis.JedisPool;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.awaitility.Awaitility.await;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ContextHierarchy(@ContextConfiguration(
@@ -60,21 +64,17 @@ class XRedisCacheTest extends AbstractConfigurationsTest {
         assertEquals(cache1,cache1.getNativeCache());
         cache1.put("A","a:A");
         assertEquals("a:A",cache1.get("A").get());
-        Thread.sleep(4 * 1000L);
-        assertNull(cache1.get("A"));
+        await().atMost(4, SECONDS).until(()->cache1.get("A"),nullValue());
         assertEquals("a:A",cache1.get("A",()->"a:A"));
-        Thread.sleep(2 * 1000L);
-        assertEquals("a:A",cache1.get("A",()->"a:A"));
-        Thread.sleep(2 * 1000L);
-        assertEquals("a:A",cache1.get("A",()->"a:A"));
-        Thread.sleep(2 * 1000L);
-        assertEquals("a:A",cache1.get("A",()->"a:A"));
+        await().atMost(2, SECONDS).until(()->cache1.get("A",()->"a:A"),is("a:A"));
+        await().atMost(1, SECONDS).until(()->cache1.get("A",()->"a:A"),is("a:A"));
+        await().atMost(3, SECONDS).until(()->cache1.get("A",()->"a:A"),is("a:A"));
+        await().atMost(4, SECONDS).until(()->cache1.get("A"),nullValue());
+
         cache1.putIfAbsent("A", "a:A");
-        Thread.sleep(4 * 1000L);
-        assertNull(cache1.get("A"));
+        await().atMost(4, SECONDS).until(()->cache1.get("A"),nullValue());
         cache1.putIfAbsent("B", "b:A");
-        Thread.sleep(2 * 1000L);
-        assertEquals("b:A",cache1.get("B").get());
+        await().atMost(2, SECONDS).until(()->cache1.get("B").get(),is("b:A"));
         cache1.putIfAbsent("C", "c:A");
         assertEquals("c:A",cache1.get("C").get());
         cache1.putIfAbsent("C", null);
@@ -94,10 +94,9 @@ class XRedisCacheTest extends AbstractConfigurationsTest {
         XRedisCache cache2 = new XRedisCache("Test2", "echo", false, 0, redisTemplate, jedisPool);
         cache2.put("A","a:A");
         assertEquals("a:A",cache2.get("A").get());
-        Thread.sleep(4 * 1000L);
-        assertEquals("a:A",cache2.get("A").get());
-        Thread.sleep(4 * 1000L);
-        assertEquals("a:A",cache2.get("A").get());
+
+        await().atMost(4, SECONDS).until(()->cache2.get("A").get(),is("a:A"));
+        await().atMost(5, SECONDS).until(()->cache2.get("A").get(),is("a:A"));
 
         XRedisCache cache3 = new XRedisCache("Test3", "echo", true, 0, redisTemplate, jedisPool);
         cache3.put("A","a:A");
