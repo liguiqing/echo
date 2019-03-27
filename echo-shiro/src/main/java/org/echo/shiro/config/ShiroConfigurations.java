@@ -124,13 +124,6 @@ public class ShiroConfigurations {
     }
 
     @Bean
-    public AuthorizationAttributeSourceAdvisor advisor(SecurityManager securityManager){
-        AuthorizationAttributeSourceAdvisor advisor = new AuthorizationAttributeSourceAdvisor();
-        advisor.setSecurityManager(securityManager);
-        return advisor;
-    }
-
-    @Bean
     public SessionIdGeneratorIterator sessionIdGeneratorIterator(Optional<List<SessionIdGenerator>> sessionIdGenerators){
         return new SessionIdGeneratorIterator(sessionIdGenerators);
     }
