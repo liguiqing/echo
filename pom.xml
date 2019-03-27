@@ -379,7 +379,6 @@
                             <include>**/*Test.java</include>
                         </includes>
                         <excludes>
-                            <exclude>**/Abstract*.java</exclude>
                             <exclude>**/package-info.java</exclude>
                         </excludes>
                         <parallel>methods</parallel>
@@ -391,15 +390,28 @@
                     <artifactId>maven-jar-plugin</artifactId>
                     <version>3.1.0</version>
                 </plugin>
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>sonar-maven-plugin</artifactId>
-                    <version>3.2</version>
-                </plugin>
             </plugins>
         </pluginManagement>
 
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.1.0</version>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -451,12 +463,6 @@
                                             <value>COVEREDRATIO</value>
                                             <minimum>0</minimum>
                                         </limit>
-                                        <!-- 指定指令覆盖到 -->
-                                        <limit implementation="org.jacoco.report.check.Limit">
-                                            <counter>INSTRUCTION</counter>
-                                            <value>COVEREDRATIO</value>
-                                            <minimum>0.80</minimum>
-                                        </limit>
                                         <!-- 指定行覆盖到 -->
                                         <limit implementation="org.jacoco.report.check.Limit">
                                             <counter>LINE</counter>
@@ -469,11 +475,6 @@
                                             <value>MISSEDCOUNT</value>
                                             <maximum>0</maximum>
                                         </limit>
-                                        <limit>
-                                            <counter>COMPLEXITY</counter>
-                                            <value>COVEREDRATIO</value>
-                                            <minimum>0.85</minimum>
-                                        </limit>
                                     </limits>
                                 </rule>
                             </rules>
@@ -482,13 +483,8 @@
                 </executions>
                 <configuration>
                     <excludes>
-                        <exclude>**/Abstract*.class</exclude>
+                        <exclude>**/*Test.class</exclude>
                         <exclude>**/package-info.class</exclude>
-                        <exclude>**/*.toString</exclude>
-                        <exclude>**/*.hashCode</exclude>
-                        <exclude>**/*.equals</exclude>
-                        <exclude>**/@EqualsAndHashCode</exclude>
-                        <exclude>**/@ToString</exclude>
                     </excludes>
                 </configuration>
             </plugin>
@@ -503,13 +499,11 @@
                 <reportSets>
                     <reportSet>
                         <reports>
-                            <!-- select non-aggregate reports -->
                             <report>report</report>
                         </reports>
                     </reportSet>
                 </reportSets>
             </plugin>
-
         </plugins>
     </reporting>
 
@@ -522,13 +516,6 @@
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
-            <!--<dependencies>-->
-            <!--<dependency>-->
-            <!--<groupId>org.springframework.boot</groupId>-->
-            <!--<artifactId>spring-boot-starter-web</artifactId>-->
-            <!--</dependency>-->
-            <!--</dependencies>-->
-            <!--<build></build>-->
         </profile>
     </profiles>
 
