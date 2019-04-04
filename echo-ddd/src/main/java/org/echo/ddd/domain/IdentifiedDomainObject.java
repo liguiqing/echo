@@ -4,6 +4,8 @@
 
 package org.echo.ddd.domain;
 
+import org.echo.ddd.domain.id.Identity;
+
 import java.io.Serializable;
 
 /**
@@ -12,9 +14,8 @@ import java.io.Serializable;
  * @author Liguiqing
  * @since V1.0
  */
-@FunctionalInterface
 public interface IdentifiedDomainObject extends Serializable {
+    Serializable getTid();
 
-    Serializable getId();
-
+    Identity getId();
 }

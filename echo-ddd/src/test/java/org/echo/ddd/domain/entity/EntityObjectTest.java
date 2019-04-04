@@ -18,7 +18,7 @@
  *
  */
 
-package org.echo.ddd.domain.vo;
+package org.echo.ddd.domain.entity;
 
 import org.echo.ddd.domain.id.Identity;
 import org.junit.jupiter.api.DisplayName;
@@ -28,25 +28,33 @@ import java.io.Serializable;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@DisplayName("IdentifiedValueObject Test")
-class IdentifiedValueObjectTest {
+@DisplayName("EntityObject Test")
+class EntityObjectTest {
 
     @Test
     void test(){
         assertTrue(Boolean.TRUE);
-        IdentifiedValueObject ivo = new IdentifiedValueObject(){
-
+        EntityObject eo = new EntityObject(){
             @Override
             public Identity getId() {
-                return null;
-            }
+                return new Identity() {
+                    @Override
+                    public Serializable getId() {
+                        return 0L;
+                    }
 
+                    @Override
+                    public void setId(Serializable id) {
+
+                    }
+                };
+            }
             @Override
             public Long getTid(){
                 return 0l;
             }
         };
-
-        assertTrue(0L == ivo.getTid());
+        assertTrue(0L==eo.getTid());
+        assertEquals(0L,eo.getId().getId());
     }
 }

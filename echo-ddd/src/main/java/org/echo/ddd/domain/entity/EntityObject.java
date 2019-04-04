@@ -2,7 +2,11 @@ package org.echo.ddd.domain.entity;
 
 import lombok.*;
 import org.echo.ddd.domain.IdentifiedDomainObject;
-import org.echo.ddd.domain.id.Identity;
+
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
 
 
 /**
@@ -13,13 +17,11 @@ import org.echo.ddd.domain.id.Identity;
  * @author Liguiqing
  * @since V1.0
  */
-@NoArgsConstructor
-@AllArgsConstructor
-@EqualsAndHashCode
 @Getter
-@ToString
+@MappedSuperclass
 public abstract class EntityObject implements IdentifiedDomainObject {
 
-    private Identity id;
-
+    @Id
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    private Long tid;
 }
