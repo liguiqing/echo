@@ -20,7 +20,9 @@
 
 package org.echo.xcache.binary;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.echo.exception.ThrowableToString;
 import org.echo.lock.DistributedLock;
@@ -40,6 +42,8 @@ import java.util.concurrent.Callable;
  * @since V1.0
  */
 @Slf4j
+@EqualsAndHashCode(of = {"name"})
+@ToString(of = {"name","identifier"})
 public class BinaryCache extends AbstractValueAdaptingCache {
 
     @Getter
