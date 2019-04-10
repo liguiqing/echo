@@ -1,6 +1,6 @@
 package org.echo.ddd.domain.entity;
 
-import lombok.*;
+import lombok.Getter;
 import org.echo.ddd.domain.IdentifiedDomainObject;
 
 import javax.persistence.GeneratedValue;

@@ -24,9 +24,7 @@ import org.echo.ddd.domain.id.Identity;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.io.Serializable;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisplayName("IdentifiedValueObject Test")
 class IdentifiedValueObjectTest {
