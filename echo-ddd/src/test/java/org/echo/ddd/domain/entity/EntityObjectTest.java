@@ -50,12 +50,8 @@ class EntityObjectTest {
                     }
                 };
             }
-            @Override
-            public Long getTid(){
-                return 0l;
-            }
+
         };
-        assertTrue(0L==eo.getTid());
         assertEquals(0L,eo.getId().getId());
     }
 }

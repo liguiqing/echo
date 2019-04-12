@@ -1,6 +1,5 @@
 package org.echo.ddd.domain.entity;
 
-import lombok.Getter;
 import org.echo.ddd.domain.IdentifiedDomainObject;
 
 import javax.persistence.GeneratedValue;
@@ -17,7 +16,6 @@ import javax.persistence.MappedSuperclass;
  * @author Liguiqing
  * @since V1.0
  */
-@Getter
 @MappedSuperclass
 public abstract class EntityObject implements IdentifiedDomainObject {
 

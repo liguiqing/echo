@@ -15,7 +15,7 @@ import java.io.Serializable;
  * @since V1.0
  */
 public interface IdentifiedDomainObject extends Serializable {
-    Serializable getTid();
+    //Serializable getTid();
 
     Identity getId();
 }

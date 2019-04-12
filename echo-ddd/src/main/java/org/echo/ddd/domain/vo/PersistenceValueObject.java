@@ -20,29 +20,25 @@
 
 package org.echo.ddd.domain.vo;
 
-import org.echo.ddd.domain.id.AssociationId;
-import org.echo.ddd.domain.id.Identity;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
 
-@DisplayName("IdentifiedValueObject Test")
-class IdentifiedValueObjectTest {
-
-    @Test
-    void test(){
-        assertTrue(Boolean.TRUE);
-        IdentifiedValueObject ivo = new IdentifiedValueObject(){
-
-            @Override
-            public Identity getId() {
-                return new AssociationId();
-            }
-
-        };
-
-        assertNotNull( ivo.getId());
-    }
+/**
+ * <p>
+ * 完全被动持久化的值对象，多见于一对多，或者一对一单向关联
+ * </P>
+ *
+ * @author liguiqing
+ * @date 2019-04-12 07:44
+ * @since V1.0.0
+ **/
+//@Getter
+@MappedSuperclass
+public abstract class PersistenceValueObject extends ValueObject{
+    @Id
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    private Long tid;
 }
