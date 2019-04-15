@@ -1,6 +1,12 @@
 package org.echo.util;
 
+import lombok.Getter;
+
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.TreeSet;
 
 /**
  * @author Liguiqing
@@ -8,6 +14,19 @@ import java.lang.reflect.InvocationTargetException;
  */
 
 public class ClassUtilsTestBean {
+
+    @Getter
+    private HashSet set1;
+
+    @Getter
+    private TreeSet set2;
+
+    @Getter
+    private ArrayList list1;
+
+    @Getter
+    private LinkedList list2;
+
 
     public ClassUtilsTestBean() {
     }
