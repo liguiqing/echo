@@ -42,7 +42,7 @@ import java.util.concurrent.Callable;
  * @since V1.0
  */
 @Slf4j
-@EqualsAndHashCode(of = {"name"})
+@EqualsAndHashCode(of = {"name"},callSuper = false)
 @ToString(of = {"name","identifier"})
 public class BinaryCache extends AbstractValueAdaptingCache {
 

@@ -21,6 +21,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.PersistenceContext;
+import java.util.Optional;
 
 /**
  * @author Liguiqing
@@ -51,11 +52,14 @@ public class DddSupportConfigurations {
     }
 
     @Bean
-    public CachingStringIdentityGenerator cachingStringIdentityGenerator(CacheDequeFactory cacheDequeFactory,
+    public CachingStringIdentityGenerator cachingStringIdentityGenerator(Optional<CacheDequeFactory> cacheDequeFactory,
                                                                          IdPrefix<Class<? extends Identity>> idPrefix,
-                                                                         DistributedLock distributedLock,
+                                                                         Optional<DistributedLock> distributedLock,
                                                                          IdPrefixBeanRepository repository){
-        return new CachingStringIdentityGenerator(repository,idPrefix,cacheDequeFactory,distributedLock);
+        return new CachingStringIdentityGenerator(repository,idPrefix,
+                cacheDequeFactory.orElse(new CacheDequeFactory(){}),
+                distributedLock.orElse(new DistributedLock(){}));
     }
+
 
 }
