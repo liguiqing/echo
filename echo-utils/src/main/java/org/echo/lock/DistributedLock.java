@@ -3,6 +3,7 @@ package org.echo.lock;
 import org.echo.exception.ThrowableToString;
 
 import java.util.concurrent.Callable;
+import java.util.function.Consumer;
 
 /**
  * 分布式锁
@@ -20,5 +21,9 @@ public interface DistributedLock<K,V> {
             ThrowableToString.logWarn(e);
             throw new LockFailureException(e.getMessage());
         }
+    }
+
+    default void lock(K key,V v, Consumer<V> consumer){
+        consumer.accept(v);
     }
 }

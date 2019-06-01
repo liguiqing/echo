@@ -12,6 +12,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Consumer;
 
 /**
  * 基于Redisson实现的分布式锁
@@ -21,7 +22,7 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 @AllArgsConstructor
 @Slf4j
-public class RedisBaseDistributedLock implements DistributedLock<Object,Object> {
+public class RedisBaseDistributedLock<K,V> implements DistributedLock<K,V> {
     private static final String LOCK_KEY = "lock:";
 
     private String lockPrefix = "echo:";
@@ -35,9 +36,8 @@ public class RedisBaseDistributedLock implements DistributedLock<Object,Object> 
     }
 
     @Override
-    public Object lock(Object key, Callable<Object> call){
-        locks.putIfAbsent(key,newLock(key));
-        Lock lock = locks.get(key);
+    public V lock(K key, Callable<V> call){
+        Lock lock = getLock(key);
         try{
             lock.lock();
             return call.call();
@@ -47,6 +47,19 @@ public class RedisBaseDistributedLock implements DistributedLock<Object,Object> 
             lock.unlock();
         }
         return null;
+    }
+
+    @Override
+    public void lock(K key, V o, Consumer<V> consumer) {
+        Lock lock = getLock(key);
+        lock.lock();
+        consumer.accept(o);
+        lock.unlock();
+    }
+
+    private Lock getLock(K key){
+        locks.putIfAbsent(key,newLock(key));
+        return locks.get(key);
     }
 
     private Lock newLock(Object key) {

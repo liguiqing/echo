@@ -22,8 +22,9 @@ class RedisBaseDistributedLockTest {
     void lock() throws Exception{
         Callable c = mock(Callable.class);
         when(c.call()).thenReturn("aa").thenThrow(NullPointerException.class);
-        DistributedLock iLock = new DistributedLock(){};
+        DistributedLock<String,String> iLock = new DistributedLock(){};
         assertEquals("aa", iLock.lock("bb",c));
+        iLock.lock("aa","AA",s -> assertEquals("AA",s));
         assertThrows(RuntimeException.class,()->iLock.lock("cc", c));
 
         RedissonClient redissonClient = mock(RedissonClient.class);
@@ -34,8 +35,9 @@ class RedisBaseDistributedLockTest {
         when(redissonClient.getFairLock(any(String.class))).thenReturn(lock);
         doNothing().when(lock).lock();
         when(lock.tryLock(any(Long.class), eq(TimeUnit.SECONDS))).thenReturn(false).thenReturn(false).thenReturn(true);
-        RedisBaseDistributedLock distributedLock = new RedisBaseDistributedLock(redissonClient);
+        RedisBaseDistributedLock<String,String> distributedLock = new RedisBaseDistributedLock(redissonClient);
         distributedLock.lock("aa",()->"");
+        distributedLock.lock("aa","aa",s -> assertEquals("aa",s));
 
         distributedLock.lock("aa",()->"");
         when(lock.tryLock(any(Long.class), eq(TimeUnit.SECONDS))).thenReturn(false);
@@ -44,16 +46,13 @@ class RedisBaseDistributedLockTest {
         when(lock.tryLock(any(Long.class),any(TimeUnit.class))).thenThrow(new InterruptedException());
         distributedLock.lock("aa",()->"");
 
+        RedisBaseDistributedLock<String,RedisLockTestBean> distributedLock2 = new RedisBaseDistributedLock(redissonClient);
         RedisLockTestBean bean1 = new RedisLockTestBean(1L,"Test");
-        distributedLock.lock(bean1,()->"");
+        distributedLock2.lock("aa",bean1,(b)->b.fetch());
 
-        RedisBaseDistributedLock distributedLock1 = new RedisBaseDistributedLock("echo",null);
+        RedisBaseDistributedLock<String,String> distributedLock1 = new RedisBaseDistributedLock("echo",null);
         distributedLock1.lock("aa",()->"");
-
         distributedLock1.lock("aa",()->"");
-
-        bean1 = new RedisLockTestBean(1L,"Test");
-        distributedLock1.lock(bean1,()->"");
         assertNull(distributedLock1.lock("AA", c));
 
         assertThrows(LockFailureException.class,()->{throw new LockFailureException("aa");});
