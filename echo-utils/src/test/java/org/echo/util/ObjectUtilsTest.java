@@ -20,6 +20,7 @@
 
 package org.echo.util;
 
+import org.echo.test.PrivateConstructors;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -56,5 +57,7 @@ class ObjectUtilsTest {
 
         ClassUtilsTestBean cu = ObjectUtils.deepClone(new ClassUtilsTestBean());
         assertNull(cu);
+
+        assertThrows(Exception.class, ()->new PrivateConstructors().exec(ObjectUtils.class));
     }
 }
