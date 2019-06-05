@@ -28,7 +28,7 @@ import java.time.LocalDate;
 
 /**
  * <p>
- * TODO
+ *
  * </P>
  *
  * @author liguiqing
@@ -37,7 +37,7 @@ import java.time.LocalDate;
  **/
 @AllArgsConstructor
 @Getter
-public class LoaderTestBean {
+class LoaderTestBean {
     private String name;
 
     private Long vale;
