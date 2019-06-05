@@ -23,7 +23,6 @@ package org.echo.data.load;
 
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.echo.exception.ThrowableToString;
 import org.echo.lock.DistributedLock;
 import org.echo.util.CollectionsUtil;
 import org.springframework.jdbc.core.JdbcOperations;
@@ -31,26 +30,27 @@ import org.springframework.jdbc.core.JdbcOperations;
 import java.sql.ResultSet;
 import java.util.*;
 import java.util.concurrent.LinkedBlockingDeque;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.ReentrantLock;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
- * <p>
+ * <pre>
  * 基于Jdbc和Deque的并支持延迟数据加载器.
- * 即一次只加载指定数据量的数据，当数据消耗到符合loaderStrategy时，再加载其他数据.依次，直到数据加载完毕　
+ * 即一次只加载指定数据量的数据，当数据消耗到满足loaderStrategy时，再加载指定数据量的数据.依次，直到数据加载完毕
  * 数据集合特性同于{@link Deque}
- * </P>
+ * 如果使用前不调用{@link #setResult(Deque)},将使用{@link LinkedBlockingDeque}作为数据存储容器
+ * 如果在使用过程中调用{@link #setResult(Deque)},将重新进行初始化，数据从新加载
+ * </pre>
  *
  * @author liguiqing
  * @date 2019-05-31 21:12
  * @since V1.0.0
- * @param <E> the type of elements held in this JdbcLazyDequeDataLoader
+ * @param <T> the type of elements held in this JdbcLazyDequeDataLoader
  **/
 @Slf4j
-public class JdbcLazyDequeDataLoader<E> implements DataLoader<E> {
+public class JdbcLazyDequeDataLoader<T> implements DataLoader<T> {
     private static final String LOCK_KEY = UUID.randomUUID().toString();
 
     private JdbcOperations jdbc;
@@ -63,67 +63,46 @@ public class JdbcLazyDequeDataLoader<E> implements DataLoader<E> {
 
     private int maxCapacity ;
 
-    private Function<? super ResultSet,E> extractor;
+    private Function<? super ResultSet,T> extractor;
 
     private String sql;
 
     private Object[] sqlArgs;
 
-    private Deque<E> result;
+    private Deque<T> result;
 
     @Setter
     private DistributedLock<String, JdbcLazyDequeDataLoader> lock;
 
     //数据加载策略
     @Setter
-    private Predicate<Collection<E>> loaderStrategy;
+    private Predicate<Collection<T>> loaderStrategy ;
 
-    public JdbcLazyDequeDataLoader(JdbcOperations jdbc, Function<? super ResultSet, E> extractor, String sql) {
+    public JdbcLazyDequeDataLoader(JdbcOperations jdbc, Function<? super ResultSet, T> extractor, String sql) {
         this(jdbc, 1000, extractor, sql);
     }
 
-    public JdbcLazyDequeDataLoader(JdbcOperations jdbc, int maxCapacity, Function<? super ResultSet, E> extractor, String sql) {
+    public JdbcLazyDequeDataLoader(JdbcOperations jdbc, int maxCapacity, Function<? super ResultSet, T> extractor, String sql) {
         this(jdbc, maxCapacity, extractor, sql, Optional.empty());
     }
 
-    public JdbcLazyDequeDataLoader(JdbcOperations jdbc, int maxCapacity, Function<? super ResultSet, E> extractor, String sql, Optional<Object[]> args) {
+    public JdbcLazyDequeDataLoader(JdbcOperations jdbc, int maxCapacity, Function<? super ResultSet, T> extractor, String sql, Optional<Object[]> args) {
         this.jdbc = jdbc;
         this.maxCapacity = maxCapacity;
         this.extractor = extractor;
         this.sql = sql;
-        this.sqlArgs = args.orElse(new Object[]{this.first,this.maxCapacity});
-        this.lock = new DistributedLock<>(){
-
-            private ReentrantLock lock = new ReentrantLock();
-
-            @Override
-            public void lock(String key, JdbcLazyDequeDataLoader jdbcDequeDataLoader, Consumer<JdbcLazyDequeDataLoader> consumer) {
-                try{
-                    if(lock.tryLock(2,TimeUnit.SECONDS)){
-                        consumer.accept(jdbcDequeDataLoader);
-                    }
-                }catch (Exception e){
-                    log.warn(ThrowableToString.toString(e));
-                }finally {
-                    lock.unlock();
-                }
-            }
-        };
+        this.lock = new DataLoaderReentrantDistributedLock();
         this.loaderStrategy = c-> CollectionsUtil.isNullOrEmpty(result);
-        this.ensureSize();
-
+        this.extendArgs(args.orElse(new Object[]{}));
+        this.ensureSize(args.orElse(new Object[]{}));
     }
 
     @Override
     public void load() {
         this.lock.lock(LOCK_KEY + "_load",this,self->{
-            if(self.first == 0)
-                return;
-
             if(Objects.isNull(this.result))
-                self.result = new LinkedBlockingDeque<>();
+                self.setResult(new LinkedBlockingDeque<>());
 
-            self.result.clear();
             self.loadData();
         });
     }
@@ -134,15 +113,13 @@ public class JdbcLazyDequeDataLoader<E> implements DataLoader<E> {
     }
 
     @Override
-    public E next() {
-        if(this.loaderStrategy.test(this.result)){
-            this.lock.lock(LOCK_KEY,this, JdbcLazyDequeDataLoader::loadData);
-        }
+    public T next() {
+        loadMore();
 
         if(this.result.isEmpty())
             throw new NoSuchElementException();
 
-        E e = this.result.pop();
+        T e = this.result.pop();
         this.popTotal ++;
         return e;
     }
@@ -152,22 +129,49 @@ public class JdbcLazyDequeDataLoader<E> implements DataLoader<E> {
         return this.size;
     }
 
-    private void ensureSize(){
-        //TODO
-        this.size = this.maxCapacity * 10 + 1;
+    private void ensureSize(Object[] args){
+        String countSql = String.format("select count(1) ct from (%s) a",this.sql);
+        log.debug("Get size of {} with {}",countSql,Arrays.deepToString(args));
+        this.size = jdbc.queryForObject(countSql, (r,i)->r.getInt("ct"),args);
     }
 
-    public void setResult(Deque<E> result){
-        this.first = 0;
-        this.result.clear();
+    public void setResult(Deque<T> result){
+        Objects.requireNonNull(result, "DataLoader result not null!");
+        if(!Objects.isNull(this.result)){
+            this.first = 0;
+            this.popTotal = 0;
+            this.result.clear();
+        }
         this.result = result;
+        this.loadData();
+    }
+
+    /**
+     * 剩余数量
+     * @return number of left
+     */
+    public int left(){
+        return this.size - this.popTotal;
+    }
+
+    private void extendArgs(Object[] args){
+        var allArgs = Stream.of(args).collect(Collectors.toList());
+        allArgs.add(this.first);
+        allArgs.add(this.maxCapacity);
+        this.sqlArgs = allArgs.toArray();
     }
 
     private void loadData(){
         var list = this.jdbc.query(this.sql,(r, i)->this.extractor.apply(r), this.sqlArgs);
-        if(CollectionsUtil.isNullOrEmpty(list))
-            return ;
+        if(CollectionsUtil.isNullOrEmpty(list)) return;
+        log.debug("Load data {}",list.size());
         this.first += list.size();
         this.result.addAll(list);
+    }
+
+    private void loadMore(){
+        if(this.loaderStrategy.test(this.result)){
+            this.lock.lock(LOCK_KEY,this, JdbcLazyDequeDataLoader::loadData);
+        }
     }
 }

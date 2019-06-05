@@ -18,26 +18,33 @@
  *
  */
 
-package org.echo.data.collection;
+package org.echo.data.index;
 
 
-import java.util.stream.Stream;
+import java.io.Serializable;
 
 /**
  * <p>
- * 数据集
+ * 统计/分析指标
  * </P>
- * @param <T> 数据对象
  *
  * @author liguiqing
- * @date 2019-05-31 20:54
+ * @date 2019-06-04 07:54
  * @since V1.0.0
+ * @param <T> the type of the input element
+ * @param <R> the type of the output element
  **/
-public interface DataSet<T> {
+public interface Index<T, R> extends Serializable {
 
-    Stream<T> stream();
+    //指标名称
+    String getTitle();
 
-    T next();
+    //指标结果
+    R getValue();
 
-    long size();
+    void combine(Index other);
+
+    void cal(T e);
+
+    Index deepClone();
 }

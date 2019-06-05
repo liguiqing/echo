@@ -18,50 +18,23 @@
  *
  */
 
-package org.echo.data.collection;
+package org.echo.data;
 
 
 import lombok.AllArgsConstructor;
-import org.echo.data.load.DataLoader;
-
-import java.util.Iterator;
-import java.util.Spliterators;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 /**
  * <p>
- * 可迭代数据集
+ * TODO
  * </P>
  *
  * @author liguiqing
- * @date 2019-05-31 20:55
+ * @date 2019-06-04 09:20
  * @since V1.0.0
- * @param <T> the type of elements held in this IterableDataSet
  **/
 @AllArgsConstructor
-public class IterableDataSet<T> implements DataSet<T>, Iterator<T> {
+public class KeyGen {
+    int index;
 
-    private DataLoader<T> dataLoader;
-
-    @Override
-    public Stream<T> stream(){
-        this.dataLoader.load();
-        return StreamSupport.stream(Spliterators.spliterator(this,this.size(), 0), false);
-    }
-
-    @Override
-    public boolean hasNext(){
-        return dataLoader.hasNext();
-    }
-
-    @Override
-    public T next() {
-        return this.dataLoader.next();
-    }
-
-    @Override
-    public long size() {
-        return this.dataLoader.size();
-    }
+    String key;
 }

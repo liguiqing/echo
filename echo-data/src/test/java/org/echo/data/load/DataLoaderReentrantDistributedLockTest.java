@@ -18,26 +18,21 @@
  *
  */
 
-package org.echo.data.collection;
+package org.echo.data.load;
 
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
-import java.util.stream.Stream;
+import static org.mockito.Mockito.mock;
 
-/**
- * <p>
- * 数据集
- * </P>
- * @param <T> 数据对象
- *
- * @author liguiqing
- * @date 2019-05-31 20:54
- * @since V1.0.0
- **/
-public interface DataSet<T> {
+@DisplayName("DataLoaderReentrantDistributedLock Test")
+class DataLoaderReentrantDistributedLockTest {
 
-    Stream<T> stream();
-
-    T next();
-
-    long size();
+    @Test
+    void lock() {
+        DataLoader dataLoader = mock(DataLoader.class);
+        DataLoaderReentrantDistributedLock<String,DataLoader> lock = new DataLoaderReentrantDistributedLock<>();
+        lock.lock("A",dataLoader,(i)->i.hasNext());
+        lock.lock("A",dataLoader,(i)->{throw new NullPointerException();});
+    }
 }

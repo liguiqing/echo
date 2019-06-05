@@ -31,12 +31,13 @@ import java.util.Iterator;
  * @author liguiqing
  * @date 2019-05-31 20:52
  * @since V1.0.0
- * @param <E> the type of elements held in this DataLoader
+ * @param <T> the type of elements held in this DataLoader
  **/
-public interface DataLoader<E> extends Iterator<E> {
+public interface DataLoader<T> extends Iterator<T> {
 
     /**
      * load elements of E
+     * 每调用一次数据都从头开始加载，所有的数据都会被清理掉
      */
     void load();
 

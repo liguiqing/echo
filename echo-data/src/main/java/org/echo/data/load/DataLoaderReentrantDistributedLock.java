@@ -18,50 +18,47 @@
  *
  */
 
-package org.echo.data.collection;
+package org.echo.data.load;
 
 
 import lombok.AllArgsConstructor;
-import org.echo.data.load.DataLoader;
+import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.echo.exception.ThrowableToString;
+import org.echo.lock.DistributedLock;
 
-import java.util.Iterator;
-import java.util.Spliterators;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Consumer;
 
 /**
  * <p>
- * 可迭代数据集
+ * 服务于DataLoader的可重入锁
  * </P>
  *
  * @author liguiqing
- * @date 2019-05-31 20:55
+ * @date 2019-06-03 07:36
  * @since V1.0.0
- * @param <T> the type of elements held in this IterableDataSet
  **/
+@Slf4j
+@NoArgsConstructor
 @AllArgsConstructor
-public class IterableDataSet<T> implements DataSet<T>, Iterator<T> {
+public class DataLoaderReentrantDistributedLock<K extends String,T extends DataLoader> implements DistributedLock<K,T> {
 
-    private DataLoader<T> dataLoader;
+    private ReentrantLock lock = new ReentrantLock();
 
-    @Override
-    public Stream<T> stream(){
-        this.dataLoader.load();
-        return StreamSupport.stream(Spliterators.spliterator(this,this.size(), 0), false);
-    }
+    private  long timeout = 2;
 
     @Override
-    public boolean hasNext(){
-        return dataLoader.hasNext();
-    }
-
-    @Override
-    public T next() {
-        return this.dataLoader.next();
-    }
-
-    @Override
-    public long size() {
-        return this.dataLoader.size();
+    public void lock(K key, T t, Consumer<T> consumer) {
+        try{
+            if(lock.tryLock(timeout, TimeUnit.SECONDS)){
+                consumer.accept(t);
+            }
+        }catch (Exception e){
+            log.warn(ThrowableToString.toString(e));
+        }finally {
+            lock.unlock();
+        }
     }
 }

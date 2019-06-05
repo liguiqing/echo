@@ -18,50 +18,29 @@
  *
  */
 
-package org.echo.data.collection;
+package org.echo.data.load;
 
 
 import lombok.AllArgsConstructor;
-import org.echo.data.load.DataLoader;
+import lombok.Getter;
 
-import java.util.Iterator;
-import java.util.Spliterators;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
+import java.time.LocalDate;
 
 /**
  * <p>
- * 可迭代数据集
+ * TODO
  * </P>
  *
  * @author liguiqing
- * @date 2019-05-31 20:55
+ * @date 2019-06-03 08:12
  * @since V1.0.0
- * @param <T> the type of elements held in this IterableDataSet
  **/
 @AllArgsConstructor
-public class IterableDataSet<T> implements DataSet<T>, Iterator<T> {
+@Getter
+public class LoaderTestBean {
+    private String name;
 
-    private DataLoader<T> dataLoader;
+    private Long vale;
 
-    @Override
-    public Stream<T> stream(){
-        this.dataLoader.load();
-        return StreamSupport.stream(Spliterators.spliterator(this,this.size(), 0), false);
-    }
-
-    @Override
-    public boolean hasNext(){
-        return dataLoader.hasNext();
-    }
-
-    @Override
-    public T next() {
-        return this.dataLoader.next();
-    }
-
-    @Override
-    public long size() {
-        return this.dataLoader.size();
-    }
+    private LocalDate date;
 }
