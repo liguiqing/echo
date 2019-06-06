@@ -11,7 +11,7 @@ import org.redisson.api.RedissonClient;
 
 @Slf4j
 public class RedisClientUtils {
-    private static final String RedisAliveTestingKey = "RedisAliveTestingKey";
+    private static final String REDIS_ALIVE_TESTING_KEY = "RedisAliveTestingKey";
 
     private RedisClientUtils(){
         throw new AssertionError("No org.echo.util.RedisClientUtils instances for you!");
@@ -22,7 +22,7 @@ public class RedisClientUtils {
             return false;
 
         //更理想的实现是定时去侦测
-        RAtomicLong rAtomicLong = redissonClient.getAtomicLong(RedisAliveTestingKey);
+        RAtomicLong rAtomicLong = redissonClient.getAtomicLong(REDIS_ALIVE_TESTING_KEY);
         rAtomicLong.expireAt(1L);
         return true;
     }

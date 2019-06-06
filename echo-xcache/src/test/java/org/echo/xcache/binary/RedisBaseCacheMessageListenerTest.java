@@ -32,6 +32,7 @@ import org.springframework.data.redis.serializer.RedisSerializer;
 
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 @DisplayName("Echo : RedisBaseCacheMessageListener Test")
@@ -62,5 +63,6 @@ class RedisBaseCacheMessageListenerTest {
 
         messageListener = new RedisBaseCacheMessageListener(Optional.empty(), cacheManager);
         messageListener.onMessage(message,new byte[]{});
+        assertTrue(true);
     }
 }

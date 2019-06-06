@@ -75,6 +75,7 @@ class StatelessWebSessionManagerTest {
         sessionManager.onStart(session,sessionContext);
         sessionManager.onStart(session,sessionContext);
         sessionManager.onStart(session,sessionContext);
+        assertNotNull(session.getId());
     }
 
     @Test
@@ -105,6 +106,7 @@ class StatelessWebSessionManagerTest {
 
         SessionKey sessionKey1 = mock(SessionKey.class);
         sessionManager.onStop(session,sessionKey1);
+        assertNotNull(session.getId());
     }
 
     @Test

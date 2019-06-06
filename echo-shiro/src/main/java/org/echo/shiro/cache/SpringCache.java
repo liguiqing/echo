@@ -2,7 +2,6 @@ package org.echo.shiro.cache;
 
 import lombok.AllArgsConstructor;
 import org.apache.shiro.cache.Cache;
-import org.apache.shiro.cache.CacheException;
 import org.echo.xcache.NativeCaches;
 
 import java.util.Collection;
@@ -18,26 +17,26 @@ public class SpringCache<K, V> implements Cache<K, V> {
     private org.springframework.cache.Cache proxyCache;
 
     @Override
-    public V get(K k) throws CacheException {
+    public V get(K k) {
         Object o = proxyCache.get(k);
         return o == null?null:(V)((org.springframework.cache.Cache.ValueWrapper) o).get();
     }
 
     @Override
-    public V put(K k, V v) throws CacheException {
+    public V put(K k, V v)  {
         this.proxyCache.put(k,v);
         return v;
     }
 
     @Override
-    public V remove(K k) throws CacheException {
+    public V remove(K k){
         V v = get(k);
         this.proxyCache.evict(k);
         return v;
     }
 
     @Override
-    public void clear() throws CacheException {
+    public void clear(){
         this.proxyCache.clear();
     }
 

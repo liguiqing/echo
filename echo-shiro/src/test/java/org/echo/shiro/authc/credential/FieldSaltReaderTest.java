@@ -25,8 +25,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @DisplayName("FieldSaltReader Test")
@@ -37,23 +36,19 @@ class FieldSaltReaderTest {
     @Test
     void doRead() {
         Decepticons decepticons = new Decepticons("salt");
-        FieldSaltReader fieldSaltReader = new FieldSaltReader();
+
         assertTrue(true);
-        assertEquals("salt", fieldSaltReader.getSalt(decepticons));
+        assertEquals("salt", new FieldSaltReader().getSalt(decepticons));
         SaltReader other = mock(SaltReader.class);
         when(other.getSalt(any())).thenReturn("").thenReturn("salt");
-        fieldSaltReader = new FieldSaltReader("salt", Optional.empty());
-        assertEquals("salt", fieldSaltReader.getSalt(decepticons));
-        fieldSaltReader = new FieldSaltReader("salt1", Optional.of(other));
-        assertEquals("", fieldSaltReader.getSalt(decepticons));
-        assertEquals("salt", fieldSaltReader.getSalt(decepticons));
 
-        fieldSaltReader = new FieldSaltReader("salt");
+        assertEquals("salt", new FieldSaltReader("salt", Optional.empty()).getSalt(decepticons));
+        assertThrows(IllegalArgumentException.class, ()->new FieldSaltReader("salt1", Optional.of(other)).getSalt(decepticons));
+
         assertTrue(true);
-        assertEquals("salt", fieldSaltReader.getSalt(decepticons));
+        assertEquals("salt", new FieldSaltReader("salt").getSalt(decepticons));
 
-        SaltReader reader = new SaltReader() {
-        };
+        SaltReader reader = new SaltReader() {};
         assertEquals("", reader.getSalt(decepticons));
         reader = new AbstractSaltReader() {
             @Override
@@ -63,7 +58,8 @@ class FieldSaltReaderTest {
         };
 
         assertEquals("", reader.getSalt(decepticons));
-        ((AbstractSaltReader) reader).other = fieldSaltReader;
+
+        ((AbstractSaltReader) reader).other = new FieldSaltReader("salt");
         assertEquals("salt", reader.getSalt(decepticons));
 
     }

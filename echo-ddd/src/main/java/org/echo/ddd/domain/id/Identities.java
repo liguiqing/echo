@@ -1,7 +1,7 @@
 package org.echo.ddd.domain.id;
 
 import lombok.extern.slf4j.Slf4j;
-import org.echo.exception.ThrowableToString;
+import org.echo.util.ClassUtils;
 
 import java.io.Serializable;
 import java.util.UUID;
@@ -54,13 +54,8 @@ public class Identities {
     }
 
     public static <T extends Identity> T genId(T t){
-        try {
-            Identity id = t.getClass().newInstance();
-            id.setId(generator.genId(id.getClass()));
-            return (T)id;
-        } catch (Exception e) {
-            log.error(ThrowableToString.toString(e));
-            throw new IllegalArgumentException(e);
-        }
+        Identity id = ClassUtils.newInstanceOf(t.getClass());
+        id.setId(generator.genId(id.getClass()));
+        return (T)id;
     }
 }

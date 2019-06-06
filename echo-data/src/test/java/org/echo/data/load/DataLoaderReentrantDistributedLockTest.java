@@ -23,6 +23,7 @@ package org.echo.data.load;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.mock;
 
 @DisplayName("DataLoaderReentrantDistributedLock Test")
@@ -34,5 +35,6 @@ class DataLoaderReentrantDistributedLockTest {
         DataLoaderReentrantDistributedLock<String,DataLoader> lock = new DataLoaderReentrantDistributedLock<>();
         lock.lock("A",dataLoader,(i)->i.hasNext());
         lock.lock("A",dataLoader,(i)->{throw new NullPointerException();});
+        assertNotNull(lock);
     }
 }

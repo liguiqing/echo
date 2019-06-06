@@ -50,10 +50,10 @@ public class FieldSaltReader extends AbstractSaltReader{
     }
 
     @Override
-    protected String doRead(Object o) throws IllegalArgumentException{
+    protected String doRead(Object o){
         try {
             return FieldUtils.readField(o,field,true).toString();
-        } catch (IllegalAccessException e) {
+        } catch (Exception e) {
             throw new IllegalArgumentException(e.getMessage());
         }
     }

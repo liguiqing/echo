@@ -28,8 +28,7 @@ import org.junit.jupiter.api.RepeatedTest;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 
 @DisplayName("BiIndex Test")
@@ -37,6 +36,8 @@ class BiIndexTest {
 
     @RepeatedTest(10)
     void test(){
+        BiIndex i = new BiIndex();
+        assertThrows(NullPointerException.class,()->i.getValue());
         var r1 = new BiIndex<Integer, IndexTestBean,Integer>("T1",()->0);
 
         var rs = IndexTestBean.buildData(1, 11,Stream.of(new KeyGen(3, "S2"), new KeyGen(1, "S1")).collect(Collectors.toList()));

@@ -41,7 +41,7 @@ import static org.mockito.Mockito.when;
 
 /**
  * <p>
- * TODO
+ * DataIntegration Test
  * </P>
  *
  * @author liguiqing
@@ -78,13 +78,13 @@ class DataIntegrationTest {
 
         when(jdbc.query(any(String.class), any(RowMapper.class), any(Object.class))).thenReturn(list1,list2,list3,list4,list5,list6).thenReturn(null);
         JdbcLazyDequeDataLoader<IndexTestBean> dataLoader = new JdbcLazyDequeDataLoader<>(jdbc,(r) -> list1.get(0),"select 1 as value from dual");
-        IterableDataSet<IndexTestBean> dataSet = new IterableDataSet<>(dataLoader);
         IndexGroup<IndexTestBean> ig = new IndexGroup<>("T1");
 
         ig.append(Indexes.total("Total"));
         ig.append(Indexes.sumOfDouble("Sum",(IndexTestBean t)->t.getS()));
         ig.append(Indexes.average("Avg",(IndexTestBean t)->t.getS()));
 
+        IterableDataSet<IndexTestBean> dataSet = new IterableDataSet<>(dataLoader);
         IndexGroup<IndexTestBean> nig = dataSet.stream().parallel().collect(ig.toCollector());
         nig.getIndexes().forEach(i->{
             switch (i.getTitle()){

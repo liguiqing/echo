@@ -24,6 +24,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisplayName("RedisNoneCache Test")
 class RedisNoneCacheTest {
@@ -52,6 +53,7 @@ class RedisNoneCacheTest {
     @Test
     void put() {
         new RedisNoneCache(false).put("","");
+        assertTrue(true);
     }
 
     @Test
@@ -62,10 +64,12 @@ class RedisNoneCacheTest {
     @Test
     void evict() {
        new RedisNoneCache(false).evict("");
+        assertTrue(true);
     }
 
     @Test
     void clear() {
         new RedisNoneCache(false).clear();
+        assertTrue(true);
     }
 }

@@ -22,7 +22,6 @@ package org.echo.shiro.authc.credential;
 
 
 import lombok.extern.slf4j.Slf4j;
-import org.echo.exception.ThrowableToString;
 
 /**
  * <p>
@@ -39,13 +38,7 @@ public abstract class AbstractSaltReader implements SaltReader{
 
     @Override
     public String getSalt(Object o) {
-        String salt = "";
-        try {
-            salt = doRead(o);
-        } catch (IllegalArgumentException e) {
-            log.warn(ThrowableToString.toString(e));
-        }
-        return readFromOtherIfNecessary(salt,o);
+        return readFromOtherIfNecessary(doRead(o),o);
     }
 
     private String readFromOtherIfNecessary(String salt,Object o) {
@@ -64,5 +57,5 @@ public abstract class AbstractSaltReader implements SaltReader{
      * @param o Source of salt value Object
      * @return If read success return it else return ""
      */
-    protected abstract String doRead(Object o) throws IllegalArgumentException;
+    protected abstract String doRead(Object o);
 }

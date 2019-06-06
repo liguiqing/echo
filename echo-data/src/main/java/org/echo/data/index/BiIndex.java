@@ -53,7 +53,7 @@ public class BiIndex<A, T, R extends Serializable> implements Index<T, R> {
 
     private transient A container;
 
-    private transient BiFunction<A, A, A> combiner;
+    private transient BinaryOperator<A> combiner;
 
     protected BiIndex(){}
 
@@ -61,29 +61,29 @@ public class BiIndex<A, T, R extends Serializable> implements Index<T, R> {
         this(title, supplier,(a1,a2)->a1);
     }
 
-    public BiIndex(String title, Supplier<A> supplier, BiFunction<A, A, A> combiner) {
+    public BiIndex(String title, Supplier<A> supplier, BinaryOperator<A> combiner) {
         this(title, supplier, (t, u) -> {},combiner);
     }
 
-    public BiIndex(String title, Supplier<A> supplier, BiConsumer<A, T> accumulator, BiFunction<A, A, A> combiner) {
+    public BiIndex(String title, Supplier<A> supplier, BiConsumer<A, T> accumulator, BinaryOperator<A> combiner) {
         this(title, t -> true, supplier, accumulator,combiner);
     }
 
     public BiIndex(String title, Supplier<A> supplier, BiConsumer<A, T> accumulator,
-                   BiFunction<A, A, A> combiner,
+                   BinaryOperator<A> combiner,
                    Function<A, R> finisher) {
         this(title, t -> true, supplier, accumulator,combiner,finisher);
     }
 
     public BiIndex(String title, Predicate<T> condition, Supplier<A> supplier, BiConsumer<A, T> accumulator,
-                   BiFunction<A, A, A> combiner) {
+                   BinaryOperator<A> combiner) {
         this(title, condition, supplier, accumulator, combiner,i -> (R) i);
     }
 
     public BiIndex(String title, Predicate<T> condition,
                    Supplier<A> supplier,
                    BiConsumer<A, T> accumulator,
-                   BiFunction<A, A, A> combiner,
+                   BinaryOperator<A> combiner,
                    Function<A, R> finisher) {
         this.title = title;
         this.condition = condition;

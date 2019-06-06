@@ -60,7 +60,7 @@ public class EnumFieldConverter implements UserType, DynamicParameterizedType {
     }
 
     @Override
-    public Object nullSafeGet(ResultSet rs, String[] names, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
+    public Object nullSafeGet(ResultSet rs, String[] names, SharedSessionContractImplementor session, Object owner) throws SQLException {
         String value = rs.getString(names[0]);
         if (value == null) {
             return null;
@@ -86,7 +86,7 @@ public class EnumFieldConverter implements UserType, DynamicParameterizedType {
     }
 
     @Override
-    public void nullSafeSet(PreparedStatement st, Object value, int index, SharedSessionContractImplementor session) throws HibernateException, SQLException {
+    public void nullSafeSet(PreparedStatement st, Object value, int index, SharedSessionContractImplementor session) throws  SQLException {
         if (value == null) {
             st.setNull(index, SQL_TYPES[0]);
             return;
@@ -119,7 +119,7 @@ public class EnumFieldConverter implements UserType, DynamicParameterizedType {
     }
 
     @Override
-    public Object deepCopy(Object value) throws HibernateException {
+    public Object deepCopy(Object value){
         return value;
     }
 
@@ -129,17 +129,17 @@ public class EnumFieldConverter implements UserType, DynamicParameterizedType {
     }
 
     @Override
-    public Serializable disassemble(Object value) throws HibernateException {
+    public Serializable disassemble(Object value){
         return (Serializable) value;
     }
 
     @Override
-    public Object assemble(Serializable cached, Object owner) throws HibernateException {
+    public Object assemble(Serializable cached, Object owner) {
         return cached;
     }
 
     @Override
-    public Object replace(Object original, Object target, Object owner) throws HibernateException {
+    public Object replace(Object original, Object target, Object owner){
         return original;
     }
 }

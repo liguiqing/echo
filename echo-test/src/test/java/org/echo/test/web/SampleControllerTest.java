@@ -1,5 +1,6 @@
 package org.echo.test.web;
 
+import org.assertj.core.util.Lists;
 import org.echo.TestBean;
 import org.echo.test.SampleTestServiceInterface;
 import org.junit.jupiter.api.DisplayName;
@@ -7,13 +8,20 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.ContextHierarchy;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 /**
  * @author Liguiqing
@@ -37,20 +45,25 @@ class SampleControllerTest extends AbstractSpringControllerTest{
         TestBean tb = new TestBean().setMaster("master");
         String content = toJsonString(tb);
         this.mvc.perform(post("/test").contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON).content(content)).andDo(print());
-//                .andDo(print())
-//                .andExpect(jsonPath("$.bean.master", is(tb.getMaster())))
-//                .andExpect(jsonPath("$.uuid", is("uuid")))
-//                .andExpect(view().name("testPost"));
+                .accept(MediaType.APPLICATION_JSON).content(content)).andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(view().name("testPost"));
     }
 
     @Test
     void onGet()throws Exception{
+        TestBean tb = new TestBean().setMaster("master");
+        TestBean tb2 = new TestBean().setMaster("master1");
+        when(serviceInterface.getSomething(any(String.class))).thenReturn(tb);
+        List<TestBean> beans = Lists.newArrayList();
+        beans.add(tb);
+        beans.add(tb2);
+        when(serviceInterface.findSometingAll()).thenReturn(beans);
         this.mvc.perform(get("/test/master").contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON).param("excludes","master")).andDo(print());
-//                .andExpect(jsonPath("$.bean.master", is("master")))
-//                .andExpect(jsonPath("$.result[0].master", is("master")))
-//                .andExpect(view().name("testGet"));
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                .param("excludes","master")).andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(view().name("testGet"));
     }
 
     @Test
@@ -58,10 +71,9 @@ class SampleControllerTest extends AbstractSpringControllerTest{
         TestBean tb = new TestBean().setMaster("master");
         String content = toJsonString(tb);
         this.mvc.perform(put("/test").contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON).content(content)).andDo(print());
-//                .andExpect(jsonPath("$.bean.master", is(tb.getMaster())))
-//                .andExpect(jsonPath("$.uuid", is("uuid")))
-//                .andExpect(view().name("testPost"));
+                .accept(MediaType.APPLICATION_JSON).content(content)).andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(view().name("testPost"));
     }
 
     @Test
@@ -69,10 +81,9 @@ class SampleControllerTest extends AbstractSpringControllerTest{
         TestBean tb = new TestBean().setMaster("master");
         String content = toJsonString(tb);
         this.mvc.perform(delete("/test").contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON).content(content)).andDo(print());
-//                .andExpect(jsonPath("$.bean.master", is(tb.getMaster())))
-//                .andExpect(jsonPath("$.uuid", is("uuid")))
-//                .andExpect(view().name("testPost"));
+                .accept(MediaType.APPLICATION_JSON).content(content)).andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(view().name("testPost"));
     }
 
     @Test

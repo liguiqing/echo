@@ -132,12 +132,7 @@ public class Junit5Test {
             //Thread.sleep(100);
         });
     }
-
-    @Test
-    public void testImgmerge(){
-
-    }
-
+    
     private static String greeting() {
         return "Hello, World!";
     }

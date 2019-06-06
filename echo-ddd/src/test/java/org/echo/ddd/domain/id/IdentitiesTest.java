@@ -41,7 +41,6 @@ class IdentitiesTest {
         assertTrue(id3 == 10000L);
         Long id4 = Identities.genId(AssociationId.class);
         assertTrue(id4.compareTo(10010L) == 0);
-        assertThrows(IllegalArgumentException.class, () -> assertFalse(Identities.genId(new AssociationId()).getId().startsWith("ABD")));
         assertThrows(Exception.class,()->new PrivateConstructors().exec(Identities.class));
 
         assertThrows(IdPrefixGeneratorNotFoundException.class, () -> {throw new IdPrefixGeneratorNotFoundException();});

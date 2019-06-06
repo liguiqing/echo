@@ -41,7 +41,7 @@ public class PrimusRealm extends AuthorizingRealm {
     }
 
     @Override
-    protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
+    protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token)  {
         UsernamePasswordToken userToken = (UsernamePasswordToken) token;
         String name = userToken.getUsername();
         if(!megatron.getName().equals(name)){

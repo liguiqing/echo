@@ -15,8 +15,8 @@ public class EventHandlers {
         this.eventBus = new EventBus() {};
     }
 
-    private final static class Holder {
-        private final static EventHandlers instance = new EventHandlers();
+    private static final class Holder {
+        private static final  EventHandlers instance = new EventHandlers();
     }
 
     public static EventHandlers getInstance() {

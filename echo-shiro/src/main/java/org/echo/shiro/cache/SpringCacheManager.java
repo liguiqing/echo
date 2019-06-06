@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.cache.AbstractCacheManager;
 import org.apache.shiro.cache.Cache;
-import org.apache.shiro.cache.CacheException;
 import org.echo.shiro.config.ShiroProperties;
 
 /**
@@ -21,7 +20,7 @@ public class SpringCacheManager extends AbstractCacheManager {
     private ShiroProperties properties;
 
     @Override
-    protected Cache createCache(String name) throws CacheException {
+    protected Cache createCache(String name) {
         String springCacheName = properties.getCacheName(name);
         org.springframework.cache.Cache springCache =  cacheManager.getCache(springCacheName);
         return new SpringCache(springCache);

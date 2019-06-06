@@ -33,7 +33,7 @@ import org.springframework.util.StringUtils;
  * @since V1.0.0
  **/
 public class BusinessException extends RuntimeException{
-    private String code;
+    private final String code;
 
     public BusinessException(String code, String message) {
         super(message);
