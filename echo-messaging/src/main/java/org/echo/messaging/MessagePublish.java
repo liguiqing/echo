@@ -17,4 +17,23 @@
  *  under the License.
  *
  */
-package org.echo.xcache.redis;
+
+package org.echo.messaging;
+
+
+import java.io.Serializable;
+
+/**
+ * <p>
+ * 发布消息
+ * </P>
+ *
+ * @author liguiqing
+ * @date 2019-06-14 10:22
+ * @since V1.0.0
+ * @param <T> the type of the publish message
+ **/
+public interface MessagePublish<T extends Serializable> {
+
+   default void publish(String topic, T message){}
+}
