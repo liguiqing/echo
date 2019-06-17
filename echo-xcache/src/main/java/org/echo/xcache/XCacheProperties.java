@@ -18,36 +18,31 @@
  *
  */
 
-package org.echo.xcache.redis;
+package org.echo.xcache;
+
 
 import com.google.common.collect.Maps;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
-import org.echo.xcache.CacheProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 /**
- * @author Liguiqing
- * @since V1.0
- */
-
+ * <pre>
+ * 缓存配置
+ * </pre>
+ *
+ * @author liguiqing
+ * @since V1.0.0 2019-06-15 15:47
+ **/
 @NoArgsConstructor
-@Slf4j
 @Getter
 @Setter
-@Component
-@ConfigurationProperties(prefix = "redis")
-public class RedisCacheProperties implements CacheProperties {
-
-    private String name;
+@ConfigurationProperties(prefix = "echo.xcache")
+public class XCacheProperties {
 
     /** 是否存储空值，默认true，防止缓存穿透*/
     private boolean cacheNullValues = true;
@@ -59,11 +54,16 @@ public class RedisCacheProperties implements CacheProperties {
     private Map<String, Long> expires = Maps.newHashMap();
 
     /** 缓存key的前缀*/
-    private String cachePrefix = "";
+    private String cachePrefix = "echo";
 
-    private Set<String> hostsAndPorts = new HashSet<>();
+    /** 是否动态根据cacheName创建Cache的实现，默认true*/
+    private boolean dynamic = true;
 
-    private Standalone standalone = new Standalone();
+    /**是否启动二级缓存,默认值不启用.启用时必须配置redis服务**/
+    private boolean level2Enabled = false;
+
+    /** 缓存消息发布/订阅主题 **/
+    private String cacheMessageTopic = "echo:binaryCache:topic";
 
     public String getCacheName(String name){
         if(name.startsWith(this.getCachePrefix().concat(":")))

@@ -20,7 +20,9 @@
 
 package org.echo.xcache.config;
 
-import org.springframework.context.annotation.ComponentScan;
+import org.echo.redis.config.RedisBaseComponentConfiguration;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -28,7 +30,8 @@ import org.springframework.context.annotation.Configuration;
  * @since V3.0
  */
 @Configuration
-@ComponentScan(value = "org.echo.xcache.config")
+@AutoConfigureAfter(RedisBaseComponentConfiguration.class)
+@ImportAutoConfiguration(classes = {CacheConfigurations.class,SecondaryCacheConfigurations.class,RedisCacheConfigurations.class})
 public class AutoCacheConfigurations {
 
 }

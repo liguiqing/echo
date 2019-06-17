@@ -18,31 +18,22 @@
  *
  */
 
-package org.echo.xcache.redis;
+package org.echo.xcache.binary;
 
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.echo.xcache.CacheDequeFactory;
-import org.echo.xcache.XCacheProperties;
-import org.redisson.api.RedissonClient;
-import org.redisson.codec.FstCodec;
+import org.echo.xcache.message.CacheMessage;
+import org.junit.jupiter.api.Test;
 
-import java.util.Deque;
+import static org.mockito.Mockito.mock;
 
-/**
- * @author Liguiqing
- * @since V1.0
- */
-@Slf4j
-@AllArgsConstructor
-public class RedissonCacheDequeFactory implements CacheDequeFactory {
+class BinaryCacheMessageConsumeTest {
 
-    private RedissonClient redissonClient;
-
-    private  XCacheProperties cacheProperties;
-
-    @Override
-    public Deque getDeque(String cacheName) {
-        return redissonClient.getBlockingDeque(cacheProperties.getCacheName(cacheName),new FstCodec());
+    @Test
+    void consume() {
+        BinaryCacheManager cacheManager = mock(BinaryCacheManager.class);
+        BinaryCacheMessageConsume cacheMessageConsume = new BinaryCacheMessageConsume(cacheManager);
+        CacheMessage m1 = new CacheMessage("A","A","AA");
+        CacheMessage m2 = new CacheMessage("A1","A1","AB",2);
+        cacheMessageConsume.consume(m1);
+        cacheMessageConsume.consume(m2);
     }
 }

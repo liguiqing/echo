@@ -21,21 +21,18 @@
 package org.echo.xcache.config;
 
 import lombok.extern.slf4j.Slf4j;
+import org.echo.messaging.MessagePublish;
 import org.echo.xcache.CacheFactory;
+import org.echo.xcache.XCacheProperties;
 import org.echo.xcache.binary.BinaryCacheManager;
-import org.echo.xcache.binary.BinaryCacheProperties;
-import org.echo.xcache.binary.RedisBaseCacheMessageListener;
+import org.echo.xcache.binary.BinaryCacheMessageConsume;
 import org.echo.xcache.caffeine.CaffeineCacheFactory;
 import org.echo.xcache.caffeine.CaffeineCacheProperties;
-import org.echo.xcache.message.CacheMessagePusher;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.echo.xcache.message.CacheMessage;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.listener.ChannelTopic;
-import org.springframework.data.redis.listener.RedisMessageListenerContainer;
+import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
 
 import java.util.Optional;
 
@@ -47,55 +44,28 @@ import java.util.Optional;
 @Configuration
 @EnableConfigurationProperties(
         value = {
-                BinaryCacheProperties.class,
+                XCacheProperties.class,
                 CaffeineCacheProperties.class
         })
 public class SecondaryCacheConfigurations {
 
-    @Autowired
-    private BinaryCacheProperties cacheProperties;
-
-    private CacheFactory secondaryCacheFactory;
-
-    private CacheMessagePusher messagePusher;
 
     @Bean("SecondaryCacheManager")
-    public BinaryCacheManager cacheManager(Optional<CacheFactory> secondaryCacheFactory,
-                                           Optional<CacheMessagePusher> messagePusher,
+    static BinaryCacheManager cacheManager(Optional<CacheFactory> secondaryCacheFactory,
+                                           MessagePublish<CacheMessage> messagePublish,
+                                           XCacheProperties xCacheProperties,
                                            CaffeineCacheProperties caffeineCacheProperties) {
         CaffeineCacheFactory caffeineCacheFactory = new CaffeineCacheFactory(caffeineCacheProperties);
-        setSecondaryCacheFactory(caffeineCacheFactory);
-        setMessagePusher((topic,message)->log.debug("Publish nothing of {}",topic));
-        secondaryCacheFactory.ifPresent(this::setSecondaryCacheFactory);
-        messagePusher.ifPresent(this::setMessagePusher);
-        return new BinaryCacheManager(this.cacheProperties, caffeineCacheFactory,
-                this.secondaryCacheFactory,this.messagePusher);
+        return  new BinaryCacheManager(
+                xCacheProperties,
+                caffeineCacheFactory,
+                secondaryCacheFactory.orElse(caffeineCacheFactory),
+                messagePublish);
     }
 
-
-    /**
-     * 注册一个基于Redis的缓存消息处理器,可以替换为其他消息中间件来实现相同的功能
-     *
-     * @param redisTemplate RedisTemplate
-     * @param cacheManager CacheManager
-     * @return RedisMessageListenerContainer
-     */
     @Bean
-    @ConditionalOnBean(BinaryCacheManager.class)
-    public RedisMessageListenerContainer redisMessageListenerContainer(Optional<RedisTemplate<Object, Object>> redisTemplate,
-                                                                       BinaryCacheManager cacheManager) {
-        RedisMessageListenerContainer redisMessageListenerContainer = new RedisMessageListenerContainer();
-        redisTemplate.ifPresent(t->redisMessageListenerContainer.setConnectionFactory(t.getConnectionFactory()));
-        RedisBaseCacheMessageListener cacheMessageListener = new RedisBaseCacheMessageListener(redisTemplate, cacheManager);
-        redisMessageListenerContainer.addMessageListener(cacheMessageListener, new ChannelTopic(cacheProperties.getCacheMessageTopic()));
-        return redisMessageListenerContainer;
+    MessageListenerAdapter cacheMessageListenerAdapter(BinaryCacheManager cacheManager) {
+        return new MessageListenerAdapter(new BinaryCacheMessageConsume(cacheManager), "consume");
     }
 
-    private void setSecondaryCacheFactory(CacheFactory secondaryCacheFactory){
-        this.secondaryCacheFactory = secondaryCacheFactory;
-    }
-
-    private void setMessagePusher(CacheMessagePusher messagePusher){
-        this.messagePusher = messagePusher;
-    }
 }

@@ -20,6 +20,7 @@
 
 package org.echo.xcache.redis;
 
+import org.echo.xcache.XCacheProperties;
 import org.junit.jupiter.api.Test;
 import org.redisson.api.RBlockingDeque;
 import org.redisson.api.RedissonClient;
@@ -34,7 +35,7 @@ class RedissonCacheDequeFactoryTest {
     void getDeque() {
         RedissonClient client = mock(RedissonClient.class);
         RBlockingDeque deque = mock(RBlockingDeque.class);
-        RedisCacheProperties properties = new RedisCacheProperties();
+        XCacheProperties properties = new XCacheProperties();
         RedissonCacheDequeFactory factory = new RedissonCacheDequeFactory(client, properties);
 
         when(client.getBlockingDeque(any(String.class), any(Codec.class))).thenReturn(deque);

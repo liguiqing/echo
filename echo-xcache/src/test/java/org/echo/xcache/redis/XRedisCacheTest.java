@@ -21,17 +21,18 @@
 package org.echo.xcache.redis;
 
 import lombok.extern.slf4j.Slf4j;
-import org.echo.test.config.AbstractConfigurationsTest;
-import org.echo.xcache.config.RedisCacheConfigurations;
+import org.echo.redis.config.RedisBaseComponentConfiguration;
+import org.echo.xcache.config.AutoCacheConfigurations;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.redisson.spring.starter.RedissonAutoConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.ContextHierarchy;
-import org.springframework.test.context.TestPropertySource;
-import redis.clients.jedis.JedisPool;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
@@ -39,27 +40,27 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.*;
 
-@ContextHierarchy(@ContextConfiguration(
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(
         initializers = {ConfigFileApplicationContextInitializer.class},
         classes = {
-                RedisCacheConfigurations.class
-        }))
-@TestPropertySource(properties = {"spring.config.location = classpath:/application-cache.yml,classpath:/application-redis.yml"})
+                RedisAutoConfiguration.class,
+                RedissonAutoConfiguration.class,
+                RedisBaseComponentConfiguration.class,
+                AutoCacheConfigurations.class
+        })
 @Slf4j
 @DisplayName("Echo : xCache XRedisCache Test")
-class XRedisCacheTest extends AbstractConfigurationsTest {
+class XRedisCacheTest {
 
     @Autowired
     private RedisTemplate<Object,Object> redisTemplate;
 
-    @Autowired
-    private JedisPool jedisPool;
-
     @Test
-    void test()throws Exception{
+    void test(){
         assertTrue(true);
 
-        XRedisCache cache1 = new XRedisCache("Test", "echo", false, 3, redisTemplate, jedisPool);
+        XRedisCache cache1 = new XRedisCache("Test", "echo", false, 3, redisTemplate);
         assertEquals("Test",cache1.getName());
         assertEquals(cache1,cache1.getNativeCache());
         cache1.put("A","a:A");
@@ -91,14 +92,14 @@ class XRedisCacheTest extends AbstractConfigurationsTest {
         assertNull(cache1.get("B"));
         assertNull(cache1.get("C"));
 
-        XRedisCache cache2 = new XRedisCache("Test2", "echo", false, 0, redisTemplate, jedisPool);
+        XRedisCache cache2 = new XRedisCache("Test2", "echo", false, 0, redisTemplate);
         cache2.put("A","a:A");
         assertEquals("a:A",cache2.get("A").get());
 
         await().atMost(4, SECONDS).until(()->cache2.get("A").get(),is("a:A"));
         await().atMost(5, SECONDS).until(()->cache2.get("A").get(),is("a:A"));
 
-        XRedisCache cache3 = new XRedisCache("Test3", "echo", true, 0, redisTemplate, jedisPool);
+        XRedisCache cache3 = new XRedisCache("Test3", "echo", true, 0, redisTemplate);
         cache3.put("A","a:A");
         assertEquals("a:A",cache3.get("A").get());
         cache3.put("A",null);

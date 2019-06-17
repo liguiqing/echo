@@ -55,7 +55,7 @@ public class RedisBaseCacheMessageListener implements MessageListener {
         }
 
         CacheMessage cacheMessage = (CacheMessage) redisTemplate.getValueSerializer().deserialize(message.getBody());
-        log.debug("Receive a redis topic message, clear local cache, the cacheName is {}, the key is {}", cacheMessage.getCacheName(), cacheMessage.getKey());
+        log.debug("Receive a redis topic messaging, clear local cache, the cacheName is {}, the key is {}", cacheMessage.getCacheName(), cacheMessage.getKey());
         if(cacheMessage.isClosed()){
             cacheManager.autoCloseOrOpen(cacheMessage);
         }else{

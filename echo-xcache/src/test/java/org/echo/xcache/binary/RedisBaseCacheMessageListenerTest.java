@@ -20,9 +20,10 @@
 
 package org.echo.xcache.binary;
 
+import org.echo.messaging.MessagePublish;
 import org.echo.xcache.CacheFactory;
+import org.echo.xcache.XCacheProperties;
 import org.echo.xcache.message.CacheMessage;
-import org.echo.xcache.message.CacheMessagePusher;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -41,10 +42,10 @@ class RedisBaseCacheMessageListenerTest {
     @Test
     void onMessage() {
         RedisTemplate redisTemplate = spy(new RedisTemplate());
-        BinaryCacheProperties cacheProperties = new BinaryCacheProperties();
+        XCacheProperties cacheProperties = new XCacheProperties();
         CacheFactory cacheL1Factory = mock(CacheFactory.class);
         CacheFactory cacheL2Factory = mock(CacheFactory.class);
-        CacheMessagePusher messagePusher = mock(CacheMessagePusher.class);
+        MessagePublish messagePusher = mock(MessagePublish.class);
         CacheMessage cacheMessage = mock(CacheMessage.class);
         RedisSerializer redisSerializer = mock(RedisSerializer.class);
         when(redisTemplate.getValueSerializer()).thenReturn(redisSerializer);

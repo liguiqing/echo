@@ -21,7 +21,7 @@
 package org.echo.xcache.caffeine;
 
 import org.assertj.core.util.Lists;
-import org.echo.test.PrivateConstructors;
+import org.echo.util.ClassUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.cache.caffeine.CaffeineCache;
@@ -40,7 +40,6 @@ class CaffeineCacheFactoryTest {
         CaffeineProperties cp = new CaffeineProperties().setName("Test");
         ccp.setDefaultProp(cp);
         assertEquals("Test",cp.getName());
-        assertEquals("Test",ccp.getName());
         CaffeineCacheFactory factory = new CaffeineCacheFactory(ccp);
         CaffeineCache cache = (CaffeineCache)factory.newCache("Test");
         assertEquals("Test",cache.getName());
@@ -63,8 +62,6 @@ class CaffeineCacheFactoryTest {
         cache = (CaffeineCache)factory.newCache("Test1");
         assertEquals("Test1",cache.getName());
 
-        assertThrows(Exception.class,()->
-                new PrivateConstructors().exec(CaffeineCaches.class)
-        );
+        assertThrows(Exception.class,() -> ClassUtils.newInstanceOf(CaffeineCaches.class));
     }
 }

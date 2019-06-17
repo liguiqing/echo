@@ -18,31 +18,18 @@
  *
  */
 
-package org.echo.xcache.redis;
+package org.echo.xcache;
 
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.echo.xcache.CacheDequeFactory;
-import org.echo.xcache.XCacheProperties;
-import org.redisson.api.RedissonClient;
-import org.redisson.codec.FstCodec;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
-import java.util.Deque;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+@DisplayName("CacheDequeFactory Test")
+class CacheDequeFactoryTest {
 
-/**
- * @author Liguiqing
- * @since V1.0
- */
-@Slf4j
-@AllArgsConstructor
-public class RedissonCacheDequeFactory implements CacheDequeFactory {
-
-    private RedissonClient redissonClient;
-
-    private  XCacheProperties cacheProperties;
-
-    @Override
-    public Deque getDeque(String cacheName) {
-        return redissonClient.getBlockingDeque(cacheProperties.getCacheName(cacheName),new FstCodec());
+    @Test
+    void getDeque() {
+        CacheDequeFactory dequeFactory = new CacheDequeFactory(){};
+        assertNotNull(dequeFactory.getDeque("a"));
     }
 }

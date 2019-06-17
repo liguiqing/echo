@@ -21,8 +21,9 @@
 package org.echo.xcache.binary;
 
 import org.echo.lock.DistributedLock;
+import org.echo.messaging.MessagePublish;
 import org.echo.xcache.NativeCaches;
-import org.echo.xcache.message.CacheMessagePusher;
+import org.echo.xcache.XCacheProperties;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.cache.Cache;
@@ -44,8 +45,8 @@ class BinaryCacheTest {
         when(l2.get("Test")).thenReturn(value).thenReturn(null);
         when(l1.get("Test")).thenReturn(null).thenReturn(value);
 
-        CacheMessagePusher pusher = mock(CacheMessagePusher.class);
-        BinaryCacheProperties binaryCacheProperties = new BinaryCacheProperties();
+        MessagePublish pusher = mock(MessagePublish.class);
+        XCacheProperties binaryCacheProperties = new XCacheProperties();
         binaryCacheProperties.setCacheNullValues(true);
         binaryCacheProperties.setLevel2Enabled(true);
         BinaryCache cache = new BinaryCache("Test",l1,l2, binaryCacheProperties,pusher);

@@ -26,9 +26,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import org.echo.util.CollectionsUtil;
-import org.echo.xcache.CacheProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 
@@ -44,20 +42,14 @@ import java.util.List;
 @Getter
 @Setter
 @Accessors(chain = true)
-@Component
-@ConfigurationProperties(prefix = "spring.cache.xcache.caffeine")
-public class CaffeineCacheProperties implements CacheProperties {
+@ConfigurationProperties(prefix = "echo.xcache.caffeine")
+public class CaffeineCacheProperties {
 
     private CaffeineProperties defaultProp;
 
     private List<CaffeineProperties> cachesOnBoot;
 
-    @Override
-    public String getName() {
-        return defaultProp.getName();
-    }
-
-    protected CaffeineProperties getProp(String name){
+    CaffeineProperties getProp(String name){
         if(CollectionsUtil.isNotNullAndNotEmpty(this.cachesOnBoot)){
             for(CaffeineProperties p:cachesOnBoot){
                 if(p.getName().equalsIgnoreCase(name))

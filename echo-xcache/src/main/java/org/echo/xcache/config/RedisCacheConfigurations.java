@@ -20,28 +20,28 @@
 
 package org.echo.xcache.config;
 
-import org.echo.lock.DistributedLock;
-import org.echo.lock.RedisBaseDistributedLock;
-import org.echo.util.RedisClientUtils;
+import org.echo.messaging.MessagePublish;
 import org.echo.xcache.CacheDequeFactory;
-import org.echo.xcache.message.RedisCacheMessagePusher;
+import org.echo.xcache.XCacheProperties;
+import org.echo.xcache.binary.BinaryCacheMessageConsume;
+import org.echo.xcache.message.CacheMessage;
 import org.echo.xcache.redis.RedisCacheFactory;
-import org.echo.xcache.redis.RedisCacheProperties;
 import org.echo.xcache.redis.RedissonCacheDequeFactory;
-import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.connection.RedisClusterConfiguration;
-import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
-import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
+import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.StringRedisSerializer;
-import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.JedisPoolConfig;
+import org.springframework.data.redis.listener.ChannelTopic;
+import org.springframework.data.redis.listener.RedisMessageListenerContainer;
+import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Optional;
 
 /**
  * 二级缓存自动配置
@@ -50,79 +50,42 @@ import redis.clients.jedis.JedisPoolConfig;
  * @since V1.0
  */
 @Configuration
-@EnableConfigurationProperties(
-    value = {
-        RedisCacheProperties.class
-    })
+@ConditionalOnClass(RedisOperations.class)
+@EnableConfigurationProperties(value = XCacheProperties.class)
 public class RedisCacheConfigurations {
 
-    @Autowired
-    private RedisCacheProperties redisCacheProperties;
+    @Bean
+    @ConditionalOnMissingBean(name="cacheMessagePublish")
+    MessagePublish<CacheMessage> cacheMessagePublish(RedisTemplate redisTemplate){
+        return redisTemplate::convertAndSend;
+    }
 
-    @Bean(destroyMethod="shutdown")
-    public RedissonClient redisson(){
-        org.redisson.config.Config config = new org.redisson.config.Config();
-        config.useSingleServer().setAddress("redis://".concat(redisCacheProperties.getStandalone().toHost()));
-        return Redisson.create(config);
+    /**
+     * 注册一个基于Redis的缓存消息处理器,可以替换为其他消息中间件来实现相同的功能
+     *
+     * @return RedisMessageListenerContainer
+     */
+    @Bean
+    @ConditionalOnMissingBean(name="cacheMessageListenerContainer")
+    RedisMessageListenerContainer cacheMessageListenerContainer(Optional<Collection<MessageListenerAdapter>> listenerAdapters,
+                                                                     XCacheProperties xCacheProperties) {
+        RedisMessageListenerContainer redisMessageListenerContainer = new RedisMessageListenerContainer();
+        listenerAdapters.orElse(new ArrayList<>()).forEach(listenerAdapter ->{
+            if(listenerAdapter.getDelegate() instanceof BinaryCacheMessageConsume){
+                redisMessageListenerContainer.addMessageListener(listenerAdapter, new ChannelTopic(xCacheProperties.getCacheMessageTopic()));
+            }
+        } );
+        return redisMessageListenerContainer;
     }
 
     @Bean
-    public DistributedLock distributedLock(RedissonClient redissonClient, @Value("${app.util.lock.prefix:echo}")String lockPrefix){
-        return new RedisBaseDistributedLock(lockPrefix, redissonClient);
+    CacheDequeFactory cacheDequeFactory(RedissonClient redissonClient,XCacheProperties xCacheProperties){
+        return new RedissonCacheDequeFactory(redissonClient, xCacheProperties);
     }
 
     @Bean
-    public CacheDequeFactory cacheDequeFactory(RedissonClient redissonClient){
-        if(RedisClientUtils.isAlive(redissonClient)){
-            return new RedissonCacheDequeFactory(redissonClient, redisCacheProperties);
-        }
-        return new CacheDequeFactory(){};
+    RedisCacheFactory redisCacheFactory(XCacheProperties xCacheProperties,RedisTemplate<Object,Object> redisTemplate){
+        return new RedisCacheFactory(xCacheProperties,redisTemplate);
     }
 
-    @Bean
-    public RedisTemplate<Object, Object> redisTemplate(JedisConnectionFactory connectionFactory){
-        RedisTemplate<Object, Object> redisTemplate =  new RedisTemplate<>();
-        StringRedisSerializer serializer = new StringRedisSerializer();
-        redisTemplate.setKeySerializer(serializer);
-        redisTemplate.setHashKeySerializer(serializer);
-        redisTemplate.setConnectionFactory(connectionFactory);
-        return redisTemplate;
-    }
-
-    @Bean
-    public RedisClusterConfiguration redisClusterConfiguration(){
-        return new RedisClusterConfiguration(redisCacheProperties.getHostsAndPorts());
-    }
-
-    @Bean
-    public JedisConnectionFactory redisConnectionFactory(){
-        return new JedisConnectionFactory(new RedisStandaloneConfiguration(redisCacheProperties.getStandalone().getHost(),
-                redisCacheProperties.getStandalone().getPort()));
-    }
-
-    @Bean
-    public JedisPool jedisPool(){
-        JedisPoolConfig config = new JedisPoolConfig();
-        config.setMaxTotal(1000);
-        config.setMaxIdle(100);
-        config.setMaxWaitMillis(10000);
-        config.setTestOnBorrow(false);
-        config.setTestOnReturn(false);
-        config.setTestWhileIdle(true);
-        config.setTimeBetweenEvictionRunsMillis(30000);
-        config.setNumTestsPerEvictionRun(10);
-        config.setMinEvictableIdleTimeMillis(60000);
-        return new JedisPool(config,redisCacheProperties.getStandalone().getHost(),
-                redisCacheProperties.getStandalone().getPort());
-    }
-
-    @Bean
-    public RedisCacheFactory secondaryCacheFactory(RedisTemplate<Object,Object> redisTemplate,JedisPool jedisPool){
-        return new RedisCacheFactory(this.redisCacheProperties,jedisPool,redisTemplate);
-    }
-
-    @Bean
-    public RedisCacheMessagePusher redisCacheMessagePusher(RedisTemplate<Object, Object> redisTemplate){
-        return new RedisCacheMessagePusher(redisTemplate);
-    }
 }

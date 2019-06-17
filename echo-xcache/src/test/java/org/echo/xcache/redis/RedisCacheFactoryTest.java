@@ -22,6 +22,7 @@ package org.echo.xcache.redis;
 
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
+import org.echo.xcache.XCacheProperties;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,49 +30,37 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.cache.Cache;
 import org.springframework.data.redis.core.RedisTemplate;
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPool;
 
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @Slf4j
 @DisplayName("Echo : xCache RedisCacheFactory Test")
 class RedisCacheFactoryTest {
 
     @Mock
-    private RedisCacheProperties redisCacheProperties;
+    private XCacheProperties redisCacheProperties;
 
     @Mock
     private RedisTemplate template;
 
-    @Mock
-    private JedisPool jedisPool;
-
-    @Mock
-    private Jedis jedis;
 
     @BeforeEach
-    public void before(){
+    void before(){
         MockitoAnnotations.initMocks(this);
     }
 
     @Test
     void newCache() {
-        when(jedisPool.getResource()).thenReturn(jedis);
-        when(jedis.isConnected()).thenReturn(true).thenReturn(true).thenReturn(true).thenReturn(false);
-        when(redisCacheProperties.getName()).thenReturn("Test2");
 
         Map<String,Long> expires = Maps.newHashMap();
         expires.put("Test", 1000L);
         expires.put("Test1", 1000L);
         expires.put("Test2", 1000L);
-        redisCacheProperties.setName("Test2");
-        assertEquals("Test2",redisCacheProperties.getName());
+
         redisCacheProperties.setExpires(expires);
-        RedisCacheFactory redisCacheFactory  = new RedisCacheFactory(redisCacheProperties,jedisPool,template);
+        RedisCacheFactory redisCacheFactory  = new RedisCacheFactory(redisCacheProperties,template);
 
         Cache cache1 = redisCacheFactory.newCache("Test11",1,1);
         assertNotNull(cache1);
@@ -80,9 +69,5 @@ class RedisCacheFactoryTest {
 
         cache1 = redisCacheFactory.newCache("Test3",1,1);
         assertNotNull(cache1);
-
-        Cache cache = redisCacheFactory.newCache("Test");
-        assertNotNull(cache);
-        assertTrue(cache instanceof RedisNoneCache);
     }
 }

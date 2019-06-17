@@ -18,31 +18,32 @@
  *
  */
 
-package org.echo.xcache.redis;
+package org.echo.xcache.binary;
+
 
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.echo.xcache.CacheDequeFactory;
-import org.echo.xcache.XCacheProperties;
-import org.redisson.api.RedissonClient;
-import org.redisson.codec.FstCodec;
-
-import java.util.Deque;
+import org.echo.messaging.MessageConsume;
+import org.echo.xcache.message.CacheMessage;
 
 /**
- * @author Liguiqing
- * @since V1.0
- */
-@Slf4j
+ * <p>
+ * 二元缓存消息消费处理
+ * </P>
+ *
+ * @author liguiqing
+ * @since V1.0.0　2019-06-15 19:19
+ **/
 @AllArgsConstructor
-public class RedissonCacheDequeFactory implements CacheDequeFactory {
+public class BinaryCacheMessageConsume implements MessageConsume<CacheMessage> {
 
-    private RedissonClient redissonClient;
-
-    private  XCacheProperties cacheProperties;
+    private BinaryCacheManager cacheManager;
 
     @Override
-    public Deque getDeque(String cacheName) {
-        return redissonClient.getBlockingDeque(cacheProperties.getCacheName(cacheName),new FstCodec());
+    public void consume(CacheMessage message) {
+        if(message.isClosed()){
+            cacheManager.autoCloseOrOpen(message);
+        }else{
+            cacheManager.clearLocal(message);
+        }
     }
 }

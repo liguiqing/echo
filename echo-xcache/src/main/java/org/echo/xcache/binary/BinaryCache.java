@@ -26,12 +26,12 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.echo.exception.ThrowableToString;
 import org.echo.lock.DistributedLock;
+import org.echo.messaging.MessagePublish;
+import org.echo.xcache.XCacheProperties;
 import org.echo.xcache.message.CacheMessage;
-import org.echo.xcache.message.CacheMessagePusher;
 import org.springframework.cache.Cache;
 import org.springframework.cache.support.AbstractValueAdaptingCache;
 
-import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 
@@ -58,7 +58,7 @@ public class BinaryCache extends AbstractValueAdaptingCache {
 
     private String topic;
 
-    private CacheMessagePusher messagePusher;
+    private MessagePublish<CacheMessage> messagePush;
 
     private DistributedLock<Object, Object> lock;
 
@@ -68,42 +68,44 @@ public class BinaryCache extends AbstractValueAdaptingCache {
 
     public BinaryCache(boolean allowNullValues) {
         super(allowNullValues);
+        this.messagePush = (topic, message) -> {};
+        this.lock = new DistributedLock<>() {};
     }
 
     public BinaryCache(String name, Cache cacheL1, Cache cacheL2,
-                       BinaryCacheProperties cacheProperties,
-                       CacheMessagePusher messagePusher) {
-        this(name, cacheL1, cacheL2, cacheProperties, messagePusher, new DistributedLock() {});
+                       XCacheProperties cacheProperties,
+                       MessagePublish<CacheMessage> messagePush) {
+        this(name, cacheL1, cacheL2, cacheProperties, messagePush, new DistributedLock() {});
     }
 
     public BinaryCache(String name, Cache cacheL1, Cache cacheL2,
-                       BinaryCacheProperties cacheProperties,
-                       CacheMessagePusher messagePusher, DistributedLock lock) {
+                       XCacheProperties cacheProperties,
+                       MessagePublish<CacheMessage> messagePush, DistributedLock lock) {
 
         this(cacheProperties.isCacheNullValues());
         this.name = name;
         this.cacheL1 = cacheL1;
         this.topic = cacheProperties.getCacheMessageTopic();
-        this.messagePusher = messagePusher;
+        this.messagePush = messagePush;
         if (cacheProperties.isLevel2Enabled()) {
             this.cacheL2 = cacheL2;
         }
         this.lock = lock;
     }
 
-    public static BinaryCache onlyCache1(String name, Cache cacheL1, BinaryCacheProperties cacheProperties, DistributedLock<Object, Object> lock) {
+    public static BinaryCache onlyCache1(String name, Cache cacheL1, XCacheProperties cacheProperties, DistributedLock<Object, Object> lock) {
         BinaryCache cache = cacheOf(name, cacheProperties, lock);
         cache.cacheL1 = cacheL1;
         return cache;
     }
 
-    public static BinaryCache onlyCache2(String name, Cache cacheL2, BinaryCacheProperties cacheProperties, DistributedLock<Object, Object> lock) {
+    public static BinaryCache onlyCache2(String name, Cache cacheL2, XCacheProperties cacheProperties, DistributedLock<Object, Object> lock) {
         BinaryCache cache = cacheOf(name, cacheProperties, lock);
         cache.cacheL2 = cacheL2;
         return cache;
     }
 
-    private static BinaryCache cacheOf(String name, BinaryCacheProperties cacheProperties, DistributedLock<Object, Object> lock) {
+    private static BinaryCache cacheOf(String name, XCacheProperties cacheProperties, DistributedLock<Object, Object> lock) {
         BinaryCache cache = new BinaryCache(cacheProperties.isCacheNullValues());
         cache.name = name;
         cache.lock = lock == null ? new DistributedLock<Object, Object>() {} : lock;
@@ -266,13 +268,10 @@ public class BinaryCache extends AbstractValueAdaptingCache {
     /**
      * 缓存变更时通知其他节点清理一级缓存
      *
-     * @param message a message to Redis server
+     * @param message a messaging to Redis server
      */
     private void push(CacheMessage message) {
-        if (!Objects.isNull(this.messagePusher)) {
-            log.debug("Push a cache update message");
-            this.messagePusher.push(topic, message);
-        }
+        this.messagePush.publish(topic, message);
     }
 
 

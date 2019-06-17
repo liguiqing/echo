@@ -21,13 +21,14 @@
 package org.echo.xcache.redis;
 
 
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.echo.exception.ThrowableToString;
 import org.springframework.cache.Cache;
 import org.springframework.cache.support.AbstractValueAdaptingCache;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.util.StringUtils;
-import redis.clients.jedis.JedisPool;
 
 import java.util.Collection;
 import java.util.Set;
@@ -40,10 +41,11 @@ import java.util.concurrent.TimeUnit;
  * </P>
  *
  * @author liguiqing
- * @date 2019-03-05 13:42
- * @since V1.0.0
+ * @since V1.0.0　2019-03-05 13:42
  **/
 @Slf4j
+@EqualsAndHashCode(of={"name"},callSuper = false)
+@ToString(of={"name","cachePrefix","expire"})
 public class XRedisCache extends AbstractValueAdaptingCache {
 
     private String name;
@@ -54,7 +56,6 @@ public class XRedisCache extends AbstractValueAdaptingCache {
 
     private String cachePrefix;
 
-    private JedisPool jedisPool;
 
     /**
      *
@@ -63,18 +64,15 @@ public class XRedisCache extends AbstractValueAdaptingCache {
      * @param allowNullValues of ull value stored if true,otherwise ignore null value
      * @param expire second of value ,-1 never expired
      * @param redisTemplate spring RedisTemplate
-     * @param jedisPool JedisPool
      */
     public XRedisCache(String name, String cachePrefix,
                           boolean allowNullValues,long expire,
-                         RedisTemplate<Object, Object> redisTemplate,
-                          JedisPool jedisPool) {
+                         RedisTemplate<Object, Object> redisTemplate) {
         super(allowNullValues);
         this.name = name;
         this.expire = expire * 1000;
         this.cachePrefix = cachePrefix;
         this.redisTemplate = redisTemplate;
-        this.jedisPool = jedisPool;
     }
 
     @Override
@@ -105,8 +103,8 @@ public class XRedisCache extends AbstractValueAdaptingCache {
                 return null;
             }
         }
-
-        jedisPool.getResource().expireAt(getKey(key).toString(),this.expire);
+        //刷新
+        this.redisTemplate.expire(key, this.expire, TimeUnit.MILLISECONDS);
         return (T)o;
     }
 

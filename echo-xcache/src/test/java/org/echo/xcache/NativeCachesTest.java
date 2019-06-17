@@ -21,33 +21,29 @@
 package org.echo.xcache;
 
 import org.echo.lock.DistributedLock;
-import org.echo.test.PrivateConstructors;
-import org.echo.test.config.AbstractConfigurationsTest;
+import org.echo.messaging.MessagePublish;
+import org.echo.redis.config.RedisBaseComponentConfiguration;
+import org.echo.util.ClassUtils;
 import org.echo.xcache.binary.BinaryCache;
-import org.echo.xcache.binary.BinaryCacheProperties;
 import org.echo.xcache.caffeine.CaffeineCaches;
 import org.echo.xcache.caffeine.CaffeineProperties;
-import org.echo.xcache.config.CacheConfigurations;
-import org.echo.xcache.config.RedisCacheConfigurations;
-import org.echo.xcache.config.SecondaryCacheConfigurations;
-import org.echo.xcache.message.CacheMessagePusher;
-import org.echo.xcache.redis.RedisCacheProperties;
+import org.echo.xcache.config.AutoCacheConfigurations;
 import org.echo.xcache.redis.RedisNoneCache;
 import org.echo.xcache.redis.XRedisCache;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.redisson.api.RedissonClient;
+import org.redisson.spring.starter.RedissonAutoConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
 import org.springframework.cache.Cache;
 import org.springframework.cache.caffeine.CaffeineCache;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.ContextHierarchy;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import redis.clients.jedis.JedisPool;
 
 import java.time.LocalDate;
 
@@ -58,27 +54,24 @@ import static org.mockito.Mockito.mock;
 @ContextHierarchy(@ContextConfiguration(
         initializers = {ConfigFileApplicationContextInitializer.class},
         classes = {
-                RedisCacheConfigurations.class, SecondaryCacheConfigurations.class, CacheConfigurations.class
+                RedisAutoConfiguration.class,
+                RedissonAutoConfiguration.class,
+                RedisBaseComponentConfiguration.class,
+                AutoCacheConfigurations.class
         })
 )
-@TestPropertySource(properties = {"spring.config.location = classpath:/application-cache.yml,classpath:/application-redis.yml"})
 @DisplayName("NativeCaches Test")
-class NativeCachesTest extends AbstractConfigurationsTest {
+class NativeCachesTest {
 
     @Autowired
     private RedissonClient redissonClient;
 
     @Autowired
-    private RedisCacheProperties redisCacheProperties;
-
-    @Autowired
-    private BinaryCacheProperties binaryCacheProperties;
+    private XCacheProperties xCacheProperties;
 
     @Autowired
     private RedisTemplate<Object,Object> template;
 
-    @Autowired
-    private JedisPool jedisPool;
 
     @Test
     void test() {
@@ -101,10 +94,11 @@ class NativeCachesTest extends AbstractConfigurationsTest {
         assertFalse(NativeCaches.values(caffeineCache).contains(v2));
 
         template.delete("echo:Test:*");
-        XRedisCache xcache = new XRedisCache("Test", "echo", false, 30, template, jedisPool);
+        XRedisCache xcache = new XRedisCache("Test", "echo", false, 30, template);
 
         assertEquals(0,NativeCaches.size(xcache));
         xcache.put(k1,v1);
+        assertNotNull(xcache.get(k1));
         assertEquals(1,NativeCaches.size(xcache));
         assertTrue(NativeCaches.keys(xcache).contains("echo:Test:"+k1));
         assertFalse(NativeCaches.keys(xcache).contains(k2));
@@ -114,22 +108,22 @@ class NativeCachesTest extends AbstractConfigurationsTest {
         template.delete("echo:Test:" + k1);
         DistributedLock lock = mock(DistributedLock.class);
 
-        BinaryCache sCache = BinaryCache.onlyCache1("exec", caffeineCache, binaryCacheProperties, lock);
+        BinaryCache sCache = BinaryCache.onlyCache1("exec", caffeineCache, xCacheProperties, lock);
         assertEquals(1,NativeCaches.size(sCache));
         assertTrue(NativeCaches.keys(sCache).contains(k1));
         assertFalse(NativeCaches.keys(sCache).contains(k2));
         assertTrue(NativeCaches.values(sCache).contains(v1));
         assertFalse(NativeCaches.values(sCache).contains(v2));
 
-        sCache = BinaryCache.onlyCache2("exec", caffeineCache, binaryCacheProperties, lock);
+        sCache = BinaryCache.onlyCache2("exec", caffeineCache, xCacheProperties, lock);
         assertEquals(1,NativeCaches.size(sCache));
         assertTrue(NativeCaches.keys(sCache).contains(k1));
         assertFalse(NativeCaches.keys(sCache).contains(k2));
         assertTrue(NativeCaches.values(sCache).contains(v1));
         assertFalse(NativeCaches.values(sCache).contains(v2));
 
-        CacheMessagePusher pusher = mock(CacheMessagePusher.class);
-        sCache = new BinaryCache("exec", caffeineCache,xcache, binaryCacheProperties,pusher);
+        MessagePublish pusher = mock(MessagePublish.class);
+        sCache = new BinaryCache("exec", caffeineCache,xcache, xCacheProperties,pusher);
         assertEquals(1,NativeCaches.size(sCache));
         assertTrue(NativeCaches.keys(sCache).contains(k1));
         assertFalse(NativeCaches.keys(sCache).contains(k2));
@@ -145,6 +139,6 @@ class NativeCachesTest extends AbstractConfigurationsTest {
 
         assertEquals(0,NativeCaches.keys(null).size());
         assertEquals(0,NativeCaches.values(null).size());
-        assertThrows(Exception.class,()->new PrivateConstructors().exec(NativeCaches.class));
+        assertThrows(Exception.class,() -> ClassUtils.newInstanceOf(NativeCaches.class));
     }
 }

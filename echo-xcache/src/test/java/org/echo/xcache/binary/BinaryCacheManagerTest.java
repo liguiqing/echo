@@ -20,13 +20,12 @@
 
 package org.echo.xcache.binary;
 
-import org.echo.test.config.AbstractConfigurationsTest;
+import org.echo.messaging.MessagePublish;
+import org.echo.redis.config.RedisBaseComponentConfiguration;
 import org.echo.xcache.CacheFactory;
-import org.echo.xcache.config.CacheConfigurations;
-import org.echo.xcache.config.RedisCacheConfigurations;
-import org.echo.xcache.config.SecondaryCacheConfigurations;
+import org.echo.xcache.XCacheProperties;
+import org.echo.xcache.config.AutoCacheConfigurations;
 import org.echo.xcache.message.CacheMessage;
-import org.echo.xcache.message.CacheMessagePusher;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,14 +33,14 @@ import org.mockito.Mockito;
 import org.redisson.api.RBlockingDeque;
 import org.redisson.api.RedissonClient;
 import org.redisson.codec.FstCodec;
+import org.redisson.spring.starter.RedissonAutoConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
 import org.springframework.cache.Cache;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.ContextHierarchy;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDateTime;
@@ -57,15 +56,16 @@ import static org.mockito.Mockito.when;
  * @since V1.0
  */
 @ExtendWith(SpringExtension.class)
-@ContextHierarchy(@ContextConfiguration(
+@ContextConfiguration(
         initializers = {ConfigFileApplicationContextInitializer.class},
         classes = {
-                RedisCacheConfigurations.class, SecondaryCacheConfigurations.class, CacheConfigurations.class
+                RedisAutoConfiguration.class,
+                RedissonAutoConfiguration.class,
+                RedisBaseComponentConfiguration.class,
+                AutoCacheConfigurations.class
         })
-)
-@TestPropertySource(properties = {"spring.config.location = classpath:/application-cache.yml,classpath:/application-redis.yml"})
 @DisplayName("Echo : BinaryCacheManager Test")
-public class BinaryCacheManagerTest extends AbstractConfigurationsTest{
+public class BinaryCacheManagerTest {
 
     @Autowired
     private BinaryCacheManager binaryCacheManager;
@@ -107,7 +107,7 @@ public class BinaryCacheManagerTest extends AbstractConfigurationsTest{
         aCache.clear();
         assertNull(aCache.get("a"));
 
-        a = aCache.get("a", () -> "a");
+        aCache.get("a", () -> "a");
         redisTemplate.convertAndSend("echo:redis:binary:topic",new CacheMessage(identifier,"aCache","a"));
         a = aCache.get("a").get()+"";
         assertNotNull(a);
@@ -217,11 +217,11 @@ public class BinaryCacheManagerTest extends AbstractConfigurationsTest{
         binaryCacheManager.clearLocal(new CacheMessage("id2","coCache","k"));
         binaryCacheManager.clearLocal(new CacheMessage("id3","coCache",null));
 
-        BinaryCacheProperties cacheProperties = Mockito.spy(new BinaryCacheProperties());
+        XCacheProperties cacheProperties = Mockito.spy(new XCacheProperties());
         when(cacheProperties.isDynamic()).thenReturn(false).thenReturn(true);
         CacheFactory cacheL1Factory = mock(CacheFactory.class);
         CacheFactory cacheL2Factory = mock(CacheFactory.class);
-        CacheMessagePusher messagePusher = mock(CacheMessagePusher.class);
+        MessagePublish messagePusher = mock(MessagePublish.class);
         BinaryCacheManager cacheManager = new BinaryCacheManager(cacheProperties,cacheL1Factory,cacheL2Factory,messagePusher);
 
         Cache tCache = cacheManager.getCache("Test");

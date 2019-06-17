@@ -22,11 +22,12 @@ package org.echo.xcache.redis;
 
 import lombok.extern.slf4j.Slf4j;
 import org.echo.xcache.CacheFactory;
+import org.echo.xcache.XCacheProperties;
 import org.springframework.cache.Cache;
 import org.springframework.data.redis.core.RedisTemplate;
-import redis.clients.jedis.JedisPool;
 
 /**
+ * {@link Cache} based redis
  *
  * @author Liguiqing
  * @since V.0
@@ -34,15 +35,13 @@ import redis.clients.jedis.JedisPool;
 @Slf4j
 public class RedisCacheFactory implements CacheFactory {
 
-    private RedisCacheProperties cacheProperties;
+    private XCacheProperties cacheProperties;
 
-    private JedisPool jedisPool;
 
     private RedisTemplate<Object,Object> redisTemplate;
 
-    public RedisCacheFactory(RedisCacheProperties cacheProperties, JedisPool jedisPool, RedisTemplate<Object, Object> redisTemplate) {
+    public RedisCacheFactory(XCacheProperties cacheProperties, RedisTemplate<Object, Object> redisTemplate) {
         this.cacheProperties = cacheProperties;
-        this.jedisPool = jedisPool;
         this.redisTemplate = redisTemplate;
     }
 
@@ -53,14 +52,7 @@ public class RedisCacheFactory implements CacheFactory {
 
     @Override
     public Cache newCache(String name, long ttl, long maxIdleSecond) {
-        if(isRedisConnected()){
-            return new XRedisCache(name, this.cacheProperties.getCachePrefix(), cacheProperties.isCacheNullValues(),
-                    cacheProperties.getTtl(name,ttl), this.redisTemplate, this.jedisPool);
-        }
-        return new RedisNoneCache(false);
-    }
-
-    private boolean isRedisConnected(){
-        return jedisPool.getResource().isConnected();
+        return new XRedisCache(name, this.cacheProperties.getCachePrefix(), cacheProperties.isCacheNullValues(),
+                    cacheProperties.getTtl(name,ttl), this.redisTemplate);
     }
 }

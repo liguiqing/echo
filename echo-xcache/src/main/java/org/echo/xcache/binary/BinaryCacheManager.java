@@ -22,10 +22,11 @@ package org.echo.xcache.binary;
 
 import lombok.extern.slf4j.Slf4j;
 import org.echo.lock.DistributedLock;
+import org.echo.messaging.MessagePublish;
 import org.echo.util.NumbersUtil;
 import org.echo.xcache.CacheFactory;
+import org.echo.xcache.XCacheProperties;
 import org.echo.xcache.message.CacheMessage;
-import org.echo.xcache.message.CacheMessagePusher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.cache.Cache;
@@ -79,7 +80,7 @@ public class BinaryCacheManager extends AbstractTransactionSupportingCacheManage
      */
     private static final String MARK = "$";
 
-    private BinaryCacheProperties cacheProperties;
+    private XCacheProperties cacheProperties;
 
     private boolean dynamic;
 
@@ -89,7 +90,7 @@ public class BinaryCacheManager extends AbstractTransactionSupportingCacheManage
 
     private CacheFactory cacheL2Factory;
 
-    private CacheMessagePusher messagePusher;
+    private MessagePublish<CacheMessage> messagePush;
 
     @Autowired
     private DefaultListableBeanFactory beanFactory;
@@ -97,15 +98,15 @@ public class BinaryCacheManager extends AbstractTransactionSupportingCacheManage
     @Autowired(required = false)
     private DistributedLock lock;
 
-    public BinaryCacheManager(BinaryCacheProperties cacheProperties,
+    public BinaryCacheManager(XCacheProperties cacheProperties,
                               CacheFactory cacheL1Factory,
                               CacheFactory cacheL2Factory,
-                              CacheMessagePusher messagePusher) {
+                              MessagePublish<CacheMessage> messagePush) {
         this.cacheProperties = cacheProperties;
         this.dynamic = cacheProperties.isDynamic();
         this.cacheL1Factory = cacheL1Factory;
         this.cacheL2Factory = cacheL2Factory;
-        this.messagePusher = messagePusher;
+        this.messagePush = messagePush;
     }
 
     @Override
@@ -165,7 +166,7 @@ public class BinaryCacheManager extends AbstractTransactionSupportingCacheManage
             }else{
                 cache.open(level * -1);
             }
-            this.messagePusher.push(cacheProperties.getCacheMessageTopic(), new CacheMessage(identifier,cacheName,null,level));
+            this.messagePush.publish(cacheProperties.getCacheMessageTopic(), new CacheMessage(identifier,cacheName,null,level));
         });
     }
 
@@ -255,7 +256,7 @@ public class BinaryCacheManager extends AbstractTransactionSupportingCacheManage
         return new BinaryCache(cacheName,
                 cacheL1Factory.newCache(cacheName,expirationSecondTime,expireAfterAccessSecondTime),
                 cacheL2Factory.newCache(cacheName,expirationSecondTime,expireAfterAccessSecondTime),
-                cacheProperties,messagePusher,lock);
+                cacheProperties,messagePush,lock);
     }
 
     /**
@@ -270,7 +271,7 @@ public class BinaryCacheManager extends AbstractTransactionSupportingCacheManage
             return toLong(cacheParams[1]);
         }
         // 默认是0
-        return cacheProperties.getDefaultTtl();
+        return cacheProperties.getDefaultExpiration();
     }
 
     /**
@@ -285,7 +286,7 @@ public class BinaryCacheManager extends AbstractTransactionSupportingCacheManage
             return maxIdl > 0 ?maxIdl:0;
         }
         // 默认是0
-        return cacheProperties.getDefaultTtl();
+        return cacheProperties.getDefaultExpiration();
     }
 
     private long toLong(String s){

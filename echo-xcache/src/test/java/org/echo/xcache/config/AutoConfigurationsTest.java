@@ -20,30 +20,39 @@
 
 package org.echo.xcache.config;
 
-import lombok.extern.slf4j.Slf4j;
-import org.echo.test.config.AbstractConfigurationsTest;
+import org.apache.commons.lang3.reflect.MethodUtils;
+import org.echo.redis.config.RedisBaseComponentConfiguration;
+import org.echo.xcache.XCacheProperties;
 import org.echo.xcache.binary.BinaryCacheManager;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.redisson.spring.starter.RedissonAutoConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
+import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
+import org.springframework.cache.interceptor.KeyGenerator;
 import org.springframework.cache.support.CompositeCacheManager;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.ContextHierarchy;
-import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import java.lang.reflect.Method;
 
-@ContextHierarchy(@ContextConfiguration(
+import static org.junit.jupiter.api.Assertions.*;
+
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(
         initializers = {ConfigFileApplicationContextInitializer.class},
         classes = {
+                RedisAutoConfiguration.class,
+                RedissonAutoConfiguration.class,
+                RedisBaseComponentConfiguration.class,
                 AutoCacheConfigurations.class
-        }))
-@TestPropertySource(properties = {"spring.config.location = classpath:/application-cache.yml,classpath:/application-redis.yml"})
-@Slf4j
+        })
 @DisplayName("Echo : xCache AutoCacheConfigurations Test")
-class AutoConfigurationsTest  extends AbstractConfigurationsTest {
+class AutoConfigurationsTest {
 
     @Autowired
     private CacheManager cacheManager;
@@ -51,9 +60,28 @@ class AutoConfigurationsTest  extends AbstractConfigurationsTest {
     @Autowired
     private BinaryCacheManager binaryCacheManager;
 
+    @Autowired
+    private KeyGenerator keyGenerator;
+
+    @Autowired
+    private XCacheProperties cacheProperties;
+
     @Test
     public void test(){
         assertTrue(cacheManager instanceof CompositeCacheManager);
         assertTrue(binaryCacheManager.hasTwoLevel());
+        Cache c1 = cacheManager.getCache("echo:test:A");
+        c1.put("A","AA");
+        assertNotNull(c1.get("A"));
+        c1.evict("A");
+        TestKeyGenerator generator = new TestKeyGenerator();
+        Method method = MethodUtils.getAccessibleMethod(TestKeyGenerator.class, "getKey");
+        Object o = keyGenerator.generate(generator, method,"A","123");
+        assertNotNull(o);
+
+        String cn1 = cacheProperties.getCacheName("echo:test:A");
+        assertEquals("echo:test:A",cn1);
+        String cn2 = cacheProperties.getCacheName("A");
+        assertEquals("echo:test:A",cn2);
     }
 }
