@@ -1,7 +1,6 @@
 package org.echo.util;
 
 import org.apache.commons.lang3.time.DateFormatUtils;
-import org.echo.test.PrivateConstructors;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -20,7 +19,7 @@ class DateUtilsTest {
     @Test
     void fromLocalDate() {
         assertNotNull(DateUtils.fromLocalDate(LocalDate.now()));
-        assertThrows(Exception.class,()->new PrivateConstructors().exec(DateUtils.class));
+        assertThrows(Exception.class,()->ClassUtils.newInstanceOf(DateUtils.class));
     }
 
     @Test

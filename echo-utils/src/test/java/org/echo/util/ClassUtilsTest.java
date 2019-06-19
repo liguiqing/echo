@@ -1,6 +1,6 @@
 package org.echo.util;
 
-import org.echo.test.PrivateConstructors;
+import org.echo.exception.BusinessException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -24,7 +24,7 @@ class ClassUtilsTest {
         AbstractClassUtilsTestInterFace2<String> testO = new AbstractClassUtilsTestInterFace2<String>(){};
         assertTrue(ClassUtils.isParameterizedTypeOf(testO.getClass(),String.class));
 
-        assertThrows(Exception.class,()->new PrivateConstructors().exec(ClassUtils.class));
+        assertThrows(Exception.class,()->ClassUtils.newInstanceOf(ClassUtils.class));
     }
 
     @Test
@@ -52,12 +52,12 @@ class ClassUtilsTest {
     void newInstanceOf(){
         ClassUtilsTestBean ct = ClassUtils.newInstanceOf(ClassUtilsTestBean.class);
         assertEquals("s1",ct.s1());
-        assertNull( ClassUtils.newInstanceOf(ClassUtilsTestBean2.class));
-        assertNull( ClassUtils.newInstanceOf(ClassUtilsTestBean2.class,null));
-        assertNull( ClassUtils.newInstanceOf(ClassUtilsTestBean2.class, Date.class));
+        assertNotNull(ClassUtils.newInstanceOf(ClassUtilsTestBean2.class));
+        assertNotNull(ClassUtils.newInstanceOf(ClassUtilsTestBean2.class,null));
+        assertThrows(BusinessException.class,()-> ClassUtils.newInstanceOf(ClassUtilsTestBean2.class, Date.class));
         assertNull( ClassUtils.newInstanceOf(null));
         assertNotNull( ClassUtils.newInstanceOf(ClassUtilsTestBean2.class,"s"));
         assertNotNull( ClassUtils.newInstanceOf(ClassUtilsTestBean2.class,"s",1l));
-        assertNull( ClassUtils.newInstanceOf(ClassUtilsTestBean2.class,String.class, Date.class));
+        assertThrows(BusinessException.class,()-> ClassUtils.newInstanceOf(ClassUtilsTestBean2.class,String.class, Date.class));
     }
 }

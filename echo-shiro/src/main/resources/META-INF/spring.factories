@@ -1,0 +1,4 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration = \
+  org.echo.shiro.config.ShiroCacheConfiguration,\
+  org.echo.shiro.config.ShiroEchoConfiguration,\
+  org.echo.shiro.config.ShiroEchoWebFilterConfiguration

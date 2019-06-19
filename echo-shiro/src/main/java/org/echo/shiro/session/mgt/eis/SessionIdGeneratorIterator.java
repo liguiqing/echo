@@ -1,12 +1,13 @@
 package org.echo.shiro.session.mgt.eis;
 
+import com.google.common.collect.Lists;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.mgt.eis.JavaUuidSessionIdGenerator;
 import org.apache.shiro.session.mgt.eis.SessionIdGenerator;
-import org.echo.util.CollectionsUtil;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -21,17 +22,16 @@ public class SessionIdGeneratorIterator implements SessionIdGenerator {
     private SessionIdGenerator uuidSessionIdGenerator = new JavaUuidSessionIdGenerator();
 
     public SessionIdGeneratorIterator(Optional<List<SessionIdGenerator>> sessionIdGenerators){
-        sessionIdGenerators.ifPresent(sessionIdGenerators1 -> this.sessionIdGenerators = sessionIdGenerators1);
+        this.sessionIdGenerators = sessionIdGenerators.orElse(Lists.newArrayList());
     }
 
     @Override
     public Serializable generateId(Session session){
-        if(CollectionsUtil.isNotNullAndNotEmpty(this.sessionIdGenerators)){
-            for(SessionIdGenerator sessionIdGenerator:sessionIdGenerators){
-                Serializable sessionId = sessionIdGenerator.generateId(session);
-                if(sessionId != null){
-                    return sessionId;
-                }
+
+        for(var sessionIdGenerator:sessionIdGenerators){
+            var sessionId = sessionIdGenerator.generateId(session);
+            if(!Objects.isNull(sessionId)){
+                return sessionId;
             }
         }
         return this.uuidSessionIdGenerator.generateId(session);

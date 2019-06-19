@@ -73,15 +73,12 @@ public class BinaryCacheManagerTest {
     @Autowired
     private RedisTemplate redisTemplate;
 
-    @Value("${jdbc.driver}")
-    private String driver;
 
     @Autowired
     private RedissonClient redissonClient;
 
     @Test
     public void test(){
-        assertNotNull(driver);
         binaryCacheManager.removeAllCache();
         String identifier = UUID.randomUUID().toString();
         redisTemplate.convertAndSend("Test",new CacheMessage(identifier,"cache1","c1"));

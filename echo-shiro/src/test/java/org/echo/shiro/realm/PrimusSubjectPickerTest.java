@@ -24,7 +24,7 @@ import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.ThreadContext;
 import org.echo.shiro.Shiros;
-import org.echo.test.PrivateConstructors;
+import org.echo.util.ClassUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -45,7 +45,7 @@ class PrimusSubjectPickerTest {
         Decepticons decepticons = new Decepticons().megatron();
         when(subject.getPrincipal()).thenReturn(decepticons);
         ThreadContext.put(ThreadContext.SUBJECT_KEY,subject);
-        assertThrows(Exception.class,()->new PrivateConstructors().exec(Shiros.class));
+        assertThrows(Exception.class,()-> ClassUtils.newInstanceOf(Shiros.class));
     }
 
 

@@ -94,7 +94,7 @@ public class UserAgentUtils {
      * @return
      */
     public static boolean isWeChat(HttpServletRequest request) {
-        String userAgent = request.getHeader("User-Agent").toLowerCase();
+        var userAgent = request.getHeader("User-Agent").toLowerCase();
         return userAgent != null && userAgent.indexOf("micromessenger") != -1;
     }
 }

@@ -20,17 +20,30 @@
         <spring.boot.version>2.1.4.RELEASE</spring.boot.version>
         <spring.data.jpa.version>2.1.6.RELEASE</spring.data.jpa.version>
         <hibernate.version>5.4.0.Final</hibernate.version>
-        <redisson.version>3.9.1</redisson.version>
+        <redisson.version>3.11.0</redisson.version>
         <junit.version>5.3.0</junit.version>
-        <mockito.version>2.27.0</mockito.version>
-        <powermock.version>1.7.4</powermock.version>
-        <org.hamcrest.version>1.3</org.hamcrest.version>
         <commons.lang.version>3.9</commons.lang.version>
-        <shiro.version>1.4.0</shiro.version>
-
+        <shiro.version>1.4.1</shiro.version>
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <version>2.27.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.awaitility</groupId>
+            <artifactId>awaitility</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
@@ -68,35 +81,19 @@
                 <version>${junit.version}</version>
                 <scope>test</scope>
             </dependency>
-            <dependency>
-                <groupId>org.mockito</groupId>
-                <artifactId>mockito-junit-jupiter</artifactId>
-                <version>${mockito.version}</version>
-                <scope>test</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>org.powermock</groupId>
-                <artifactId>powermock-api-mockito2</artifactId>
-                <version>${powermock.version}</version>
-                <scope>test</scope>
-            </dependency>
 
             <!-- https://mvnrepository.com/artifact/org.awaitility/awaitility -->
             <dependency>
                 <groupId>org.awaitility</groupId>
                 <artifactId>awaitility</artifactId>
                 <version>3.1.6</version>
-                <scope>test</scope>
             </dependency>
 
             <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
                 <version>1.18.6</version>
-                <scope>provided</scope>
             </dependency>
-
 
             <!-- set spring -->
             <dependency>
@@ -144,7 +141,17 @@
             </dependency>
             <dependency>
                 <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-data-jdbc</artifactId>
+                <version>${spring.boot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-data-redis</artifactId>
+                <version>${spring.boot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-freemarker</artifactId>
                 <version>${spring.boot.version}</version>
             </dependency>
             <dependency>
@@ -168,14 +175,20 @@
                 <version>${spring.data.jpa.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.redisson</groupId>
+                <artifactId>redisson-spring-boot-starter</artifactId>
+                <version>${redisson.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>junit</groupId>
+                        <artifactId>junit</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
                 <version>2.9.7</version>
-            </dependency>
-            <dependency>
-                <groupId>org.freemarker</groupId>
-                <artifactId>freemarker</artifactId>
-                <version>2.3.28</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-configuration2 -->
             <dependency>
@@ -190,18 +203,6 @@
                 <version>2.6.0</version>
             </dependency>
 
-            <!-- https://mvnrepository.com/artifact/redis.clients/jedis -->
-            <dependency>
-                <groupId>redis.clients</groupId>
-                <artifactId>jedis</artifactId>
-                <version>2.9.0</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.apache.commons</groupId>
-                        <artifactId>commons-pool2</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
 
             <!-- https://mvnrepository.com/artifact/org.redisson/redisson -->
             <dependency>
@@ -210,11 +211,11 @@
                 <version>${redisson.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.redisson/redisson-spring-data-20 -->
-            <dependency>
-                <groupId>org.redisson</groupId>
-                <artifactId>redisson-spring-data-20</artifactId>
-                <version>${redisson.version}</version>
-            </dependency>
+<!--            <dependency>-->
+<!--                <groupId>org.redisson</groupId>-->
+<!--                <artifactId>redisson-spring-data-20</artifactId>-->
+<!--                <version>${redisson.version}</version>-->
+<!--            </dependency>-->
 
             <dependency>
                 <groupId>net.sf.ehcache</groupId>
@@ -250,19 +251,19 @@
             </dependency>
 
             <!-- set servlet -->
-            <dependency>
-                <groupId>javax.servlet</groupId>
-                <artifactId>javax.servlet-api</artifactId>
-                <version>3.1.0</version>
-                <scope>provided</scope>
-            </dependency>
+<!--            <dependency>-->
+<!--                <groupId>javax.servlet</groupId>-->
+<!--                <artifactId>javax.servlet-api</artifactId>-->
+<!--                <version>3.1.0</version>-->
+<!--                <scope>provided</scope>-->
+<!--            </dependency>-->
 
             <!--jstl-->
-            <dependency>
-                <groupId>javax.servlet</groupId>
-                <artifactId>jstl</artifactId>
-                <version>1.2</version>
-            </dependency>
+<!--            <dependency>-->
+<!--                <groupId>javax.servlet</groupId>-->
+<!--                <artifactId>jstl</artifactId>-->
+<!--                <version>1.2</version>-->
+<!--            </dependency>-->
 
             <dependency>
                 <groupId>com.google.guava</groupId>
@@ -278,47 +279,10 @@
             <!-- set shiro -->
             <dependency>
                 <groupId>org.apache.shiro</groupId>
-                <artifactId>shiro-core</artifactId>
+                <artifactId>shiro-spring-boot-web-starter</artifactId>
                 <version>${shiro.version}</version>
                 <scope>compile</scope>
             </dependency>
-            <dependency>
-                <groupId>org.apache.shiro</groupId>
-                <artifactId>shiro-web</artifactId>
-                <version>${shiro.version}</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.shiro</groupId>
-                <artifactId>shiro-quartz</artifactId>
-                <version>${shiro.version}</version>
-                <scope>compile</scope>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.opensymphony.quartz</groupId>
-                        <artifactId>quartz</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.shiro</groupId>
-                <artifactId>shiro-ehcache</artifactId>
-                <version>${shiro.version}</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.shiro</groupId>
-                <artifactId>shiro-cas</artifactId>
-                <version>${shiro.version}</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.shiro</groupId>
-                <artifactId>shiro-spring</artifactId>
-                <version>${shiro.version}</version>
-                <scope>compile</scope>
-            </dependency>
-
             <dependency>
                 <groupId>com.squareup.okhttp3</groupId>
                 <artifactId>okhttp</artifactId>
@@ -348,9 +312,6 @@
 
     <build>
         <sourceDirectory>src/main/java</sourceDirectory>
-        <filters>
-            <filter>src/filters/${env}.properties</filter>
-        </filters>
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
@@ -518,6 +479,7 @@
                 </executions>
                 <configuration>
                     <excludes>
+                        <exclude>META-INF/**</exclude>
                         <exclude>**/*Test.class</exclude>
                         <exclude>**/package-info.class</exclude>
                     </excludes>
@@ -545,9 +507,6 @@
     <profiles>
         <profile>
             <id>dev</id>
-            <properties>
-                <env>dev</env>
-            </properties>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
@@ -570,12 +529,16 @@
     <modules>
         <module>echo-test</module>
         <module>echo-utils</module>
-        <module>echo-share</module>
+        <module>echo-web</module>
+        <module>echo-taglib-freemarker</module>
         <module>echo-xcache</module>
         <module>echo-shiro</module>
+        <module>echo-data</module>
+        <module>echo-repository-hibernate</module>
         <module>echo-ddd</module>
         <module>echo-ddd-support</module>
-        <module>echo-taglib-freemarker</module>
-        <module>echo-data</module>
+        <module>echo-redis</module>
+        <module>echo-ext-spring</module>
+        <module>echo-messaging</module>
     </modules>
 </project>

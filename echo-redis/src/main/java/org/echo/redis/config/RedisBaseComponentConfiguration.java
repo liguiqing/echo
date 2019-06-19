@@ -35,8 +35,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
-import java.net.UnknownHostException;
-
 /**
  * <pre>
  * 基于redis实现的通用组件,配置依赖于{@link RedisAutoConfiguration} 及　{@link RedissonAutoConfiguration}

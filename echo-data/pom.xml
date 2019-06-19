@@ -39,8 +39,12 @@
         </dependency>
         <dependency>
             <groupId>echo</groupId>
-            <artifactId>echo-share</artifactId>
+            <artifactId>echo-utils</artifactId>
             <version>${echo.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jdbc</artifactId>
         </dependency>
     </dependencies>
 

@@ -4,7 +4,6 @@ import eu.bitwalker.useragentutils.Browser;
 import eu.bitwalker.useragentutils.DeviceType;
 import eu.bitwalker.useragentutils.OperatingSystem;
 import eu.bitwalker.useragentutils.UserAgent;
-import org.echo.test.PrivateConstructors;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -32,7 +31,7 @@ class UserAgentUtilsTest {
 
     @Test
     void getUserAgent() {
-        assertThrows(Exception.class,()->new PrivateConstructors().exec(UserAgentUtils.class));
+        assertThrows(Exception.class,()->ClassUtils.newInstanceOf(UserAgentUtils.class));
        // HttpServletRequest request = mock(HttpServletRequest.class);
         //when(request.getHeader("User-Agent")).thenReturn("Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_8; en-us) AppleWebKit/534.50 (KHTML, like Gecko) Version/5.1 Safari/534.50");
         UserAgent agent = UserAgentUtils.getUserAgent(request);

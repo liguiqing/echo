@@ -23,17 +23,17 @@ public class PasswordCredentialsMatcher implements CredentialsMatcher {
 
     @Override
     public boolean doCredentialsMatch(AuthenticationToken token, AuthenticationInfo info) {
-        String tokenHashedCredentials = tokenHashedCredentials(token, info);
+        var tokenHashedCredentials = tokenHashedCredentials(token, info);
         byte[] tokenBytes = tokenHashedCredentials.getBytes();
         byte[] accountBytes = info.getCredentials().toString().getBytes();
         return Arrays.equals(tokenBytes, accountBytes);
     }
 
     private String tokenHashedCredentials(AuthenticationToken token, AuthenticationInfo info) {
-        PrincipalCollection pc = info.getPrincipals();
-        UsernamePasswordToken upToken = (UsernamePasswordToken) token;
-        String originalPassword = new String(upToken.getPassword());
-        String salt = saltReader.getSalt(pc.getPrimaryPrincipal());
+        var pc = info.getPrincipals();
+        var upToken = (UsernamePasswordToken) token;
+        var originalPassword = new String(upToken.getPassword());
+        var salt = saltReader.getSalt(pc.getPrimaryPrincipal());
         return this.passwordEncoder.encode(salt, originalPassword);
     }
 }

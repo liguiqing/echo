@@ -18,7 +18,7 @@ public class SpringCache<K, V> implements Cache<K, V> {
 
     @Override
     public V get(K k) {
-        Object o = proxyCache.get(k);
+        var o = proxyCache.get(k);
         return o == null?null:(V)((org.springframework.cache.Cache.ValueWrapper) o).get();
     }
 

@@ -1,6 +1,5 @@
 package org.echo.util;
 
-import org.echo.test.PrivateConstructors;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -25,6 +24,6 @@ class ThreadsTest {
         ExecutorService es3 = Threads.getExecutorService();
         assertNotNull(es3);
         es3.shutdown();
-        assertThrows(Exception.class,()->new PrivateConstructors().exec(Threads.class));
+        assertThrows(Exception.class,()->ClassUtils.newInstanceOf(Threads.class));
     }
 }

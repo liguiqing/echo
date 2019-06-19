@@ -23,5 +23,4 @@ public class Closer {
             log.error(ThrowableToString.toString(e));
         }
     }
-
 }

@@ -22,7 +22,7 @@ public class DateUtils {
      * @return Date {@link Date}
      */
     public static Date fromLocalDate(LocalDate localDate){
-        ZonedDateTime zonedDateTime = localDate.atStartOfDay(ZoneId.systemDefault());
+        var zonedDateTime = localDate.atStartOfDay(ZoneId.systemDefault());
         return Date.from(zonedDateTime.toInstant());
     }
 
@@ -32,9 +32,9 @@ public class DateUtils {
      * @return
      */
     public static LocalDate toLocalDate(Date date){
-        Instant instant = date.toInstant();
-        ZoneId zone = ZoneId.systemDefault();
-        LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, zone);
+        var instant = date.toInstant();
+        var zone = ZoneId.systemDefault();
+        var localDateTime = LocalDateTime.ofInstant(instant, zone);
         return localDateTime.toLocalDate();
     }
 
@@ -44,8 +44,8 @@ public class DateUtils {
      * @return Date {@link Date}
      */
     public static Date endOfDay(Date date) {
-        LocalDateTime localDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(date.getTime()), ZoneId.systemDefault());
-        LocalDateTime endOfDay = localDateTime.with(LocalTime.MAX);
+        var localDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(date.getTime()), ZoneId.systemDefault());
+        var endOfDay = localDateTime.with(LocalTime.MAX);
         return Date.from(endOfDay.atZone(ZoneId.systemDefault()).toInstant());
     }
 
@@ -55,8 +55,8 @@ public class DateUtils {
      * @return Date {@link Date}
      */
     public static Date startOfDay(Date date) {
-        LocalDateTime localDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(date.getTime()), ZoneId.systemDefault());
-        LocalDateTime startOfDay = localDateTime.with(LocalTime.MIN);
+        var localDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(date.getTime()), ZoneId.systemDefault());
+        var startOfDay = localDateTime.with(LocalTime.MIN);
         return Date.from(startOfDay.atZone(ZoneId.systemDefault()).toInstant());
     }
 }

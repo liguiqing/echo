@@ -1,13 +1,11 @@
 package org.echo.util;
 
 import lombok.extern.slf4j.Slf4j;
+import org.echo.exception.BusinessException;
 import org.echo.exception.ThrowableToString;
 import org.springframework.beans.BeanUtils;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
+import java.lang.reflect.*;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -40,7 +38,7 @@ public class ClassUtils {
             types[types.length-1] = oClass.getGenericSuperclass();
         }
 
-        for (Type type1 : types) {
+        for (var type1 : types) {
             if (contains(type1, parameterizedTypeClass)) {
                 return true;
             }
@@ -79,7 +77,7 @@ public class ClassUtils {
                 argsClasses[i++] = arg.getClass();
             }
         }
-        Method method = BeanUtils.findMethod(o.getClass(), methodName, argsClasses);
+        var method = BeanUtils.findMethod(o.getClass(), methodName, argsClasses);
         if(method == null)
             return null;
         method.setAccessible(true);
@@ -104,7 +102,7 @@ public class ClassUtils {
         Class<?> cls = o.getClass();
 
         Method[] methods = cls.getDeclaredMethods();
-        for(Method method:methods){
+        for(var method:methods){
             if(method.getReturnType().equals(returnType)){
                 try {
                     return cls.getMethod(method.getName(), parameterTypes);
@@ -122,14 +120,21 @@ public class ClassUtils {
      * @param cls of Constructor
      * @param parameterTypes {@link Class} of method parameter types
      * @param <T> return type
-     * @return null if can'nt instance
+     * @return new instance of T
+     * @throws
      */
     public static <T> T newInstanceOf(Class cls,Object... parameterTypes){
-        if(Objects.isNull(cls) || Objects.isNull(parameterTypes)){
+        if(Objects.isNull(cls)){
             return null;
         }
 
         try {
+            if(Objects.isNull(parameterTypes)||parameterTypes.length == 0){
+                Constructor c0=  cls.getDeclaredConstructor();
+                c0.setAccessible(true);
+                return (T) c0.newInstance();
+            }
+
             Class[] clses = new Class[parameterTypes.length];
             int i = 0;
             for(Object o:parameterTypes){
@@ -138,7 +143,7 @@ public class ClassUtils {
             return (T)cls.getDeclaredConstructor(clses).newInstance(parameterTypes);
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
             log.error(ThrowableToString.toString(e));
+            throw new BusinessException("000-001",String.format("实例化%s错误",cls.getName()));
         }
-        return null;
     }
 }

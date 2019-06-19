@@ -1,8 +1,10 @@
 package org.echo.lang;
 
-import org.echo.test.PrivateConstructors;
+import org.echo.exception.BusinessException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.echo.util.ClassUtils;
+
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -23,6 +25,6 @@ class CloserTest {
         Closer.close(closeable);
         doThrow(IOException.class).when(closeable).close();
         Closer.close(closeable);
-        assertThrows(Exception.class,()->new PrivateConstructors().exec(Closer.class));
+        assertThrows(BusinessException.class,()-> ClassUtils.newInstanceOf(Closer.class));
     }
 }

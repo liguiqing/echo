@@ -1,6 +1,5 @@
 package org.echo.util;
 
-import org.echo.test.PrivateConstructors;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
@@ -41,7 +40,7 @@ class NumbersUtilTest {
         assertTrue(NumbersUtil.stringToInt("0.5")==0);
         assertTrue(NumbersUtil.stringToInt("aaa")==0);
 
-        assertThrows(Exception.class,()->new PrivateConstructors().exec(NumbersUtil.class));
+        assertThrows(Exception.class,()->ClassUtils.newInstanceOf(NumbersUtil.class));
     }
 
     @Test

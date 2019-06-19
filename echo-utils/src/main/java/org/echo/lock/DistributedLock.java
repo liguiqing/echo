@@ -11,7 +11,6 @@ import java.util.function.Consumer;
  * @author Liguiqing
  * @since V1.0
  */
-
 public interface DistributedLock<K,V> {
 
     default V lock(K key, Callable<V> call){

@@ -21,7 +21,7 @@
 package org.echo.data.index;
 
 import org.echo.data.IndexTestBean;
-import org.echo.test.PrivateConstructors;
+import org.echo.util.ClassUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -34,7 +34,7 @@ class IndexesTest {
 
     @Test
     void total() {
-        assertThrows(Exception.class, () -> new PrivateConstructors().exec(Indexes.class));
+        assertThrows(Exception.class, () -> ClassUtils.newInstanceOf(Indexes.class));
 
         Index total1 = Indexes.total("T1");
         assertEquals("T1", total1.getTitle());

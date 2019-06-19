@@ -1,17 +1,19 @@
 package org.echo.ddd.support.domain.model.vo;
 
 import org.echo.ddd.support.config.DddSupportConfigurations;
-import org.echo.share.config.DataSourceConfigurations;
-import org.echo.test.repository.AbstractRepositoryTest;
 import org.echo.xcache.config.AutoCacheConfigurations;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.redisson.spring.starter.RedissonAutoConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.ContextHierarchy;
-import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.transaction.Transactional;
 import java.util.List;
@@ -21,19 +23,21 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * Copyright (c) 2016,$today.year, 深圳市易考试乐学测评有限公司
  **/
-
-@ContextHierarchy(@ContextConfiguration(
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(
         initializers = {ConfigFileApplicationContextInitializer.class},
         classes = {
-                DataSourceConfigurations.class,
+                DataSourceAutoConfiguration.class,
                 AutoCacheConfigurations.class,
+                HibernateJpaAutoConfiguration.class,
+                RedisAutoConfiguration.class,
+                RedissonAutoConfiguration.class,
                 DddSupportConfigurations.class
-        }))
-@TestPropertySource(properties = {"spring.config.location = classpath:/application-cache.yml,classpath:/application-redis.yml"})
+        })
 @Transactional
 @Rollback
 @DisplayName("Echo : LabelValueObjectRepository Test")
-class LabelValueObjectRepositoryTest extends AbstractRepositoryTest {
+class LabelValueObjectRepositoryTest {
 
     @Autowired
     private LabelValueObjectRepository labelValueObjectRepository;

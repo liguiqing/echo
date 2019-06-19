@@ -27,7 +27,7 @@ import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.ThreadContext;
 import org.echo.shiro.realm.Decepticons;
 import org.echo.shiro.realm.PrimusSubjectPicker;
-import org.echo.test.PrivateConstructors;
+import org.echo.util.ClassUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -56,7 +56,7 @@ class SubjectsContextTest {
         when(principalCollection.getPrimaryPrincipal()).thenReturn(null).thenReturn(decepticons).thenReturn(null).thenReturn(decepticons).thenReturn(decepticons).thenReturn(null);
         when(subject.getPrincipal()).thenReturn(null).thenReturn(decepticons).thenReturn(decepticons).thenReturn(decepticons);
         ThreadContext.put(ThreadContext.SUBJECT_KEY,subject);
-        assertThrows(Exception.class,()->new PrivateConstructors().exec(Shiros.class));
+        assertThrows(Exception.class,()-> ClassUtils.newInstanceOf(Shiros.class));
     }
 
     @Test

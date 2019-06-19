@@ -3,7 +3,7 @@ package org.echo.shiro;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.ThreadContext;
-import org.echo.test.PrivateConstructors;
+import org.echo.util.ClassUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,7 +26,7 @@ class ShirosTest {
         Subject subject = mock(Subject.class);
         when(subject.isAuthenticated()).thenReturn(true).thenReturn(false);
         ThreadContext.put(ThreadContext.SUBJECT_KEY,subject);
-        assertThrows(Exception.class,()->new PrivateConstructors().exec(Shiros.class));
+        assertThrows(Exception.class,() -> ClassUtils.newInstanceOf(Shiros.class));
     }
 
     @Test

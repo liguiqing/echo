@@ -38,7 +38,7 @@ class FieldSaltReaderTest {
         Decepticons decepticons = new Decepticons("salt");
 
         assertTrue(true);
-        assertEquals("salt", new FieldSaltReader().getSalt(decepticons));
+        assertEquals("salt", new FieldSaltReader("salt").getSalt(decepticons));
         SaltReader other = mock(SaltReader.class);
         when(other.getSalt(any())).thenReturn("").thenReturn("salt");
 

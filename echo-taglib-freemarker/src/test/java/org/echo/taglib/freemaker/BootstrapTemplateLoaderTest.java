@@ -20,67 +20,17 @@
 
 package org.echo.taglib.freemaker;
 
-import org.echo.share.config.SpringMvcConfiguration;
-import org.echo.test.web.AbstractSpringControllerTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.ContextHierarchy;
 
-import java.io.BufferedReader;
-import java.io.Reader;
-
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 @DisplayName("Echo: BootstrapTemplateLoader Test")
-@ContextHierarchy(@ContextConfiguration(
-        classes = {
-                SpringMvcConfiguration.class,
-                BootstrapTemplateLoader.class,
-                FreemarkerLoaderTestController.class
-        }))
-class BootstrapTemplateLoaderTest extends AbstractSpringControllerTest {
+class BootstrapTemplateLoaderTest {
 
     @Test
-    void html()throws Exception{
-        this.mvc.perform(get("/html"))
-                .andDo(print())
-                .andExpect(view().name("/htmlTest"))
-                .andExpect(content().string(startsWith("<!DOCTYPE html>")))
-                .andExpect(content().string(containsString("</html>")));
-
-        this.mvc.perform(get("/html").param("requirejs","false"))
-                .andDo(print())
-                .andExpect(view().name("/htmlTest"))
-                .andExpect(content().string(startsWith("<!DOCTYPE html>")))
-                .andExpect(content().string(containsString("</html>")));
-    }
-
-    @Test
-    void test() throws Exception {
-        assertTrue(Boolean.TRUE);
+    void test() throws Exception{
         BootstrapTemplateLoader templateLoader = new BootstrapTemplateLoader();
-        Object source = templateLoader.findTemplateSource("html.ftl");
-        Reader reader = templateLoader.getReader(source, "utf-8");
-        String s = readerToString(reader);
-        assertNotNull(s);
-    }
-
-    private String readerToString(Reader reader) throws Exception {
-        BufferedReader bufferedReader = new BufferedReader(reader);
-        StringBuffer sb = new StringBuffer();
-        String temp = null;
-        while ((temp = bufferedReader.readLine()) != null) {
-            sb.append(temp);
-        }
-        bufferedReader.close();
-        return sb.toString();
+        assertNotNull(templateLoader.findTemplateSource("html.ftl"));
     }
 }

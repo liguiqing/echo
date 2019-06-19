@@ -10,6 +10,7 @@ import org.echo.ddd.support.infrastructure.id.WordsToUpperCaseString;
 import org.echo.lock.DistributedLock;
 import org.echo.xcache.CacheDequeFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -29,6 +30,7 @@ import java.util.Optional;
  */
 @Configuration
 @EnableCaching
+@EntityScan(basePackages = "org.echo.ddd.support.domain.**.*")
 @EnableJpaRepositories(value = "org.echo.ddd.support.domain.**.*",
         includeFilters = {@ComponentScan.Filter(type= FilterType.ANNOTATION,value= Repository.class)})
 @ComponentScan(value = "org.echo.ddd.support.**",
@@ -60,6 +62,4 @@ public class DddSupportConfigurations {
                 cacheDequeFactory.orElse(new CacheDequeFactory(){}),
                 distributedLock.orElse(new DistributedLock(){}));
     }
-
-
 }

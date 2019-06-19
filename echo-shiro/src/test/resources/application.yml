@@ -1,0 +1,34 @@
+# see https://shiro.apache.org/spring-boot.html#configuration-properties
+shiro:
+  enabled: true
+  web:
+    enabled: true
+  annotations:
+    enabled: true
+  loginUrl: /index
+  rememberMeManager:
+    cookie:
+      domain: echo
+      name: echo
+      path: /
+      secure: false
+  sessionManager:
+    cookie:
+      domain: echo
+      maxAge: -1
+      name: echo
+      path: /
+      secure: true
+    deleteInvalidSessions: true
+    sessionIdCookieEnabled: true
+    sessionIdUrlRewritingEnabled: true
+  successUrl: /home
+  unauthorizedUrl: /index
+  userNativeSessionManager: false
+  scheduler:
+    validationInterval: 180000
+  credentials:
+    salt:
+      reader:
+        field: salt
+        method: getSalt

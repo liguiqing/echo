@@ -1,6 +1,6 @@
 package org.echo.exception;
 
-import org.echo.test.PrivateConstructors;
+import org.echo.util.ClassUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -45,7 +45,7 @@ class ThrowableToStringTest {
         Throwable t = null;
         assertTrue(ThrowableToString.toString(t).contains("Throwable is null"));
         assertTrue(ThrowableToString.toString(new Exception(new IllegalArgumentException(" Fuck"))).contains("Fuck"));
-        assertThrows(Exception.class,()->new PrivateConstructors().exec(ThrowableToString.class));
+        assertThrows(Exception.class,()-> ClassUtils.newInstanceOf(ThrowableToString.class));
     }
 
     @Test

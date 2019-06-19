@@ -1,7 +1,6 @@
 package org.echo.shiro.cache;
 
 import org.apache.shiro.cache.Cache;
-import org.echo.shiro.config.ShiroProperties;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -22,8 +21,7 @@ class SpringCacheManagerTest {
         when(cacheManager.getCache(any(String.class))).thenReturn(cache);
         when(cache.get(any(Object.class))).thenReturn(()->"a").thenReturn(()->"a").thenReturn(()->"a").thenReturn(()->"a");
         when(cache.putIfAbsent(any(Object.class),any(Object.class))).thenReturn(()->"a");
-        ShiroProperties sp = new ShiroProperties();
-        SpringCacheManager springCacheManager = new SpringCacheManager(cacheManager, sp);
+        SpringCacheManager springCacheManager = new SpringCacheManager(cacheManager, 2);
         Cache cache1 = springCacheManager.createCache("a");
         assertNotNull(cache1);
         assertEquals("a",cache1.get("a"));

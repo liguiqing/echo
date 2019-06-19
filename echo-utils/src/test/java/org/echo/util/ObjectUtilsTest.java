@@ -20,12 +20,10 @@
 
 package org.echo.util;
 
-import org.echo.test.PrivateConstructors;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
-import java.time.temporal.TemporalUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -58,6 +56,6 @@ class ObjectUtilsTest {
         ClassUtilsTestBean cu = ObjectUtils.deepClone(new ClassUtilsTestBean());
         assertNull(cu);
 
-        assertThrows(Exception.class, ()->new PrivateConstructors().exec(ObjectUtils.class));
+        assertThrows(Exception.class, ()->ClassUtils.newInstanceOf(ObjectUtils.class));
     }
 }

@@ -22,7 +22,6 @@ package org.echo.shiro.authc.credential;
 
 
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import org.echo.util.ClassUtils;
 
 import java.util.Optional;
@@ -33,14 +32,13 @@ import java.util.Optional;
  * </P>
  *
  * @author liguiqing
- * @date 2019-03-04 09:18
- * @since V1.0.0
+ * @since V1.0.0 2019-03-04 09:18
  **/
-@NoArgsConstructor
 @AllArgsConstructor
 public class MethodSaltReader extends AbstractSaltReader {
+    public static final String DEFAULT_METHOD = "getSalt";
 
-    private String method = "getSalt";
+    private String method;
 
     public MethodSaltReader(String field, Optional<SaltReader> other) {
         this.method = field;

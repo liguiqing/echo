@@ -22,6 +22,7 @@ package org.echo.shiro.realm;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
+import org.echo.shiro.Shiros;
 import org.echo.shiro.SubjectPicker;
 
 /**
@@ -46,7 +47,7 @@ public class PrimusSubjectPicker implements SubjectPicker {
 
     @Override
     public boolean isAuthenticated() {
-        return SecurityUtils.getSubject().isAuthenticated();
+        return Shiros.isAuthenticated();
     }
 
     @Override
@@ -55,7 +56,7 @@ public class PrimusSubjectPicker implements SubjectPicker {
     }
 
     private Decepticons getDecepticons(){
-        Subject subject = SecurityUtils.getSubject();
+        var subject = SecurityUtils.getSubject();
         return (Decepticons)subject.getPrincipal();
     }
 }

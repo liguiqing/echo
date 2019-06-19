@@ -16,13 +16,13 @@ public class Shiros {
     }
 
     public static  Subject getSubject(){
-        Subject subject = SecurityUtils.getSubject();
+        var subject = SecurityUtils.getSubject();
         log.debug(subject.toString());
         return subject;
     }
 
     public static boolean isAuthenticated(){
-        Subject subject = getSubject();
+        var subject = getSubject();
         return subject.isAuthenticated();
     }
 }

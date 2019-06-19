@@ -1,0 +1,30 @@
+logging:
+  level:
+    root: DEBUG
+
+spring:
+  http:
+    encoding:
+      force: true
+      charset: UTF-8
+  freemarker:
+    charset: UTF-8
+    cache: false
+    expose-request-attributes: true
+    request-context-attribute: request
+    expose-session-attributes: true
+    content-type: text/html
+    template-loader-path: classpath:/META-INF/ftl
+    suffix: .ftl
+    check-template-location: true
+    allow-request-override: false
+    allow-session-override: false
+    enabled: true
+    expose-spring-macro-helpers: true
+    prefer-file-system-access: true
+    settings:
+      template_update_delay: 0
+      default_encoding: UTF-8
+      number_format: 0.######
+      classic_compatible: true
+      template_exception_handler: ignore

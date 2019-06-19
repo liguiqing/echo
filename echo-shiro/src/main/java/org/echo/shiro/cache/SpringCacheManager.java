@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.cache.AbstractCacheManager;
 import org.apache.shiro.cache.Cache;
-import org.echo.shiro.config.ShiroProperties;
 
 /**
  * @author Liguiqing
@@ -15,14 +14,19 @@ import org.echo.shiro.config.ShiroProperties;
 @AllArgsConstructor
 public class SpringCacheManager extends AbstractCacheManager {
 
+    public final static int DEFAULT_CACHE_LEVEL = 2;
+
     private org.springframework.cache.CacheManager cacheManager;
 
-    private ShiroProperties properties;
+    private int cacheLevel;
 
     @Override
     protected Cache createCache(String name) {
-        String springCacheName = properties.getCacheName(name);
-        org.springframework.cache.Cache springCache =  cacheManager.getCache(springCacheName);
+        org.springframework.cache.Cache springCache =  cacheManager.getCache(springCacheName(name));
         return new SpringCache(springCache);
+    }
+
+    private String springCacheName(String cacheName){
+        return cacheName.concat("#-1#-1#").concat(Integer.toString(cacheLevel));
     }
 }

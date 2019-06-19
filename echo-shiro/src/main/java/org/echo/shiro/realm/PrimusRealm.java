@@ -42,14 +42,14 @@ public class PrimusRealm extends AuthorizingRealm {
 
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token)  {
-        UsernamePasswordToken userToken = (UsernamePasswordToken) token;
+        var userToken = (UsernamePasswordToken) token;
         String name = userToken.getUsername();
         if(!megatron.getName().equals(name)){
             throw new UnknownAccountException("You are The Fallen");
         }
 
-        SimplePrincipalCollection principalCollection = new SimplePrincipalCollection(megatron, getName());
-        SimpleAuthenticationInfo simpleAuthenticationInfo = new SimpleAuthenticationInfo();
+        var principalCollection = new SimplePrincipalCollection(megatron, getName());
+        var simpleAuthenticationInfo = new SimpleAuthenticationInfo();
         simpleAuthenticationInfo.setCredentials(encoder.encode(megatron.getSalt(), megatron.getPassword()));
         simpleAuthenticationInfo.setPrincipals(principalCollection);
         return simpleAuthenticationInfo;

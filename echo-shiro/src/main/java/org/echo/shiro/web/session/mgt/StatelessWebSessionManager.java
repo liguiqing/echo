@@ -41,12 +41,12 @@ public class StatelessWebSessionManager extends DefaultWebSessionManager impleme
 
     @Override
     public Serializable getSessionId(SessionKey key){
-        Serializable sessionId = key.getSessionId();
+        var sessionId = key.getSessionId();
         if(sessionId != null){
             return sessionId;
         }
 
-        HttpServletRequest request = WebUtils.getHttpRequest(key);
+        var request = WebUtils.getHttpRequest(key);
         if(UserAgentUtils.isBrowser(request)){
             return super.getSessionId(key);
         }
@@ -63,13 +63,13 @@ public class StatelessWebSessionManager extends DefaultWebSessionManager impleme
 
     @Override
     protected void onStart(Session session, SessionContext context){
-        HttpServletRequest request = WebUtils.getHttpRequest(context);
+        var request = WebUtils.getHttpRequest(context);
         if(UserAgentUtils.isBrowser(request)){
             super.onStart(session,context);
             return;
         }
 
-        HttpServletResponse response = WebUtils.getHttpResponse(context);
+        var response = WebUtils.getHttpResponse(context);
         Serializable sessionId = session.getId();
         this.storeSessionId(sessionId, response);
         request.removeAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_ID_SOURCE);
@@ -78,7 +78,7 @@ public class StatelessWebSessionManager extends DefaultWebSessionManager impleme
 
     @Override
     protected void onStop(Session session, SessionKey key) {
-        HttpServletRequest request = WebUtils.getHttpRequest(key);
+        var request = WebUtils.getHttpRequest(key);
         if(UserAgentUtils.isBrowser(request)){
             super.onStop(session,key);
             return;
@@ -102,8 +102,8 @@ public class StatelessWebSessionManager extends DefaultWebSessionManager impleme
     }
 
     private Serializable getSessionId(ServletRequest request) {
-        HttpServletRequest httpRequest = (HttpServletRequest) request;
-        String id = httpRequest.getHeader(this.sessionToken);
+        var httpRequest = (HttpServletRequest) request;
+        var id = httpRequest.getHeader(this.sessionToken);
 
         if (StringUtils.isEmpty(id)) {
             log.debug("Session Id is null ");
@@ -128,7 +128,7 @@ public class StatelessWebSessionManager extends DefaultWebSessionManager impleme
      */
     private void storeSessionId(Serializable currentId, HttpServletResponse response) {
         Preconditions.checkNotNull(currentId, "sessionId cannot be null when persisting for subsequent requests.");
-        String idString = currentId.toString();
+        var idString = currentId.toString();
         response.setHeader(this.sessionToken, idString);
         log.info("Set session ID header for session with id {}", idString);
     }

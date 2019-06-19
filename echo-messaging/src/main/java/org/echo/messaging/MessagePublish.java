@@ -35,5 +35,5 @@ import java.io.Serializable;
  **/
 public interface MessagePublish<T extends Serializable> {
 
-   default void publish(String topic, T message){}
+   void publish(String topic, T message);
 }

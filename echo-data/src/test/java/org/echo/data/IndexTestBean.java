@@ -21,10 +21,10 @@
 package org.echo.data;
 
 
+import com.google.common.collect.Lists;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.apache.commons.lang3.RandomUtils;
-import org.assertj.core.util.Lists;
 
 import java.time.Duration;
 import java.time.LocalDateTime;

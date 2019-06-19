@@ -22,10 +22,10 @@ public class ThrowableToString {
     public static String toString(Throwable t) {
         if (t == null)
             return "Throwable is null";
-        StringWriter swriter = new StringWriter();
-        PrintWriter pwriter = new PrintWriter(swriter);
+        var swriter = new StringWriter();
+        var pwriter = new PrintWriter(swriter);
         t.printStackTrace(pwriter);
-        String s = swriter.toString();
+        var s = swriter.toString();
         Closer.close(pwriter);
         return s;
     }

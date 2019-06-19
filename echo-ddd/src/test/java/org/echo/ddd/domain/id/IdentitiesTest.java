@@ -1,6 +1,6 @@
 package org.echo.ddd.domain.id;
 
-import org.echo.test.PrivateConstructors;
+import org.echo.util.ClassUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -41,7 +41,7 @@ class IdentitiesTest {
         assertTrue(id3 == 10000L);
         Long id4 = Identities.genId(AssociationId.class);
         assertTrue(id4.compareTo(10010L) == 0);
-        assertThrows(Exception.class,()->new PrivateConstructors().exec(Identities.class));
+        assertThrows(Exception.class,()-> ClassUtils.newInstanceOf(Identities.class));
 
         assertThrows(IdPrefixGeneratorNotFoundException.class, () -> {throw new IdPrefixGeneratorNotFoundException();});
         assertThrows(IdPrefixGeneratorNotFoundException.class, () -> {throw new IdPrefixGeneratorNotFoundException("");});

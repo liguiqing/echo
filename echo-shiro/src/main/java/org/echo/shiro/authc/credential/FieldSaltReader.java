@@ -22,7 +22,6 @@ package org.echo.shiro.authc.credential;
 
 
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.reflect.FieldUtils;
 
@@ -34,15 +33,16 @@ import java.util.Optional;
  * </P>
  *
  * @author liguiqing
- * @date 2019-03-04 09:12
- * @since V1.0.0
+ * @since V1.0.0 2019-03-04 09:12
  **/
-@NoArgsConstructor
+
 @AllArgsConstructor
 @Slf4j
 public class FieldSaltReader extends AbstractSaltReader{
 
-    private String field = "salt";
+    public static final String DEFAULT_FIELD = "salt";
+
+    private String field;
 
     public FieldSaltReader(String field, Optional<SaltReader> other) {
         this.field = field;
@@ -54,7 +54,7 @@ public class FieldSaltReader extends AbstractSaltReader{
         try {
             return FieldUtils.readField(o,field,true).toString();
         } catch (Exception e) {
-            throw new IllegalArgumentException(e.getMessage());
+            throw new IllegalArgumentException(e);
         }
     }
 }

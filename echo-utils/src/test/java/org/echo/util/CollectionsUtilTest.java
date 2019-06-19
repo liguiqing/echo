@@ -1,8 +1,8 @@
 package org.echo.util;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import org.assertj.core.util.Lists;
-import org.echo.test.PrivateConstructors;
+import org.echo.exception.BusinessException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -20,7 +20,7 @@ class CollectionsUtilTest {
 
     @Test
     void isNotNullAndNotEmpty() {
-        assertThrows(Exception.class,()->new PrivateConstructors().exec(CollectionsUtil.class));
+        assertThrows(BusinessException.class,()->ClassUtils.newInstanceOf(CollectionsUtil.class));
         assertAll(()->assertFalse(CollectionsUtil.isNotNullAndNotEmpty(null)),
                 ()->assertFalse(CollectionsUtil.isNotNullAndNotEmpty(new ArrayList())),
                 ()->assertTrue(CollectionsUtil.isNotNullAndNotEmpty(Arrays.asList("a"))));

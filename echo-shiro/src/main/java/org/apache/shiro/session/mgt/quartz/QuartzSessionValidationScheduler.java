@@ -52,13 +52,13 @@ public class QuartzSessionValidationScheduler implements SessionValidationSchedu
         log.debug("Echo Scheduling session validation job using Quartz with session validation interval of [{}]ms...",this.sessionValidationInterval);
 
         try {  
-            SimpleTrigger trigger = TriggerBuilder.newTrigger()
+            var trigger = TriggerBuilder.newTrigger()
                     .startNow()
                     .withIdentity(JOB_NAME, Scheduler.DEFAULT_GROUP)
                     .withSchedule(SimpleScheduleBuilder.simpleSchedule().withIntervalInMilliseconds(sessionValidationInterval))
                     .build();
   
-            JobDetail detail = JobBuilder.newJob(QuartzSessionValidationJob.class)  
+            var detail = JobBuilder.newJob(QuartzSessionValidationJob.class)
                     .withIdentity(JOB_NAME, Scheduler.DEFAULT_GROUP).build();  
             detail.getJobDataMap().put(SESSION_MANAGER_KEY, this.getSessionManager());
             getScheduler().scheduleJob(detail, trigger);

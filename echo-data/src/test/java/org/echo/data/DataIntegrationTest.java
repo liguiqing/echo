@@ -21,7 +21,7 @@
 package org.echo.data;
 
 
-import org.assertj.core.util.Lists;
+import com.google.common.collect.Lists;
 import org.echo.data.collection.IterableDataSet;
 import org.echo.data.index.IndexGroup;
 import org.echo.data.index.Indexes;

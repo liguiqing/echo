@@ -31,7 +31,7 @@ class MethodSaltReaderTest {
     @Test
     void doRead() {
         Decepticons decepticons = new Decepticons("salt");
-        MethodSaltReader saltReader = new MethodSaltReader();
+        MethodSaltReader saltReader = new MethodSaltReader("getSalt");
         assertEquals("salt",saltReader.getSalt(decepticons));
 
         saltReader = new MethodSaltReader("getSalt");
