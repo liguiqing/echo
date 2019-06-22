@@ -162,7 +162,7 @@ public class JdbcLazyDequeDataLoader<T> implements DataLoader<T> {
     }
 
     private void loadData(){
-        var list = this.jdbc.query(this.sql,(r, i)->this.extractor.apply(r), this.sqlArgs);
+        var list = this.jdbc.query(this.sql.concat(" limit ?,? "),(r, i)->this.extractor.apply(r), this.sqlArgs);
         if(CollectionsUtil.isNullOrEmpty(list)) return;
         log.debug("Load data {}",list.size());
         this.first += list.size();

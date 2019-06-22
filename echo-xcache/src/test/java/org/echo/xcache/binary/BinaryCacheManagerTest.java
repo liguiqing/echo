@@ -79,6 +79,10 @@ public class BinaryCacheManagerTest {
 
     @Test
     public void test(){
+        assertNotNull(binaryCacheManager);
+        assertNotNull(redisTemplate);
+        assertNotNull(redissonClient);
+
         binaryCacheManager.removeAllCache();
         String identifier = UUID.randomUUID().toString();
         redisTemplate.convertAndSend("Test",new CacheMessage(identifier,"cache1","c1"));
@@ -226,10 +230,12 @@ public class BinaryCacheManagerTest {
         assertTrue(cacheManager.hasTwoLevel());
 
         binaryCacheManager.removeCache("Test");
+        testRedissonCollections();
     }
 
-    @Test
-    public void testRedissonCollections(){
+
+    void testRedissonCollections(){
+        assertNotNull(redissonClient);
         String dequeueKey = "echo:catch:exec:deKey1";
         RBlockingDeque deque = redissonClient.getBlockingDeque(dequeueKey);
         deque.clear();
