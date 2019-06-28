@@ -68,7 +68,7 @@ public class BinaryCache extends AbstractValueAdaptingCache {
 
     public BinaryCache(boolean allowNullValues) {
         super(allowNullValues);
-        this.messagePush = (topic, message) -> {};
+        this.messagePush = (t, m) -> {};
         this.lock = new DistributedLock<>() {};
     }
 

@@ -30,7 +30,7 @@ class BusinessExceptionTest {
 
     @Test
     void test(){
-        BusinessException exception = new BusinessException("a", "Hello Baby");
+        var exception = new BusinessException("a", "Hello Baby");
         assertEquals("a",exception.getCode());
         assertEquals("a:Hello Baby",exception.getMessage());
         exception = new BusinessException("", "Hello Baby");

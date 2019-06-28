@@ -14,7 +14,7 @@ import org.apache.shiro.cache.Cache;
 @AllArgsConstructor
 public class SpringCacheManager extends AbstractCacheManager {
 
-    public final static int DEFAULT_CACHE_LEVEL = 2;
+    public static final  int DEFAULT_CACHE_LEVEL = 2;
 
     private org.springframework.cache.CacheManager cacheManager;
 

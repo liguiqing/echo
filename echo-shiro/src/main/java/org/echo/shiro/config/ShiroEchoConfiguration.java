@@ -74,6 +74,7 @@ public class ShiroEchoConfiguration extends AbstractShiroWebConfiguration {
     }
 
     @Bean(name = "sessionCookieTemplate")
+    @Override
     public Cookie sessionCookieTemplate(){
         return super.sessionCookieTemplate();
     }
@@ -96,6 +97,7 @@ public class ShiroEchoConfiguration extends AbstractShiroWebConfiguration {
     }
 
     @Bean
+    @Override
     public SessionFactory sessionFactory(){
         return super.sessionFactory();
     }

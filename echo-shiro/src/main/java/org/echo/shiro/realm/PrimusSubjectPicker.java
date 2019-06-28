@@ -21,7 +21,6 @@
 package org.echo.shiro.realm;
 
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.subject.Subject;
 import org.echo.shiro.Shiros;
 import org.echo.shiro.SubjectPicker;
 

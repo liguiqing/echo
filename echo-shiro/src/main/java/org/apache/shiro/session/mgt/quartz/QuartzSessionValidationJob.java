@@ -7,7 +7,6 @@ package org.apache.shiro.session.mgt.quartz;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.session.mgt.ValidatingSessionManager;
 import org.quartz.Job;
-import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 

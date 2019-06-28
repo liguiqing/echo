@@ -40,9 +40,12 @@ import java.nio.charset.Charset;
 @AllArgsConstructor
 @Slf4j
 public class RedisLock {
-    private static final byte[] UNLOCK_SCRIPT = "if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('del', KEYS[1]) else return 0 end".getBytes(Charset.forName("UTF-8"));
+    private static final String CHARSET_NAME = "UTF-8";
+
+    private static final byte[] UNLOCK_SCRIPT = "if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('del', KEYS[1]) else return 0 end".getBytes(Charset.forName(CHARSET_NAME));
 
     private static final String LOCK_KEY = "lock:";
+
 
     private String lockPrefix;
 
@@ -59,9 +62,9 @@ public class RedisLock {
         log.debug("Lock redis key {}->{}",requestId,key);
 
         String lockKey = lockPrefix + ":" + LOCK_KEY + key;
-        RedisCallback<Boolean> callback = (connection) ->
-             connection.set(lockKey.getBytes(Charset.forName("UTF-8")),
-                    requestId.getBytes(Charset.forName("UTF-8")),
+        RedisCallback<Boolean> callback = connection ->
+             connection.set(lockKey.getBytes(Charset.forName(CHARSET_NAME)),
+                    requestId.getBytes(Charset.forName(CHARSET_NAME)),
                     Expiration.seconds(expireTime), RedisStringCommands.SetOption.SET_IF_ABSENT);
 
         return (Boolean)redisOperations.execute(callback);
@@ -77,9 +80,9 @@ public class RedisLock {
         log.debug("Unlock redis key {}->{}", requestId, key);
 
         String lockKey = lockPrefix + ":" + LOCK_KEY + key;
-        RedisCallback<Boolean> callback = (connection) ->
-                connection.eval(UNLOCK_SCRIPT, ReturnType.BOOLEAN, 1, lockKey.getBytes(Charset.forName("UTF-8")),
-                        requestId.getBytes(Charset.forName("UTF-8")));
+        RedisCallback<Boolean> callback = connection ->
+                connection.eval(UNLOCK_SCRIPT, ReturnType.BOOLEAN, 1, lockKey.getBytes(Charset.forName(CHARSET_NAME)),
+                        requestId.getBytes(Charset.forName(CHARSET_NAME)));
 
         return (Boolean) redisOperations.execute(callback);
     }

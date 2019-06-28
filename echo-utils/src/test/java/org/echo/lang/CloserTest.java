@@ -1,10 +1,9 @@
 package org.echo.lang;
 
 import org.echo.exception.BusinessException;
+import org.echo.util.ClassUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.echo.util.ClassUtils;
-
 
 import java.io.Closeable;
 import java.io.IOException;

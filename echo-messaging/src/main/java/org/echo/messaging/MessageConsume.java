@@ -24,9 +24,9 @@ package org.echo.messaging;
 import java.io.Serializable;
 
 /**
- * <p>
+ * <pre>
  * 消费消息
- * </P>
+ * </pre>
  *
  * @author liguiqing
  * @date 2019-06-14 10:40

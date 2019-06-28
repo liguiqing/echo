@@ -39,15 +39,14 @@ class RedissonDistributedLockTest {
         RLock lock = mock(RLock.class);
         when(lock.tryLock()).thenReturn(true).thenReturn(false).thenReturn(true).thenReturn(true).thenReturn(false).thenReturn(true);
         when(redissonClient.getFairLock(anyString())).thenReturn(lock);
-        RedissonDistributedLock distributedLock = new RedissonDistributedLock(redissonClient);
+        RedissonDistributedLock<String,Integer> distributedLock = new RedissonDistributedLock(redissonClient);
 
-        assertEquals("aa",distributedLock.lock("aa",()->"aa"));
-        assertNull(distributedLock.lock("aa",()->"aa"));
-        assertNull(distributedLock.lock("aa",()->"".substring(2,5)));
+        assertEquals(Integer.valueOf(1),distributedLock.lock("aa",()->1));
+        assertNull(distributedLock.lock("aa",()->1));
 
-        distributedLock.lock("aa","aa",s -> assertEquals("aa",s));
-        distributedLock.lock("aa","aa",s -> assertNotEquals("aa",s));
+        distributedLock.lock("aa",1,s -> assertTrue(1 == s));
+        distributedLock.lock("aa",1,s -> assertTrue(1 == s));
         //distributedLock.lock("aa",0,s -> assertEquals(0,s));
-        distributedLock.lock("aa",0,s -> {var a = 1/(int)s;assertThrows(Exception.class,() -> 1/(int)s);});
+        distributedLock.lock("aa",0,s -> {final int a = s;assertThrows(Exception.class,()->{var b= a/1;});});
     }
 }
