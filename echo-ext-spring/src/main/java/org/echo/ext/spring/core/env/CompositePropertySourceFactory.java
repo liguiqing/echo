@@ -21,6 +21,7 @@
 package org.echo.ext.spring.core.env;
 
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
 import org.springframework.core.env.PropertiesPropertySource;
 import org.springframework.core.env.PropertySource;
@@ -33,13 +34,14 @@ import java.util.Properties;
 
 /**
  * <p>
- * CompositePropertySourceFactory support properties and yaml file
+ * 支持同时从 properties and yaml file 加载配置
  * </P>
  *
  * @author liguiqing
  * @date 2019-06-10 20:55
  * @since V1.0.0
  **/
+@Slf4j
 public class CompositePropertySourceFactory extends DefaultPropertySourceFactory {
     @Override
     public PropertySource<?> createPropertySource(String name, EncodedResource resource)
@@ -61,6 +63,7 @@ public class CompositePropertySourceFactory extends DefaultPropertySourceFactory
      * @return
      */
     private Properties loadYaml(EncodedResource resource) {
+        log.debug("Load configurations from yml");
         YamlPropertiesFactoryBean factory = new YamlPropertiesFactoryBean();
         factory.setResources(resource.getResource());
         factory.afterPropertiesSet();

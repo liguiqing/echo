@@ -1,3 +1,7 @@
+logging:
+  level:
+    root: DEBUG
+
 spring:
   redis:
     host: 192.168.1.251
