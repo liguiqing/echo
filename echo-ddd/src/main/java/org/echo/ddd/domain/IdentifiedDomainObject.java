@@ -13,7 +13,8 @@ import java.io.Serializable;
  *
  * @author Liguiqing
  * @since V1.0
+ * @param <T> element of Identity
  */
-public interface IdentifiedDomainObject extends Serializable {
-    Identity getId();
+public interface IdentifiedDomainObject<T extends Identity> extends Serializable {
+    T getId();
 }
