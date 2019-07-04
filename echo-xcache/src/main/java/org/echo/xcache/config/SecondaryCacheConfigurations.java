@@ -32,7 +32,9 @@ import org.echo.xcache.message.CacheMessage;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
+import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer;
 
 import java.util.Optional;
 
@@ -64,8 +66,10 @@ public class SecondaryCacheConfigurations {
     }
 
     @Bean
-    MessageListenerAdapter cacheMessageListenerAdapter(BinaryCacheManager cacheManager) {
-        return new MessageListenerAdapter(new BinaryCacheMessageConsume(cacheManager), "consume");
+    MessageListenerAdapter cacheMessageListenerAdapter(BinaryCacheManager cacheManager, RedisTemplate redisTemplate) {
+        MessageListenerAdapter cacheMessageAdptor = new MessageListenerAdapter(new BinaryCacheMessageConsume(cacheManager), "consume");
+        cacheMessageAdptor.setSerializer(redisTemplate.getValueSerializer());
+        return cacheMessageAdptor;
     }
 
 }

@@ -21,9 +21,11 @@
 package org.echo.xcache.config;
 
 import org.apache.commons.lang3.reflect.MethodUtils;
+import org.echo.messaging.MessagePublish;
 import org.echo.redis.config.RedisBaseComponentConfiguration;
 import org.echo.xcache.XCacheProperties;
 import org.echo.xcache.binary.BinaryCacheManager;
+import org.echo.xcache.message.CacheMessage;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -66,6 +68,9 @@ class AutoConfigurationsTest {
     @Autowired
     private XCacheProperties cacheProperties;
 
+    //@Autowired
+    //MessagePublish<CacheMessage> cacheMessagePublish;
+
     @Test
     public void test(){
         assertTrue(cacheManager instanceof CompositeCacheManager);
@@ -83,5 +88,7 @@ class AutoConfigurationsTest {
         assertEquals("echo:test:A",cn1);
         String cn2 = cacheProperties.getCacheName("A");
         assertEquals("echo:test:A",cn2);
+
+
     }
 }
