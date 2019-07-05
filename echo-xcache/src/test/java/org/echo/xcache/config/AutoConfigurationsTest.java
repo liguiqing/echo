@@ -21,11 +21,9 @@
 package org.echo.xcache.config;
 
 import org.apache.commons.lang3.reflect.MethodUtils;
-import org.echo.messaging.MessagePublish;
 import org.echo.redis.config.RedisBaseComponentConfiguration;
 import org.echo.xcache.XCacheProperties;
 import org.echo.xcache.binary.BinaryCacheManager;
-import org.echo.xcache.message.CacheMessage;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

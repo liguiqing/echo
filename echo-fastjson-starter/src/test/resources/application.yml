@@ -1,0 +1,10 @@
+logging:
+  level:
+    root: DEBUG
+
+spring:
+  fastjson:
+    dateFormat : yyyy-MM-dd HH:mm:ss
+    serializer-features:
+      - prettyformat
+      - writedateusedateformat
