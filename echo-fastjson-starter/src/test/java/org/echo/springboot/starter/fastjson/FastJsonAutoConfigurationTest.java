@@ -1,3 +1,5 @@
+package org.echo.springboot.starter.fastjson;
+
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.support.spring.FastJsonJsonView;
 import org.echo.springboot.starter.fastjson.FastJsonAutoConfiguration;
@@ -7,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -20,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * @author liguiqing
  * @since V1.0.0 2019-07-05 15:37
  **/
+@SpringBootTest
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration( initializers = {ConfigFileApplicationContextInitializer.class},
         classes = {

@@ -16,9 +16,7 @@
         <java.version>11</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <sonar.test.exclusions>
-            src/test/**/*
-        </sonar.test.exclusions>
+        <sonar.test.exclusions>src/test/**/*</sonar.test.exclusions>
         <echo.version>1.0.0-SNAPSHOT</echo.version>
         <spring.version>5.1.8.RELEASE</spring.version>
         <spring.boot.version>2.1.6.RELEASE</spring.boot.version>
@@ -26,7 +24,6 @@
         <redisson.version>3.11.0</redisson.version>
         <commons.lang.version>3.9</commons.lang.version>
         <shiro.version>1.4.1</shiro.version>
-        <log4j2.version>2.12.0</log4j2.version>
     </properties>
 
     <dependencies>
@@ -72,18 +69,8 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter</artifactId>
                 <version>${spring.boot.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.springframework.boot</groupId>
-                        <artifactId>spring-boot-starter-logging</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-log4j2</artifactId>
-                <version>${spring.boot.version}</version>
-            </dependency>
+
             <dependency>
                 <groupId>com.lmax</groupId>
                 <artifactId>disruptor</artifactId>

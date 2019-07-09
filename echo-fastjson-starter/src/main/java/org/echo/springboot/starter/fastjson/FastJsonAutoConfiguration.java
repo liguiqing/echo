@@ -5,13 +5,17 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
 import com.alibaba.fastjson.support.spring.FastJsonJsonView;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
 
+import javax.servlet.Servlet;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -25,8 +29,10 @@ import java.util.Objects;
  * @since V1.0.0 2019-07-05 14:58
  **/
 @Configuration
+@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
+@AutoConfigureAfter(WebMvcAutoConfiguration.class)
 @EnableConfigurationProperties(value = FastJsonProperties.class)
-@ConditionalOnClass(JSON.class)
+@ConditionalOnClass({Servlet.class,JSON.class})
 public class FastJsonAutoConfiguration {
 
     private FastJsonProperties fastJsonProperties;
