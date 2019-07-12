@@ -15,6 +15,7 @@ import org.springframework.boot.test.context.ConfigFileApplicationContextInitial
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.test.context.ContextConfiguration;
 
 import javax.servlet.Filter;
@@ -46,6 +47,9 @@ class ConfigurationsTest {
 
     @Autowired
     ShiroFilterFactoryBean filterFactoryBean;
+
+    @Autowired
+    Environment en;
 
     @Test
     void test(){

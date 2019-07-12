@@ -8,13 +8,13 @@ shiro:
   loginUrl: /index
   rememberMeManager:
     cookie:
-      domain: echo
-      name: echo
+      domain: echo-test
+      name: echo-test
       path: /
       secure: false
   sessionManager:
     cookie:
-      domain: echo
+      domain: echo-test
       maxAge: -1
       name: echo
       path: /
@@ -27,8 +27,13 @@ shiro:
   userNativeSessionManager: false
   scheduler:
     validationInterval: 180000
+  filter-chain:
+    - pattern: /static/script/**
+      filter: anon
   credentials:
     salt:
       reader:
         field: salt
         method: getSalt
+  cache:
+    activeSessionCache: echo-activeSessionCache

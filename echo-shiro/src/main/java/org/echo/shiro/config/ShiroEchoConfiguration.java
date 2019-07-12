@@ -12,6 +12,8 @@ import org.apache.shiro.session.mgt.eis.SessionIdGenerator;
 import org.apache.shiro.session.mgt.quartz.QuartzSessionValidationScheduler;
 import org.apache.shiro.spring.config.web.autoconfigure.ShiroWebAutoConfiguration;
 import org.apache.shiro.spring.web.config.AbstractShiroWebConfiguration;
+import org.apache.shiro.spring.web.config.DefaultShiroFilterChainDefinition;
+import org.apache.shiro.spring.web.config.ShiroFilterChainDefinition;
 import org.apache.shiro.web.servlet.Cookie;
 import org.echo.shiro.SubjectPicker;
 import org.echo.shiro.SubjectsContext;
@@ -20,15 +22,17 @@ import org.echo.shiro.realm.PrimusRealm;
 import org.echo.shiro.realm.PrimusSubjectPicker;
 import org.echo.shiro.session.mgt.eis.SessionIdGeneratorIterator;
 import org.echo.shiro.web.session.mgt.StatelessWebSessionManager;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -38,6 +42,7 @@ import java.util.Optional;
 @Slf4j
 @Configuration
 @AutoConfigureBefore(ShiroWebAutoConfiguration.class)
+@EnableConfigurationProperties
 public class ShiroEchoConfiguration extends AbstractShiroWebConfiguration {
 
     @Value("#{ @environment['shiro.cache.activeSessionCache'] ?: T(org.apache.shiro.session.mgt.eis.CachingSessionDAO).ACTIVE_SESSION_CACHE_NAME}")
@@ -45,9 +50,6 @@ public class ShiroEchoConfiguration extends AbstractShiroWebConfiguration {
 
     @Value("#{ @environment['shiro.session.globalSessionTimeout'] ?: T(org.apache.shiro.session.mgt.DefaultSessionManager).DEFAULT_GLOBAL_SESSION_TIMEOUT}")
     private long globalSessionTimeout;
-
-    @Value("#{ @environment['shiro.cache.level'] ?: T(org.echo.shiro.cache.SpringCacheManager).DEFAULT_CACHE_LEVEL}")
-    private int cacheLevel;
 
     @Value("#{ @environment['shiro.credentials.salt.reader.field'] ?: T(org.echo.shiro.authc.credential.FieldSaltReader).DEFAULT_FIELD}")
     private String saltReaderFieldName;
@@ -69,7 +71,7 @@ public class ShiroEchoConfiguration extends AbstractShiroWebConfiguration {
     }
 
     @Bean
-    public SessionIdGeneratorIterator sessionIdGeneratorIterator(Optional<List<SessionIdGenerator>> sessionIdGenerators){
+    static SessionIdGeneratorIterator sessionIdGeneratorIterator(Optional<List<SessionIdGenerator>> sessionIdGenerators){
         return new SessionIdGeneratorIterator(sessionIdGenerators);
     }
 
@@ -80,7 +82,7 @@ public class ShiroEchoConfiguration extends AbstractShiroWebConfiguration {
     }
 
     @Bean
-    public SessionDAO sessionDAO(SessionIdGeneratorIterator sessionIdGenerator,
+    SessionDAO sessionDAO(SessionIdGeneratorIterator sessionIdGenerator,
                                  Optional<CacheManager> cacheManager){
         var sessionDAO = new EnterpriseCacheSessionDAO();
         cacheManager.ifPresent(sessionDAO::setCacheManager);
@@ -90,7 +92,7 @@ public class ShiroEchoConfiguration extends AbstractShiroWebConfiguration {
     }
 
     @Bean
-    public SessionValidationScheduler sessionValidationScheduler(){
+    SessionValidationScheduler sessionValidationScheduler(){
         var scheduler = new QuartzSessionValidationScheduler();
         scheduler.setSessionValidationInterval(schedulerValidationInterval);
         return scheduler;
@@ -103,7 +105,7 @@ public class ShiroEchoConfiguration extends AbstractShiroWebConfiguration {
     }
 
     @Bean
-    public SessionManager sessionManager(SessionValidationScheduler sessionValidationScheduler,
+    SessionManager sessionManager(SessionValidationScheduler sessionValidationScheduler,
                                          SessionDAO sessionDAO,
                                          SessionFactory sessionFactory){
         var sessionManager = new StatelessWebSessionManager();
@@ -120,12 +122,12 @@ public class ShiroEchoConfiguration extends AbstractShiroWebConfiguration {
     }
 
     @Bean
-    public MD5PasswordEncoder md5PasswordEncoder(){
+    MD5PasswordEncoder md5PasswordEncoder(){
         return new MD5PasswordEncoder();
     }
 
     @Bean
-    public PasswordCredentialsMatcher passwordCredentialsMatcher(Optional<SaltReader> saltReader,MD5PasswordEncoder encoder){
+    PasswordCredentialsMatcher passwordCredentialsMatcher(Optional<SaltReader> saltReader,MD5PasswordEncoder encoder){
         var fieldReader = new FieldSaltReader(saltReaderFieldName,Optional.of(new MethodSaltReader(saltReaderMethodName, saltReader)));
         return new PasswordCredentialsMatcher(encoder,fieldReader);
     }
@@ -136,5 +138,23 @@ public class ShiroEchoConfiguration extends AbstractShiroWebConfiguration {
         var realm =  new PrimusRealm(encoder);
         realm.setCredentialsMatcher(passwordCredentialsMatcher);
         return realm;
+    }
+
+
+    @Bean
+    @ConfigurationProperties(prefix = "shiro.filter-chain")
+    List<FilterChainDefinition> filterChainDefinitions(){
+        return new LinkedList<>();
+    }
+
+
+    @Bean
+    ShiroFilterChainDefinition shiroFilterChain(@Qualifier("filterChainDefinitions") List<FilterChainDefinition> filterChainDefinitions){
+        if(!filterChainDefinitions.contains(FilterChainDefinition.allAuthc()))
+            filterChainDefinitions.add(FilterChainDefinition.allAuthc());
+        Map<String,String> maps = filterChainDefinitions.stream().collect(Collectors.toMap(FilterChainDefinition::getPattern,FilterChainDefinition::getFilter));
+        var chainDefinition = new DefaultShiroFilterChainDefinition();
+        chainDefinition.addPathDefinitions(maps);
+        return chainDefinition;
     }
 }
