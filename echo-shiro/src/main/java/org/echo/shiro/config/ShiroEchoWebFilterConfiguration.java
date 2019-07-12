@@ -25,6 +25,9 @@ import com.google.common.collect.Maps;
 import org.apache.shiro.spring.config.web.autoconfigure.ShiroWebFilterConfiguration;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.spring.web.config.AbstractShiroWebFilterConfiguration;
+import org.apache.shiro.web.filter.authc.FormAuthenticationFilter;
+import org.echo.shiro.authc.filter.WebLoginFilter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -46,6 +49,16 @@ import java.util.Optional;
 @ConditionalOnProperty(name = "shiro.web.enabled", matchIfMissing = true)
 @AutoConfigureBefore(ShiroWebFilterConfiguration.class)
 public class ShiroEchoWebFilterConfiguration extends AbstractShiroWebFilterConfiguration {
+    public static final String DEFAULT_AJAX_LOGIN_FAILURE_URL = "ajaxLoginFailure";
+
+    @Value("#{ @environment['shiro.login.ajax.failure.url'] ?:T(org.echo.shiro.config.ShiroEchoWebFilterConfiguration).DEFAULT_AJAX_LOGIN_FAILURE_URL}")
+    private String ajaxLoginFailureUrl;
+
+
+    @Bean
+    FormAuthenticationFilter formAuthenticationFilter(){
+        return new WebLoginFilter(this.ajaxLoginFailureUrl);
+    }
 
     @Bean
     ShiroFilterFactoryBean shiroFilterFactoryBean(Optional<Map<String, Filter>> filters) {

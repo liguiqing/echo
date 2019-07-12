@@ -15,6 +15,7 @@ import org.apache.shiro.spring.web.config.AbstractShiroWebConfiguration;
 import org.apache.shiro.spring.web.config.DefaultShiroFilterChainDefinition;
 import org.apache.shiro.spring.web.config.ShiroFilterChainDefinition;
 import org.apache.shiro.web.servlet.Cookie;
+import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 import org.echo.shiro.SubjectPicker;
 import org.echo.shiro.SubjectsContext;
 import org.echo.shiro.authc.credential.*;
@@ -108,7 +109,7 @@ public class ShiroEchoConfiguration extends AbstractShiroWebConfiguration {
     SessionManager sessionManager(SessionValidationScheduler sessionValidationScheduler,
                                          SessionDAO sessionDAO,
                                          SessionFactory sessionFactory){
-        var sessionManager = new StatelessWebSessionManager();
+        var sessionManager = new DefaultWebSessionManager();
         sessionManager.validateSessions();
         sessionManager.setGlobalSessionTimeout(globalSessionTimeout);
         sessionManager.setDeleteInvalidSessions(true);
