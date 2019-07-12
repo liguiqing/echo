@@ -5,7 +5,7 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
 import com.alibaba.fastjson.support.spring.FastJsonJsonView;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
@@ -30,7 +30,7 @@ import java.util.Objects;
  **/
 @Configuration
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
-@AutoConfigureAfter(WebMvcAutoConfiguration.class)
+@AutoConfigureBefore(WebMvcAutoConfiguration.class)
 @EnableConfigurationProperties(value = FastJsonProperties.class)
 @ConditionalOnClass({Servlet.class,JSON.class})
 public class FastJsonAutoConfiguration {
@@ -51,7 +51,7 @@ public class FastJsonAutoConfiguration {
     }
 
     @Bean
-    public FastJsonJsonView fastJsonJsonView() {
+    FastJsonJsonView fastJsonJsonView() {
         FastJsonConfig fastJsonConfig = getFastJsonConfig();
         fastJsonConfig.setSerializerFeatures(SerializerFeature.WriteDateUseDateFormat,
                 SerializerFeature.WriteMapNullValue,
@@ -59,18 +59,13 @@ public class FastJsonAutoConfiguration {
                 SerializerFeature.WriteNullNumberAsZero,
                 SerializerFeature.WriteNullBooleanAsFalse,
                 SerializerFeature.WriteEnumUsingToString);
-        fastJsonConfig.setDateFormat(fastJsonProperties.getDateFormat());
         FastJsonJsonView view = new FastJsonJsonView();
         view.setFastJsonConfig(fastJsonConfig);
         return view;
     }
 
-    /**
-     * 设置 fastJsonConfig
-     *
-     * @return fastJsonConfig
-     */
-    private FastJsonConfig getFastJsonConfig() {
+    @Bean
+    FastJsonConfig getFastJsonConfig() {
         FastJsonConfig fastJsonConfig = new FastJsonConfig();
 
         SerializerFeature[] serializerFeatures = fastJsonProperties.getSerializerFeatures();
@@ -81,7 +76,7 @@ public class FastJsonAutoConfiguration {
                     SerializerFeature.PrettyFormat,
                     SerializerFeature.WriteDateUseDateFormat);
         }
-
+        fastJsonConfig.setDateFormat(fastJsonProperties.getDateFormat());
         return fastJsonConfig;
     }
 
