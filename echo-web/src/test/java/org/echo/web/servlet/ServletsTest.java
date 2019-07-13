@@ -35,6 +35,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -66,5 +67,10 @@ class ServletsTest  {
         assertTrue(map.containsValue("b"));
         assertTrue(map.containsValue(LocalDate.now().toString()));
         assertEquals(0,Servlets.getParameterMap(request).size());
+
+        when(request.getHeader(anyString())).thenReturn("header").thenReturn("").thenReturn(null);
+        assertTrue(Servlets.requestHeaderContains(request, "header"));
+        assertFalse(Servlets.requestHeaderContains(request, "header"));
+        assertFalse(Servlets.requestHeaderContains(request, "header"));
     }
 }

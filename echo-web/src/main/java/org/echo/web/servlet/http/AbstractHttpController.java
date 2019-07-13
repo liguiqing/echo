@@ -22,7 +22,6 @@ package org.echo.web.servlet.http;
 
 import lombok.extern.slf4j.Slf4j;
 import org.echo.exception.ThrowableToString;
-import org.echo.shiro.SubjectsContext;
 import org.echo.web.servlet.Servlets;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -40,9 +39,6 @@ public abstract class AbstractHttpController {
 
     @Autowired
     protected ResponseTextFactory responseTextFactory;
-
-    @Autowired(required = false)
-    protected SubjectsContext subjectsContext;
 
     protected void output(String content){
         this.output(content, Servlets.getResponse());

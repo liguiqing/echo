@@ -20,9 +20,11 @@
 
 package org.echo.web.servlet;
 
+import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
@@ -62,5 +64,10 @@ public class Servlets {
             }
         }
         return pss;
+    }
+
+    public static boolean requestHeaderContains(ServletRequest request,String header){
+        HttpServletRequest req = (HttpServletRequest) request;
+        return !StringUtils.isEmpty(req.getHeader(header));
     }
 }

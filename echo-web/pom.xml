@@ -19,8 +19,12 @@
             <type>pom</type>
         </dependency>
         <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+        </dependency>
+        <dependency>
             <groupId>echo</groupId>
-            <artifactId>echo-shiro</artifactId>
+            <artifactId>echo-utils</artifactId>
             <version>${echo.version}</version>
         </dependency>
         <dependency>
