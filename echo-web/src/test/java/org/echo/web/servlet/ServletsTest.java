@@ -22,6 +22,8 @@ package org.echo.web.servlet;
 
 
 import org.echo.util.ClassUtils;
+import org.echo.web.servlet.http.ResponseText;
+import org.echo.web.servlet.http.ResponseTextFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -30,14 +32,15 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.PrintWriter;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @DisplayName("Echo : UserAgentUtils Test ")
 @WebAppConfiguration
@@ -45,7 +48,7 @@ import static org.mockito.Mockito.when;
 class ServletsTest  {
 
     @Test
-    void test(){
+    void test()throws Exception{
         assertThrows(Exception.class,()-> ClassUtils.newInstanceOf(Servlets.class));
         assertTrue(true);
 
@@ -72,5 +75,32 @@ class ServletsTest  {
         assertTrue(Servlets.requestHeaderContains(request, "header"));
         assertFalse(Servlets.requestHeaderContains(request, "header"));
         assertFalse(Servlets.requestHeaderContains(request, "header"));
+
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        PrintWriter out = mock(PrintWriter.class);
+
+        ResponseTextFactory responseTextFactory = mock(ResponseTextFactory.class);
+        when(request.getParameter("local")).thenReturn("local");
+        when(responseTextFactory.lookup(anyString())).thenReturn(new ResponseText() {
+            @Override
+            public String getText(String code) {
+                return "Test";
+            }
+        });
+        when(response.getWriter()).thenReturn(out);
+        Servlets.outputNotClose("",response);
+        doThrow(new RuntimeException()).when(out).print(anyString());
+        Servlets.outputNotClose("",response);
+
+        Servlets.responseJsonAndClose(response,responseTextFactory,401,"You are my sunshine");
+        when(response.getWriter()).thenReturn(null);
+        doThrow(new RuntimeException()).when(out).print(anyString());
+        Servlets.responseJsonAndClose(response,responseTextFactory,401,"You are my sunshine");
+
+        when(request.getHeader(anyString())).thenReturn("header").thenReturn(null);
+        when(request.getParameter(anyString())).thenReturn(null).thenReturn("header").thenReturn("");
+        assertTrue(Servlets.isParamNullOrEmpty(request, false,"header"));
+        assertFalse(Servlets.isParamNullOrEmpty(request, true,"header"));
+        assertTrue(Servlets.isParamNullOrEmpty(request, true,"header","header"));
     }
 }

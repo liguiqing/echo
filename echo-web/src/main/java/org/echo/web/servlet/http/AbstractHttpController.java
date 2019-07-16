@@ -41,16 +41,7 @@ public abstract class AbstractHttpController {
     protected ResponseTextFactory responseTextFactory;
 
     protected void output(String content){
-        this.output(content, Servlets.getResponse());
-    }
-
-    protected void output(String content, HttpServletResponse response){
-        try {
-            PrintWriter out = response.getWriter();
-            out.print(content);
-        } catch (IOException e) {
-            log.error(ThrowableToString.toString(e));
-        }
+        Servlets.outputNotClose(content, Servlets.getResponse());
     }
 
     protected ModelAndViewer modelAndViewer(String viewName){
