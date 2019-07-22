@@ -30,6 +30,7 @@ import org.echo.xcache.redis.RedissonCacheDequeFactory;
 import org.redisson.api.RedissonClient;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -51,12 +52,14 @@ import java.util.Optional;
  * @since V1.0
  */
 @Configuration
+@ConditionalOnProperty("spring.redis")
 @ConditionalOnClass(RedisOperations.class)
 @EnableConfigurationProperties(value = XCacheProperties.class)
 public class RedisCacheConfigurations {
 
     @Bean
     @ConditionalOnMissingBean(name="cacheMessagePublish")
+    @ConditionalOnClass(RedisTemplate.class)
     MessagePublish<CacheMessage> cacheMessagePublish(RedisTemplate redisTemplate){
         return redisTemplate::convertAndSend;
     }
@@ -83,11 +86,13 @@ public class RedisCacheConfigurations {
     }
 
     @Bean
+    @ConditionalOnClass(RedissonClient.class)
     CacheDequeFactory cacheDequeFactory(RedissonClient redissonClient,XCacheProperties xCacheProperties){
         return new RedissonCacheDequeFactory(redissonClient, xCacheProperties);
     }
 
     @Bean
+    @ConditionalOnClass(RedisTemplate.class)
     RedisCacheFactory redisCacheFactory(XCacheProperties xCacheProperties,RedisTemplate<Object,Object> redisTemplate){
         return new RedisCacheFactory(xCacheProperties,redisTemplate);
     }

@@ -29,6 +29,8 @@ import org.echo.xcache.binary.BinaryCacheMessageConsume;
 import org.echo.xcache.caffeine.CaffeineCacheFactory;
 import org.echo.xcache.caffeine.CaffeineCacheProperties;
 import org.echo.xcache.message.CacheMessage;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -53,7 +55,7 @@ public class SecondaryCacheConfigurations {
 
     @Bean("SecondaryCacheManager")
     static BinaryCacheManager cacheManager(Optional<CacheFactory> secondaryCacheFactory,
-                                           MessagePublish<CacheMessage> messagePublish,
+                                           Optional<MessagePublish<CacheMessage>> messagePublish,
                                            XCacheProperties xCacheProperties,
                                            CaffeineCacheProperties caffeineCacheProperties) {
         CaffeineCacheFactory caffeineCacheFactory = new CaffeineCacheFactory(caffeineCacheProperties);
@@ -61,10 +63,11 @@ public class SecondaryCacheConfigurations {
                 xCacheProperties,
                 caffeineCacheFactory,
                 secondaryCacheFactory.orElse(caffeineCacheFactory),
-                messagePublish);
+                messagePublish.orElse((a,b)->{}));
     }
 
     @Bean
+    @ConditionalOnBean(RedisTemplate.class)
     MessageListenerAdapter cacheMessageListenerAdapter(BinaryCacheManager cacheManager, RedisTemplate redisTemplate) {
         MessageListenerAdapter cacheMessageAdptor = new MessageListenerAdapter(new BinaryCacheMessageConsume(cacheManager), "consume");
         cacheMessageAdptor.setSerializer(redisTemplate.getValueSerializer());
