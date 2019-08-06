@@ -92,10 +92,10 @@ class ServletsTest  {
         doThrow(new RuntimeException()).when(out).print(anyString());
         Servlets.outputNotClose("",response);
 
-        Servlets.responseJsonAndClose(response,responseTextFactory,401,"You are my sunshine");
+        Servlets.responseJsonAndClose(response,responseTextFactory,401);
         when(response.getWriter()).thenReturn(null);
         doThrow(new RuntimeException()).when(out).print(anyString());
-        Servlets.responseJsonAndClose(response,responseTextFactory,401,"You are my sunshine");
+        Servlets.responseJsonAndClose(response,responseTextFactory,401);
 
         when(request.getHeader(anyString())).thenReturn("header").thenReturn(null);
         when(request.getParameter(anyString())).thenReturn(null).thenReturn("header").thenReturn("");

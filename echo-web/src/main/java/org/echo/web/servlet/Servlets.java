@@ -75,30 +75,25 @@ public class Servlets {
         Map<String,String[]> ps = request.getParameterMap();
         HashMap<String,String> pss = new HashMap<>();
         Iterator<String> keys = ps.keySet().iterator();
-        while(keys.hasNext()){
-            String key = keys.next();
+        keys.forEachRemaining(key -> {
             String[] values = ps.get(key);
-            if(values == null || values.length == 0){
-                pss.put(key,"");
-            }else{
-                pss.put(key,values[0]);
-            }
-        }
+            pss.put(key,(values == null || values.length == 0)?"":values[0]);
+
+        });
         return pss;
     }
 
     /**
-     * 响应{@link ModelAndView#getModel()}格式的json,同时关闭 {@link HttpServletResponse}
+     * 强制响应{@link ModelAndView#getModel()}格式的json数据,同时关闭 {@link HttpServletResponse}
      * @param response {@link HttpServletResponse}
      * @param responseTextFactory {@link ResponseTextFactory}
      * @param respondStatus a status code of {@link HttpServletResponse} public field
-     * @param outData message data
      */
     public static void responseJsonAndClose(HttpServletResponse response, ResponseTextFactory responseTextFactory,
-                                    int respondStatus,Object outData){
+                                    int respondStatus){
         String local = getRequest().getParameter("local");
         ModelAndViewer modelAndViewer = new ModelAndViewer("",responseTextFactory.lookup(local));
-        modelAndViewer.failure().code(respondStatus + "").data(respondStatus + "",outData);
+        modelAndViewer.failure().code("http:" + respondStatus);
         response.setStatus(respondStatus);
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json; charset=utf-8");

@@ -20,6 +20,8 @@
 
 package org.echo.web.servlet.http;
 
+import com.google.common.collect.Maps;
+import io.echo.api.data.Data;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.HashMap;
@@ -31,7 +33,7 @@ import java.util.HashMap;
 
 public class ModelAndViewer {
 
-    private HashMap<String, Object> model;
+    private Data data;
 
     private String viewName;
 
@@ -44,11 +46,11 @@ public class ModelAndViewer {
     public ModelAndViewer(String viewName, ResponseText responseText) {
         this.viewName = viewName;
         this.responseText = responseText;
-        this.model = new HashMap<>();
+        this.data = new Data();
     }
 
-    public ModelAndViewer data(String name,Object data){
-        this.model.put(name,data);
+    public ModelAndViewer data(String name,Object modelObject){
+        this.data.add(name,modelObject);
         return this;
     }
 
@@ -64,7 +66,9 @@ public class ModelAndViewer {
 
     public ModelAndView create(){
         Responser response = new Responser(this.success,this.code,this.responseText.getText(this.code));
-        this.data("status", response);
-        return new ModelAndView(this.viewName, this.model);
+        HashMap<String, Object> model = Maps.newHashMap();
+        model.put("status", response);
+        model.put("data",this.data);
+        return new ModelAndView(this.viewName, model);
     }
 }
